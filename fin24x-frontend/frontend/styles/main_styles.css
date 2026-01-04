@@ -867,8 +867,44 @@ section
 
 .section_title_container
 {
-	max-width: 600px;
-	margin: 0 auto;
+	max-width: 100%;
+	margin: 0;
+}
+
+.courses .section_title_container
+{
+	margin-bottom: 20px; /* Further reduced spacing */
+	align-items: center; /* Align title and subtitle vertically */
+	justify-content: space-between; /* Push link to right */
+}
+
+.courses .section_title
+{
+	margin-bottom: 0; /* Remove default margin */
+	font-size: 28px; /* Keep title size */
+}
+
+.courses .section_subtitle p
+{
+	margin-bottom: 0; /* Remove default margin */
+	font-size: 14px; /* Smaller subtitle */
+	color: #76777a; /* Lighter color for subtitle */
+}
+
+/* Responsive for courses button in title section */
+@media (max-width: 992px)
+{
+	.courses .section_title_container
+	{
+		flex-wrap: wrap; /* Allow wrapping on smaller screens */
+	}
+	
+	.section_title_container .courses_button
+	{
+		margin-left: 0;
+		margin-top: 15px;
+		width: 100%;
+	}
 }
 .section_title
 {
@@ -876,8 +912,8 @@ section
 }
 .section_subtitle
 {
-	line-height: 1.85;
-	margin-top: 14px;
+	line-height: 1.5; /* Reduced from 1.85 */
+	margin-top: 0; /* Removed margin since it's on same line */
 }
 .section_background
 {
@@ -1116,12 +1152,12 @@ section
 .courses
 {
 	width: 100%;
-	padding-top: 93px;
+	padding-top: 40px; /* Reduced from 93px */
 	padding-bottom: 100px;
 }
 .courses_row
 {
-	margin-top: 45px;
+	margin-top: 20px; /* Further reduced from 30px */
 }
 .course
 {
@@ -1143,15 +1179,15 @@ section
 }
 .course_body
 {
-	padding-top: 22px;
-	padding-left: 30px;
-	padding-right: 30px;
-	padding-bottom: 23px;
+	padding-top: 15px; /* Reduced from 22px */
+	padding-left: 20px; /* Reduced from 30px */
+	padding-right: 20px; /* Reduced from 30px */
+	padding-bottom: 15px; /* Reduced from 23px */
 }
 .course_title a
 {
 	font-family: 'Roboto Slab', serif;
-	font-size: 20px;
+	font-size: 18px; /* Reduced from 20px */
 	color: #384158;
 	-webkit-transition: all 200ms ease;
 	-moz-transition: all 200ms ease;
@@ -1165,26 +1201,27 @@ section
 }
 .course_teacher
 {
-	font-size: 15px;
+	font-size: 14px; /* Reduced from 15px */
 	font-weight: 400;
 	color: #384158;
-	margin-top: 6px;
+	margin-top: 5px; /* Reduced from 6px */
 }
 .course_text
 {
-	margin-top: 13px;
+	margin-top: 8px; /* Reduced from 13px */
+	font-size: 13px; /* Slightly smaller */
 }
 .course_footer
 {
-	padding-left: 30px;
-	padding-right: 30px;
+	padding-left: 20px; /* Reduced from 30px */
+	padding-right: 20px; /* Reduced from 30px */
 }
 .course_footer_content
 {
 	width: 100%;
 	border-top: solid 1px #e5e5e5;
-	padding-top: 9px;
-	padding-bottom: 11px;
+	padding-top: 8px; /* Reduced from 9px */
+	padding-bottom: 8px; /* Reduced from 11px */
 }
 .course_info
 {
@@ -1224,9 +1261,16 @@ section
 	border-radius: 3px;
 	background: #14bdee;
 	text-align: center;
-	margin: 0 auto;
-	margin-top: 41px;
+	margin: 0;
 	box-shadow: 0px 5px 40px rgba(29,34,47,0.15);
+	flex-shrink: 0; /* Prevent button from shrinking */
+}
+
+/* When button is in section_title_container, remove auto margins */
+.section_title_container .courses_button
+{
+	margin: 0;
+	margin-left: 20px;
 }
 .courses_button:hover
 {

@@ -14,6 +14,7 @@
 	min-height: 40px; /* Ensure minimum height */
 	margin-top: 90px; /* Push down to account for fixed header height */
 	box-shadow: 0px 2px 5px rgba(0,0,0,0.05); /* Subtle shadow like navbar */
+	margin-bottom: 0; /* Remove bottom margin to reduce spacing */
 }
 
 .market-ticker-section .container
