@@ -44,7 +44,7 @@ $(document).ready(function()
 
 	initMenu();
 	initHeaderSearch();
-	initHomeSlider();
+	// initHomeSlider(); // Removed - home slider no longer used
 	initMilestones();
 
 	/* 

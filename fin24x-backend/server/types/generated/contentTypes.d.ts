@@ -585,6 +585,35 @@ export interface ApiHeaderHeader extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiMarketTickerMarketTicker extends Struct.SingleTypeSchema {
+  collectionName: 'market_tickers';
+  info: {
+    description: 'Live market data ticker for Gold, Silver, NIFTY, SENSEX, BANKNIFTY';
+    displayName: 'Market Ticker';
+    pluralName: 'market-tickers';
+    singularName: 'market-ticker';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::market-ticker.market-ticker'
+    > &
+      Schema.Attribute.Private;
+    marketItems: Schema.Attribute.Component<'market.market-item', true>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface PluginContentReleasesRelease
   extends Struct.CollectionTypeSchema {
   collectionName: 'strapi_releases';
@@ -1099,6 +1128,7 @@ declare module '@strapi/strapi' {
       'api::contact-page.contact-page': ApiContactPageContactPage;
       'api::footer.footer': ApiFooterFooter;
       'api::header.header': ApiHeaderHeader;
+      'api::market-ticker.market-ticker': ApiMarketTickerMarketTicker;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

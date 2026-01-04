@@ -78,6 +78,32 @@ export interface LayoutSocialLink extends Struct.ComponentSchema {
   };
 }
 
+export interface MarketMarketItem extends Struct.ComponentSchema {
+  collectionName: 'components_market_market_items';
+  info: {
+    description: 'Single market data item (Gold, Silver, NIFTY, etc.)';
+    displayName: 'Market Item';
+    icon: 'chartLine';
+  };
+  attributes: {
+    changePercent: Schema.Attribute.Decimal;
+    changeValue: Schema.Attribute.Decimal;
+    currentPrice: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    name: Schema.Attribute.Enumeration<
+      [
+        'Gold',
+        'Silver',
+        'NIFTY',
+        'SENSEX',
+        'BANKNIFTY',
+        'MIDCAP100',
+        'SMALLCAP100',
+      ]
+    > &
+      Schema.Attribute.Required;
+  };
+}
+
 export interface SectionsCta extends Struct.ComponentSchema {
   collectionName: 'components_sections_ctas';
   info: {
@@ -159,6 +185,7 @@ declare module '@strapi/strapi' {
       'layout.link': LayoutLink;
       'layout.link-column': LayoutLinkColumn;
       'layout.social-link': LayoutSocialLink;
+      'market.market-item': MarketMarketItem;
       'sections.cta': SectionsCta;
       'sections.feature-card': SectionsFeatureCard;
       'sections.hero': SectionsHero;

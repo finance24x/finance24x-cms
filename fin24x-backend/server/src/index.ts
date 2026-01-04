@@ -30,7 +30,7 @@ export default {
           .findMany({
             where: {
               role: publicRole.id,
-              action: { $in: ['api::header.header.find', 'api::header.header.findOne', 'api::footer.footer.find', 'api::footer.footer.findOne'] },
+              action: { $in: ['api::header.header.find', 'api::header.header.findOne', 'api::footer.footer.find', 'api::footer.footer.findOne', 'api::market-ticker.market-ticker.find', 'api::market-ticker.market-ticker.findOne'] },
             },
           });
 
@@ -133,6 +133,53 @@ export default {
             },
           });
           console.log('✅ Created public permission for footer.findOne');
+        }
+
+        // Enable permissions for market-ticker
+        const marketTickerFind = permissions.find(p => p.action === 'api::market-ticker.market-ticker.find');
+        const marketTickerFindOne = permissions.find(p => p.action === 'api::market-ticker.market-ticker.findOne');
+
+        if (marketTickerFind && !marketTickerFind.enabled) {
+          await strapi
+            .query('plugin::users-permissions.permission')
+            .update({
+              where: { id: marketTickerFind.id },
+              data: { enabled: true },
+            });
+          console.log('✅ Enabled public access for market-ticker.find');
+        }
+
+        if (marketTickerFindOne && !marketTickerFindOne.enabled) {
+          await strapi
+            .query('plugin::users-permissions.permission')
+            .update({
+              where: { id: marketTickerFindOne.id },
+              data: { enabled: true },
+            });
+          console.log('✅ Enabled public access for market-ticker.findOne');
+        }
+
+        // Create permissions if they don't exist
+        if (!permissionActions.includes('api::market-ticker.market-ticker.find')) {
+          await strapi.query('plugin::users-permissions.permission').create({
+            data: {
+              action: 'api::market-ticker.market-ticker.find',
+              role: publicRole.id,
+              enabled: true,
+            },
+          });
+          console.log('✅ Created public permission for market-ticker.find');
+        }
+
+        if (!permissionActions.includes('api::market-ticker.market-ticker.findOne')) {
+          await strapi.query('plugin::users-permissions.permission').create({
+            data: {
+              action: 'api::market-ticker.market-ticker.findOne',
+              role: publicRole.id,
+              enabled: true,
+            },
+          });
+          console.log('✅ Created public permission for market-ticker.findOne');
         }
       }
     } catch (error) {
