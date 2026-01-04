@@ -505,7 +505,7 @@ section
 	-o-transition: all 200ms ease;
 	transition: all 200ms ease;
 }
-.main_nav li.dropdown:hover .dropdown-toggle i
+.main_nav li.dropdown .dropdown-toggle.active i
 {
 	-webkit-transform: rotate(180deg);
 	-moz-transform: rotate(180deg);
@@ -539,7 +539,6 @@ section
 	transition: all 200ms ease;
 	z-index: 1000;
 }
-.main_nav li.dropdown:hover .dropdown-menu,
 .main_nav li.dropdown .dropdown-toggle.active + .dropdown-menu,
 .main_nav li.dropdown .dropdown-menu.active,
 .main_nav li.dropdown.active .dropdown-menu
@@ -2042,18 +2041,24 @@ section
 }
 .footer_links_container ul
 {
-	columns: 2;
-	-webkit-columns: 2;
-	-moz-columns: 2;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
 }
 .footer_links_container
 {
 	margin-top: 33px;
 }
+.footer_links_container ul li
+{
+	display: inline-block;
+	margin: 0;
+}
 .footer_links_container ul li a
 {
 	font-size: 14px;
 	color: #b5b8be;
+	white-space: nowrap;
 	-webkit-transition: all 200ms ease;
 	-moz-transition: all 200ms ease;
 	-ms-transition: all 200ms ease;
@@ -2062,7 +2067,8 @@ section
 }
 .footer_links_container ul li:not(:last-child)
 {
-	margin-bottom: 15px;
+	margin-bottom: 0;
+	margin-right: 20px;
 }
 .footer_links_container ul li a:hover
 {

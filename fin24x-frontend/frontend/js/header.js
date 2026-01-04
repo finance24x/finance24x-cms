@@ -27,15 +27,10 @@ function renderNavigationLinks(navigationLinks, currentPage = '') {
   console.log('Total navigation links:', navigationLinks.length);
   console.log('All links:', navigationLinks.map(l => l.label));
 
-  // Remove last 2 links (Bank Deposits and Government Schemes) as requested
-  const filteredLinks = navigationLinks.slice(0, -2);
-  console.log('After removing last 2:', filteredLinks.length, 'links');
-  console.log('Filtered links:', filteredLinks.map(l => l.label));
-  
   // Show first 5 links in main nav
-  const mainLinks = filteredLinks.slice(0, 5);
-  // Rest go in dropdown (should be 5 links: IPOs, Stocks & Indices, Cryptocurrency, Mutual Funds, Calculators)
-  const dropdownLinks = filteredLinks.slice(5);
+  const mainLinks = navigationLinks.slice(0, 5);
+  // Rest go in dropdown (all remaining links - no truncation)
+  const dropdownLinks = navigationLinks.slice(5);
   
   console.log('Main nav will show:', mainLinks.length, 'links');
   console.log('Dropdown will show:', dropdownLinks.length, 'links');
@@ -75,10 +70,8 @@ function renderMobileMenuLinks(navigationLinks) {
     return '<li class="menu_mm"><a href="index.html">Home</a></li>';
   }
 
-  // Remove last 2 links for mobile menu too
-  const filteredLinks = navigationLinks.slice(0, -2);
-
-  return filteredLinks.map(link => {
+  // Show all links in mobile menu
+  return navigationLinks.map(link => {
     return `<li class="menu_mm"><a href="${link.url || '#'}">${link.label || ''}</a></li>`;
   }).join('');
 }
