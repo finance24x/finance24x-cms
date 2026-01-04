@@ -1,0 +1,49 @@
+{
+  "kind": "singleType",
+  "collectionName": "contact_pages",
+  "info": {
+    "singularName": "contact-page",
+    "pluralName": "contact-pages",
+    "displayName": "Contact Page",
+    "description": "Contact us page content"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "seo.meta"
+    },
+    "hero": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.hero"
+    },
+    "formTitle": {
+      "type": "string",
+      "default": "Get In Touch"
+    },
+    "formDescription": {
+      "type": "text"
+    },
+    "contactInfo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "layout.contact-info"
+    },
+    "mapEmbedUrl": {
+      "type": "string"
+    },
+    "officeHoursTitle": {
+      "type": "string",
+      "default": "Office Hours"
+    },
+    "officeHours": {
+      "type": "text"
+    }
+  }
+}
+

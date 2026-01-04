@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_layout_social_links",
+  "info": {
+    "displayName": "Social Link",
+    "icon": "hashtag",
+    "description": "Social media link with platform identifier"
+  },
+  "options": {},
+  "attributes": {
+    "platform": {
+      "type": "enumeration",
+      "enum": ["facebook", "twitter", "instagram", "linkedin", "youtube", "tiktok", "google"],
+      "required": true
+    },
+    "url": {
+      "type": "string",
+      "required": true
+    }
+  }
+}
+

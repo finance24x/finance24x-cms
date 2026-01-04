@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_seo_metas",
+  "info": {
+    "displayName": "Meta",
+    "icon": "search",
+    "description": "SEO metadata for pages"
+  },
+  "options": {},
+  "attributes": {
+    "metaTitle": {
+      "type": "string",
+      "required": false
+    },
+    "metaDescription": {
+      "type": "text",
+      "required": false
+    },
+    "shareImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}
+

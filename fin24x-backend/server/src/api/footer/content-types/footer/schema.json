@@ -1,0 +1,74 @@
+{
+  "kind": "singleType",
+  "collectionName": "footers",
+  "info": {
+    "singularName": "footer",
+    "pluralName": "footers",
+    "displayName": "Footer",
+    "description": "Site footer with multiple sections"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "logoText": {
+      "type": "string",
+      "required": false,
+      "default": "Unicat"
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "description": {
+      "type": "text",
+      "required": false
+    },
+    "socialLinks": {
+      "type": "component",
+      "repeatable": true,
+      "component": "layout.social-link"
+    },
+    "contactInfo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "layout.contact-info"
+    },
+    "quickLinksTitle": {
+      "type": "string",
+      "default": "Quick Links"
+    },
+    "quickLinksColumn1": {
+      "type": "component",
+      "repeatable": true,
+      "component": "layout.link"
+    },
+    "quickLinksColumn2": {
+      "type": "component",
+      "repeatable": true,
+      "component": "layout.link"
+    },
+    "mobileTitle": {
+      "type": "string",
+      "default": "Mobile"
+    },
+    "appDownloads": {
+      "type": "component",
+      "repeatable": true,
+      "component": "layout.app-download"
+    },
+    "copyrightText": {
+      "type": "string",
+      "required": false
+    },
+    "bottomLinks": {
+      "type": "component",
+      "repeatable": true,
+      "component": "layout.link"
+    }
+  }
+}
+

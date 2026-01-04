@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_layout_link_columns",
+  "info": {
+    "displayName": "Link Column",
+    "icon": "bulletList",
+    "description": "A column of links for footer"
+  },
+  "options": {},
+  "attributes": {
+    "links": {
+      "type": "component",
+      "repeatable": true,
+      "component": "layout.link"
+    }
+  }
+}
+

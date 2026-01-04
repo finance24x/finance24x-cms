@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_layout_app_downloads",
+  "info": {
+    "displayName": "App Download",
+    "icon": "download",
+    "description": "App store download button"
+  },
+  "options": {},
+  "attributes": {
+    "platform": {
+      "type": "enumeration",
+      "enum": ["google-play", "app-store"],
+      "required": true
+    },
+    "url": {
+      "type": "string",
+      "required": true
+    },
+    "badgeImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}
+

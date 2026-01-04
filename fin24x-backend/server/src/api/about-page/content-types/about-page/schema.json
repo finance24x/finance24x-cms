@@ -1,0 +1,65 @@
+{
+  "kind": "singleType",
+  "collectionName": "about_pages",
+  "info": {
+    "singularName": "about-page",
+    "pluralName": "about-pages",
+    "displayName": "About Page",
+    "description": "About us page content"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "seo.meta"
+    },
+    "hero": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.hero"
+    },
+    "aboutTitle": {
+      "type": "string"
+    },
+    "aboutContent": {
+      "type": "richtext"
+    },
+    "aboutImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "missionTitle": {
+      "type": "string",
+      "default": "Our Mission"
+    },
+    "missionContent": {
+      "type": "text"
+    },
+    "visionTitle": {
+      "type": "string",
+      "default": "Our Vision"
+    },
+    "visionContent": {
+      "type": "text"
+    },
+    "stats": {
+      "type": "component",
+      "repeatable": true,
+      "component": "sections.stats-item"
+    },
+    "teamTitle": {
+      "type": "string",
+      "default": "Meet Our Team"
+    },
+    "teamDescription": {
+      "type": "text"
+    }
+  }
+}
+

@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_sections_stats_items",
+  "info": {
+    "displayName": "Stats Item",
+    "icon": "chartBubble",
+    "description": "Single stat counter item"
+  },
+  "options": {},
+  "attributes": {
+    "number": {
+      "type": "string",
+      "required": true
+    },
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "icon": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}
+

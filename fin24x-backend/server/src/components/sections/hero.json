@@ -1,0 +1,36 @@
+{
+  "collectionName": "components_sections_heroes",
+  "info": {
+    "displayName": "Hero",
+    "icon": "picture",
+    "description": "Hero banner section"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "subtitle": {
+      "type": "text",
+      "required": false
+    },
+    "backgroundImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "primaryButton": {
+      "type": "component",
+      "repeatable": false,
+      "component": "layout.link"
+    },
+    "secondaryButton": {
+      "type": "component",
+      "repeatable": false,
+      "component": "layout.link"
+    }
+  }
+}
+
