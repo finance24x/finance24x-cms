@@ -1,0 +1,13 @@
+{
+  "name": "fin24x-frontend",
+  "version": "1.0.0",
+  "description": "Fin24x Frontend - Local Development Server",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
+

@@ -1,10 +1,10 @@
-// import type { Core } from '@strapi/strapi';
+import type { Core } from '@strapi/strapi';
 
 export default {
   /**
    * An asynchronous register function that runs before
    * your application is initialized.
-   *
+   *  
    * This gives you an opportunity to extend code.
    */
   register(/* { strapi }: { strapi: Core.Strapi } */) {},
@@ -16,5 +16,127 @@ export default {
    * This gives you an opportunity to set up your data model,
    * run jobs, or perform some special logic.
    */
-  bootstrap(/* { strapi }: { strapi: Core.Strapi } */) {},
+  async bootstrap({ strapi }: { strapi: Core.Strapi }) {
+    // Set public permissions for header and footer
+    try {
+      const publicRole = await strapi
+        .query('plugin::users-permissions.role')
+        .findOne({ where: { type: 'public' } });
+
+      if (publicRole) {
+        // Get all permissions for public role
+        const permissions = await strapi
+          .query('plugin::users-permissions.permission')
+          .findMany({
+            where: {
+              role: publicRole.id,
+              action: { $in: ['api::header.header.find', 'api::header.header.findOne', 'api::footer.footer.find', 'api::footer.footer.findOne'] },
+            },
+          });
+
+        // Enable permissions for header
+        const headerFind = permissions.find(p => p.action === 'api::header.header.find');
+        const headerFindOne = permissions.find(p => p.action === 'api::header.header.findOne');
+
+        if (headerFind && !headerFind.enabled) {
+          await strapi
+            .query('plugin::users-permissions.permission')
+            .update({
+              where: { id: headerFind.id },
+              data: { enabled: true },
+            });
+          console.log('✅ Enabled public access for header.find');
+        }
+
+        if (headerFindOne && !headerFindOne.enabled) {
+          await strapi
+            .query('plugin::users-permissions.permission')
+            .update({
+              where: { id: headerFindOne.id },
+              data: { enabled: true },
+            });
+          console.log('✅ Enabled public access for header.findOne');
+        }
+
+        // Enable permissions for footer
+        const footerFind = permissions.find(p => p.action === 'api::footer.footer.find');
+        const footerFindOne = permissions.find(p => p.action === 'api::footer.footer.findOne');
+
+        if (footerFind && !footerFind.enabled) {
+          await strapi
+            .query('plugin::users-permissions.permission')
+            .update({
+              where: { id: footerFind.id },
+              data: { enabled: true },
+            });
+          console.log('✅ Enabled public access for footer.find');
+        }
+
+        if (footerFindOne && !footerFindOne.enabled) {
+          await strapi
+            .query('plugin::users-permissions.permission')
+            .update({
+              where: { id: footerFindOne.id },
+              data: { enabled: true },
+            });
+          console.log('✅ Enabled public access for footer.findOne');
+        }
+
+        // Create permissions if they don't exist
+        const allPermissions = await strapi
+          .query('plugin::users-permissions.permission')
+          .findMany({
+            where: { role: publicRole.id },
+          });
+
+        const permissionActions = allPermissions.map(p => p.action);
+
+        if (!permissionActions.includes('api::header.header.find')) {
+          await strapi.query('plugin::users-permissions.permission').create({
+            data: {
+              action: 'api::header.header.find',
+              role: publicRole.id,
+              enabled: true,
+            },
+          });
+          console.log('✅ Created public permission for header.find');
+        }
+
+        if (!permissionActions.includes('api::header.header.findOne')) {
+          await strapi.query('plugin::users-permissions.permission').create({
+            data: {
+              action: 'api::header.header.findOne',
+              role: publicRole.id,
+              enabled: true,
+            },
+          });
+          console.log('✅ Created public permission for header.findOne');
+        }
+
+        if (!permissionActions.includes('api::footer.footer.find')) {
+          await strapi.query('plugin::users-permissions.permission').create({
+            data: {
+              action: 'api::footer.footer.find',
+              role: publicRole.id,
+              enabled: true,
+            },
+          });
+          console.log('✅ Created public permission for footer.find');
+        }
+
+        if (!permissionActions.includes('api::footer.footer.findOne')) {
+          await strapi.query('plugin::users-permissions.permission').create({
+            data: {
+              action: 'api::footer.footer.findOne',
+              role: publicRole.id,
+              enabled: true,
+            },
+          });
+          console.log('✅ Created public permission for footer.findOne');
+        }
+      }
+    } catch (error) {
+      console.error('❌ Error setting up public permissions:', error);
+    }
+  },
 };

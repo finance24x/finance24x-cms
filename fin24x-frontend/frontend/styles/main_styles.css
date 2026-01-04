@@ -485,6 +485,110 @@ section
 {
 	color: #14bdee;
 }
+
+/* Dropdown Styles */
+.main_nav li.dropdown
+{
+	position: relative;
+}
+.main_nav li.dropdown .dropdown-toggle
+{
+	cursor: pointer;
+}
+.main_nav li.dropdown .dropdown-toggle i
+{
+	font-size: 12px;
+	margin-left: 5px;
+	-webkit-transition: all 200ms ease;
+	-moz-transition: all 200ms ease;
+	-ms-transition: all 200ms ease;
+	-o-transition: all 200ms ease;
+	transition: all 200ms ease;
+}
+.main_nav li.dropdown:hover .dropdown-toggle i
+{
+	-webkit-transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+	-ms-transform: rotate(180deg);
+	-o-transform: rotate(180deg);
+	transform: rotate(180deg);
+}
+.main_nav li.dropdown .dropdown-menu
+{
+	position: absolute;
+	top: 100%;
+	left: 0;
+	margin-top: 10px;
+	min-width: 200px;
+	background: #FFFFFF;
+	box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
+	border-radius: 5px;
+	padding: 10px 0;
+	opacity: 0;
+	visibility: hidden;
+	display: none;
+	-webkit-transform: translateY(-10px);
+	-moz-transform: translateY(-10px);
+	-ms-transform: translateY(-10px);
+	-o-transform: translateY(-10px);
+	transform: translateY(-10px);
+	-webkit-transition: all 200ms ease;
+	-moz-transition: all 200ms ease;
+	-ms-transition: all 200ms ease;
+	-o-transition: all 200ms ease;
+	transition: all 200ms ease;
+	z-index: 1000;
+}
+.main_nav li.dropdown:hover .dropdown-menu,
+.main_nav li.dropdown .dropdown-toggle.active + .dropdown-menu,
+.main_nav li.dropdown .dropdown-menu.active,
+.main_nav li.dropdown.active .dropdown-menu
+{
+	opacity: 1;
+	visibility: visible;
+	display: block !important;
+	-webkit-transform: translateY(0);
+	-moz-transform: translateY(0);
+	-ms-transform: translateY(0);
+	-o-transform: translateY(0);
+	transform: translateY(0);
+}
+.main_nav li.dropdown .dropdown-toggle.active
+{
+	color: #14bdee;
+}
+.main_nav li.dropdown .dropdown-menu li
+{
+	display: block;
+	margin: 0;
+	padding: 0;
+}
+.main_nav li.dropdown .dropdown-menu li:not(:last-child)
+{
+	margin-right: 0;
+}
+.main_nav li.dropdown .dropdown-menu li a
+{
+	display: block;
+	padding: 10px 20px;
+	font-size: 16px;
+	color: #384158;
+	-webkit-transition: all 200ms ease;
+	-moz-transition: all 200ms ease;
+	-ms-transition: all 200ms ease;
+	-o-transition: all 200ms ease;
+	transition: all 200ms ease;
+}
+.main_nav li.dropdown .dropdown-menu li a:hover,
+.main_nav li.dropdown .dropdown-menu li.active a
+{
+	background: #f8f9fa;
+	color: #14bdee;
+}
+.main_nav li.dropdown .dropdown-menu li.active::after
+{
+	display: none;
+}
 .header_search_form
 {
 	display: block;
