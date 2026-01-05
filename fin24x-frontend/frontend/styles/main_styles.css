@@ -894,10 +894,10 @@ section
 .events .section_title_container,
 .news .section_title_container
 {
-	margin-bottom: 10px; /* Further reduced from 20px */
+	margin-bottom: 5px; /* Further reduced */
 	align-items: center; /* Align title and subtitle vertically */
 	justify-content: space-between; /* Push link to right */
-	gap: 20px; /* Add gap between elements */
+	gap: 15px; /* Reduced gap */
 }
 
 .courses .section_title_container > div:first-child,
@@ -1193,12 +1193,12 @@ section
 .courses
 {
 	width: 100%;
-	padding-top: 40px; /* Reduced from 93px */
-	padding-bottom: 100px;
+	padding-top: 25px; /* Further reduced */
+	padding-bottom: 50px; /* Further reduced */
 }
 .courses_row
 {
-	margin-top: 20px; /* Further reduced from 30px */
+	margin-top: 10px; /* Further reduced */
 }
 .course
 {
@@ -1220,10 +1220,10 @@ section
 }
 .course_body
 {
-	padding-top: 15px; /* Reduced from 22px */
-	padding-left: 20px; /* Reduced from 30px */
-	padding-right: 20px; /* Reduced from 30px */
-	padding-bottom: 15px; /* Reduced from 23px */
+	padding-top: 12px; /* Further reduced */
+	padding-left: 15px; /* Further reduced */
+	padding-right: 15px; /* Further reduced */
+	padding-bottom: 12px; /* Further reduced */
 }
 .course_title a
 {
@@ -1245,24 +1245,24 @@ section
 	font-size: 14px; /* Reduced from 15px */
 	font-weight: 400;
 	color: #384158;
-	margin-top: 5px; /* Reduced from 6px */
+	margin-top: 3px; /* Further reduced */
 }
 .course_text
 {
-	margin-top: 8px; /* Reduced from 13px */
+	margin-top: 5px; /* Further reduced */
 	font-size: 13px; /* Slightly smaller */
 }
 .course_footer
 {
-	padding-left: 20px; /* Reduced from 30px */
-	padding-right: 20px; /* Reduced from 30px */
+	padding-left: 15px; /* Further reduced */
+	padding-right: 15px; /* Further reduced */
 }
 .course_footer_content
 {
 	width: 100%;
 	border-top: solid 1px #e5e5e5;
-	padding-top: 8px; /* Reduced from 9px */
-	padding-bottom: 8px; /* Reduced from 11px */
+	padding-top: 6px; /* Further reduced */
+	padding-bottom: 6px; /* Further reduced */
 }
 .course_info
 {
@@ -1537,12 +1537,12 @@ section
 .events
 {
 	width: 100%;
-	padding-top: 40px; /* Reduced from 93px to match courses */
-	padding-bottom: 70px;
+	padding-top: 25px; /* Further reduced */
+	padding-bottom: 50px; /* Further reduced */
 }
 .events_row
 {
-	margin-top: 20px; /* Reduced from 47px */
+	margin-top: 10px; /* Further reduced */
 }
 /* Removed event_left, event_mid, event_right classes for 4-column layout */
 .event_col
@@ -1561,8 +1561,8 @@ section
 }
 .event_body
 {
-	padding-top: 20px; /* Reduced from 30px */
-	padding-bottom: 20px; /* Reduced from 30px */
+	padding-top: 12px; /* Further reduced */
+	padding-bottom: 12px; /* Further reduced */
 }
 .event_date
 {
@@ -1622,7 +1622,7 @@ section
 }
 .event_info_container
 {
-	margin-top: 8px; /* Reduced from 11px */
+	margin-top: 5px; /* Further reduced */
 }
 .event_info
 {
@@ -1640,7 +1640,7 @@ section
 }
 .event_text
 {
-	margin-top: 8px; /* Reduced from 12px */
+	margin-top: 5px; /* Further reduced */
 	font-size: 13px; /* Slightly smaller */
 }
 
@@ -1780,8 +1780,8 @@ section
 .news
 {
 	width: 100%;
-	padding-top: 40px; /* Reduced from 93px to match courses/events */
-	padding-bottom: 60px; /* Reduced from 100px */
+	padding-top: 25px; /* Further reduced */
+	padding-bottom: 50px; /* Further reduced */
 }
 
 /* Alternating backgrounds for content sections */
@@ -1811,7 +1811,7 @@ section
 
 .news_row
 {
-	margin-top: 10px; /* Further reduced from 20px */
+	margin-top: 5px; /* Further reduced */
 }
 .news_post_large_container
 {
@@ -1833,7 +1833,7 @@ section
 }
 .news_post_large_title
 {
-	margin-top: 12px; /* Further reduced */
+	margin-top: 8px; /* Further reduced */
 }
 .news_post_large_title a
 {
@@ -1854,7 +1854,7 @@ section
 }
 .news_post_meta
 {
-	margin-top: 6px; /* Further reduced */
+	margin-top: 4px; /* Further reduced */
 }
 .news_post_meta ul li
 {
@@ -1887,13 +1887,13 @@ section
 }
 .news_post_text
 {
-	margin-top: 8px; /* Further reduced */
+	margin-top: 5px; /* Further reduced */
 	font-size: 13px; /* Smaller */
-	line-height: 1.5; /* Tighter */
+	line-height: 1.4; /* Tighter */
 }
 .news_post_link
 {
-	margin-top: 10px; /* Further reduced */
+	margin-top: 6px; /* Further reduced */
 }
 .news_post_link a
 {
@@ -1918,12 +1918,12 @@ section
 }
 .news_post_small:not(:last-child)
 {
-	padding-bottom: 12px; /* Much more compact */
+	padding-bottom: 8px; /* Further reduced */
 	border-bottom: solid 1px #e5e5e5;
 }
 .news_post_small:not(:first-child)
 {
-	padding-top: 12px; /* Much more compact */
+	padding-top: 8px; /* Further reduced */
 }
 .news_post_small_title a
 {
@@ -1944,7 +1944,7 @@ section
 }
 .news_post_small .news_post_meta
 {
-	margin-top: 5px; /* Reduced spacing for small posts */
+	margin-top: 3px; /* Further reduced */
 }
 .news_post_small .news_post_meta ul li a
 {
