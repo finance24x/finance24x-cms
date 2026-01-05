@@ -636,7 +636,7 @@ export interface ApiHomepageSectionHomepageSection
       Schema.Attribute.DefaultTo<0>;
     publishedAt: Schema.Attribute.DateTime;
     sectionType: Schema.Attribute.Enumeration<
-      ['grid', 'grid-with-date', 'news']
+      ['grid', 'grid-vertical', 'grid-with-date', 'news']
     > &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'grid'>;

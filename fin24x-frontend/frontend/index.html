@@ -32,47 +32,172 @@
   margin-top: 10px;
 }
 
-/* Reduce grid gaps */
-.courses_row,
+/* Grid card columns - tight spacing */
+.grid_card_col {
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-bottom: 16px;
+}
+.courses_row {
+  margin-left: -8px;
+  margin-right: -8px;
+}
+
+/* ===== HORIZONTAL GRID CARD ===== */
+.grid-card-horizontal {
+  display: flex;
+  gap: 12px;
+  padding: 0;
+}
+.grid-card-horizontal .grid-card-image {
+  flex-shrink: 0;
+  width: 120px;
+  height: 130px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+.grid-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.grid-card-placeholder {
+  background: linear-gradient(135deg, #e8e8e8 0%, #f5f5f5 100%);
+}
+.grid-card-horizontal .grid-card-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.grid-card-category {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #14bdee;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.grid-card-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.35;
+  margin: 0 0 6px 0;
+}
+.grid-card-title a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.grid-card-title a:hover {
+  color: #14bdee;
+}
+.grid-card-excerpt {
+  font-size: 0.8rem;
+  color: #666;
+  line-height: 1.45;
+  margin: 0 0 6px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.grid-card-meta {
+  font-size: 0.7rem;
+  color: #999;
+}
+.grid-card-meta .separator {
+  margin: 0 5px;
+  color: #ddd;
+}
+
+/* ===== VERTICAL GRID CARD ===== */
+.grid-card-vertical {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.grid-card-vertical .grid-card-image {
+  width: 100%;
+  height: 140px;
+  background: #f5f5f5;
+}
+.grid-card-vertical .grid-card-content {
+  padding: 14px 16px 16px;
+}
+.grid-card-vertical .grid-card-title {
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+}
+.grid-card-vertical .grid-card-excerpt {
+  -webkit-line-clamp: 3;
+}
+
+/* Vertical Card with Date Badge */
+.grid-card-image-wrapper {
+  position: relative;
+}
+.grid-card-date-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #14bdee;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  text-align: center;
+  line-height: 1;
+}
+.grid-card-date-badge .date-day {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.grid-card-date-badge .date-month {
+  display: block;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* Dark mode for grid cards */
+.dark-mode .grid-card-placeholder {
+  background: var(--bg-secondary);
+}
+.dark-mode .grid-card-title {
+  color: var(--text-primary);
+}
+.dark-mode .grid-card-title a {
+  color: var(--text-primary);
+}
+.dark-mode .grid-card-excerpt {
+  color: var(--text-secondary);
+}
+.dark-mode .grid-card-meta {
+  color: var(--text-secondary);
+}
+.dark-mode .grid-card-vertical {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* Event card spacing */
 .events_row {
   margin-left: -8px;
   margin-right: -8px;
 }
-.course_col,
 .event_col {
   padding-left: 8px;
   padding-right: 8px;
   margin-bottom: 16px;
 }
-
-/* Card body spacing */
-.course_body {
-  padding: 15px 18px 18px;
-}
-.course_title {
-	line-height: 1.0;
-  margin-bottom: 10px;
-}
-.course_teacher {
-  margin-bottom: 10px;
-  font-size: 0.85rem;
-  color: #888;
-}
-.course_text {
-  margin-top: 0;
-}
-.course_text p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: #666;
-}
-
-/* Remove footer from cards */
-.course_footer {
-  display: none;
-}
-
-/* Event card spacing */
 .event_body {
   padding: 12px 15px;
 }
@@ -108,13 +233,6 @@
   border-radius: 8px;
 }
 
-/* Dark mode adjustments */
-.dark-mode .course_teacher {
-  color: #aaa;
-}
-.dark-mode .course_text p {
-  color: #bbb;
-}
 </style>
 </head>
 <body>

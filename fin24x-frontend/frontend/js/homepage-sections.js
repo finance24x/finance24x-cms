@@ -79,6 +79,9 @@ class HomepageSectionsManager {
         case 'grid-with-date':
           sectionHtml = this.renderGridWithDateSection(section, articles, bgClass, i, category);
           break;
+        case 'grid-vertical':
+          sectionHtml = this.renderGridVerticalSection(section, articles, bgClass, i, category);
+          break;
         case 'grid':
         default:
           sectionHtml = this.renderGridSection(section, articles, bgClass, i, category);
@@ -141,7 +144,7 @@ class HomepageSectionsManager {
             </div>
           </div>
           <div class="row courses_row">
-            ${articles.slice(0, 4).map(article => this.renderGridCard(article)).join('')}
+            ${articles.slice(0, 6).map(article => this.renderGridCard(article)).join('')}
           </div>
         </div>
       </div>
@@ -149,13 +152,13 @@ class HomepageSectionsManager {
   }
 
   /**
-   * Render Grid with Date Section (Event-like cards with dates)
+   * Render Grid Vertical Section (Vertical cards - image on top)
    */
-  renderGridWithDateSection(section, articles, bgClass, index, category) {
+  renderGridVerticalSection(section, articles, bgClass, index, category) {
     const categoryUrl = category?.slug ? `/${category.slug}` : '#';
     
     return `
-      <div class="events content-section section-${index + 1} ${bgClass}">
+      <div class="courses content-section section-${index + 1} ${bgClass}">
         <div class="container">
           <div class="row">
             <div class="col">
@@ -165,8 +168,33 @@ class HomepageSectionsManager {
               </div>
             </div>
           </div>
-          <div class="row events_row">
-            ${articles.slice(0, 4).map(article => this.renderEventCard(article)).join('')}
+          <div class="row courses_row">
+            ${articles.slice(0, 4).map(article => this.renderVerticalCard(article)).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Render Grid with Date Section (Vertical cards with date - 4 per row)
+   */
+  renderGridWithDateSection(section, articles, bgClass, index, category) {
+    const categoryUrl = category?.slug ? `/${category.slug}` : '#';
+    
+    return `
+      <div class="courses content-section section-${index + 1} ${bgClass}">
+        <div class="container">
+          <div class="row">
+            <div class="col">
+              <div class="section_title_container d-flex flex-row align-items-center justify-content-between">
+                <h2 class="section_title mb-0">${section.title}</h2>
+                <div class="courses_button trans_200"><a href="${categoryUrl}">${section.buttonText || 'view all'}</a></div>
+              </div>
+            </div>
+          </div>
+          <div class="row courses_row">
+            ${articles.slice(0, 4).map(article => this.renderVerticalCardWithDate(article)).join('')}
           </div>
         </div>
       </div>
@@ -219,23 +247,28 @@ class HomepageSectionsManager {
   }
 
   /**
-   * Render Grid Card
+   * Render Grid Card (Horizontal layout - image left, content right)
    */
   renderGridCard(article) {
     const hasImage = article.image?.url;
     const imageHtml = hasImage 
-      ? `<div class="course_image"><img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}"></div>`
-      : '';
+      ? `<div class="grid-card-image"><img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}"></div>`
+      : '<div class="grid-card-image grid-card-placeholder"></div>';
+    
+    const categoryName = article.category?.name || 'Article';
     
     return `
-      <div class="col-lg-3 course_col">
-        <div class="course">
+      <div class="col-lg-6 col-md-6 grid_card_col">
+        <div class="grid-card-horizontal">
           ${imageHtml}
-          <div class="course_body">
-            <h3 class="course_title"><a href="blog_single.html?slug=${article.slug}">${article.title}</a></h3>
-            <div class="course_teacher">${article.author || 'Admin'}</div>
-            <div class="course_text">
-              <p>${article.excerpt || this.truncateText(article.content, 80)}</p>
+          <div class="grid-card-content">
+            <div class="grid-card-category">${categoryName}</div>
+            <h3 class="grid-card-title"><a href="blog_single.html?slug=${article.slug}">${article.title}</a></h3>
+            <p class="grid-card-excerpt">${article.excerpt || this.truncateText(article.content, 80)}</p>
+            <div class="grid-card-meta">
+              <span>${article.minutesToread || 3} min read</span>
+              <span class="separator">•</span>
+              <span>By ${article.author || 'Admin'}</span>
             </div>
           </div>
         </div>
@@ -244,37 +277,65 @@ class HomepageSectionsManager {
   }
 
   /**
-   * Render Event Card (with date)
+   * Render Vertical Card (image on top, content below) - 4 per row
    */
-  renderEventCard(article) {
+  renderVerticalCard(article) {
     const hasImage = article.image?.url;
     const imageHtml = hasImage 
-      ? `<div class="event_image"><img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}"></div>`
-      : '';
+      ? `<div class="grid-card-image"><img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}"></div>`
+      : '<div class="grid-card-image grid-card-placeholder"></div>';
     
+    const categoryName = article.category?.name || 'Article';
+    
+    return `
+      <div class="col-lg-3 col-md-6 grid_card_col">
+        <div class="grid-card-vertical">
+          ${imageHtml}
+          <div class="grid-card-content">
+            <div class="grid-card-category">${categoryName}</div>
+            <h3 class="grid-card-title"><a href="blog_single.html?slug=${article.slug}">${article.title}</a></h3>
+            <p class="grid-card-excerpt">${article.excerpt || this.truncateText(article.content, 80)}</p>
+            <div class="grid-card-meta">
+              <span>${article.minutesToread || 3} min read</span>
+              <span class="separator">•</span>
+              <span>By ${article.author || 'Admin'}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Render Vertical Card with Date (image on top with date badge) - 4 per row
+   */
+  renderVerticalCardWithDate(article) {
+    const hasImage = article.image?.url;
+    const imageHtml = hasImage 
+      ? `<div class="grid-card-image"><img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}"></div>`
+      : '<div class="grid-card-image grid-card-placeholder"></div>';
+    
+    const categoryName = article.category?.name || 'Article';
     const date = new Date(article.publishedDate);
     const day = date.getDate().toString().padStart(2, '0');
     const month = date.toLocaleString('en', { month: 'short' });
     
     return `
-      <div class="col-lg-3 event_col">
-        <div class="event">
-          ${imageHtml}
-          <div class="event_body d-flex flex-row align-items-start justify-content-start">
-            <div class="event_date">
-              <div class="d-flex flex-column align-items-center justify-content-center trans_200">
-                <div class="event_day trans_200">${day}</div>
-                <div class="event_month trans_200">${month}</div>
-              </div>
+      <div class="col-lg-3 col-md-6 grid_card_col">
+        <div class="grid-card-vertical grid-card-with-date">
+          <div class="grid-card-image-wrapper">
+            ${imageHtml}
+            <div class="grid-card-date-badge">
+              <span class="date-day">${day}</span>
+              <span class="date-month">${month}</span>
             </div>
-            <div class="event_content">
-              <div class="event_title"><a href="blog_single.html?slug=${article.slug}">${article.title}</a></div>
-              <div class="event_info_container">
-                <div class="event_info"><i class="fa fa-user" aria-hidden="true"></i><span>${article.author || 'Admin'}</span></div>
-                <div class="event_text">
-                  <p>${article.excerpt || this.truncateText(article.content, 60)}</p>
-                </div>
-              </div>
+          </div>
+          <div class="grid-card-content">
+            <div class="grid-card-category">${categoryName}</div>
+            <h3 class="grid-card-title"><a href="blog_single.html?slug=${article.slug}">${article.title}</a></h3>
+            <p class="grid-card-excerpt">${article.excerpt || this.truncateText(article.content, 80)}</p>
+            <div class="grid-card-meta">
+              <span>By ${article.author || 'Admin'}</span>
             </div>
           </div>
         </div>
