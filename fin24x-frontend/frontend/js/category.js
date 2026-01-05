@@ -27,6 +27,11 @@ class CategoryPageManager {
       return;
     }
 
+    // Immediately set a formatted slug as title (before API loads)
+    const formattedSlug = this.formatSlugAsTitle(slug);
+    document.title = `${formattedSlug} - Finance24x`;
+    document.getElementById('breadcrumb-category').textContent = formattedSlug;
+
     try {
       // Fetch category details
       this.category = await this.fetchCategory(slug);
@@ -36,7 +41,7 @@ class CategoryPageManager {
         return;
       }
 
-      // Update page with category info
+      // Update page with actual category info
       this.updateCategoryInfo();
       
       // Fetch and render articles
@@ -46,6 +51,16 @@ class CategoryPageManager {
       console.error('Error loading category:', error);
       this.showError('Failed to load category');
     }
+  }
+
+  /**
+   * Format slug as readable title (e.g., "latest-news" → "Latest News")
+   */
+  formatSlugAsTitle(slug) {
+    return slug
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 
   /**

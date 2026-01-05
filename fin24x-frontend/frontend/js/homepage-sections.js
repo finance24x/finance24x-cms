@@ -227,8 +227,6 @@ class HomepageSectionsManager {
       ? `<div class="course_image"><img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}"></div>`
       : '';
     
-    const categoryName = article.category?.name || 'Article';
-    
     return `
       <div class="col-lg-3 course_col">
         <div class="course">
@@ -238,15 +236,6 @@ class HomepageSectionsManager {
             <div class="course_teacher">${article.author || 'Admin'}</div>
             <div class="course_text">
               <p>${article.excerpt || this.truncateText(article.content, 80)}</p>
-            </div>
-          </div>
-          <div class="course_footer">
-            <div class="course_footer_content d-flex flex-row align-items-center justify-content-start">
-              <div class="course_info">
-                <i class="fa fa-newspaper-o" aria-hidden="true"></i>
-                <span>${categoryName}</span>
-              </div>
-              <div class="course_price ml-auto">Read</div>
             </div>
           </div>
         </div>

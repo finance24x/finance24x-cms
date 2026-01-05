@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Category - Finance24x</title>
+<title></title>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="description" content="Finance project">
@@ -116,11 +116,7 @@
   max-height: 320px;
   object-fit: cover;
   display: block;
-  opacity: 0.65;
   transition: opacity 0.3s ease;
-}
-.featured-image:hover img {
-  opacity: 1;
 }
 
 /* Cards Section */
@@ -473,6 +469,12 @@
 /* Dark mode - Featured */
 .dark-mode .featured-article {
   border-bottom-color: var(--border-color);
+}
+.dark-mode .featured-image img {
+  opacity: 0.65;
+}
+.dark-mode .featured-image:hover img {
+  opacity: 1;
 }
 .dark-mode .featured-title {
   color: var(--text-primary);

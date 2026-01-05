@@ -31,6 +31,58 @@
 .content-section .events_row {
   margin-top: 10px;
 }
+
+/* Reduce grid gaps */
+.courses_row,
+.events_row {
+  margin-left: -8px;
+  margin-right: -8px;
+}
+.course_col,
+.event_col {
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-bottom: 16px;
+}
+
+/* Card body spacing */
+.course_body {
+  padding: 15px 18px 18px;
+}
+.course_title {
+	line-height: 1.0;
+  margin-bottom: 10px;
+}
+.course_teacher {
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+  color: #888;
+}
+.course_text {
+  margin-top: 0;
+}
+.course_text p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Remove footer from cards */
+.course_footer {
+  display: none;
+}
+
+/* Event card spacing */
+.event_body {
+  padding: 12px 15px;
+}
+.event_title {
+  margin-bottom: 6px;
+}
+.event_info {
+  margin-bottom: 8px;
+}
+
 .loading-sections {
   padding: 100px 0;
   text-align: center;
@@ -54,6 +106,14 @@
   color: #999;
   background: #f5f5f5;
   border-radius: 8px;
+}
+
+/* Dark mode adjustments */
+.dark-mode .course_teacher {
+  color: #aaa;
+}
+.dark-mode .course_text p {
+  color: #bbb;
 }
 </style>
 </head>
