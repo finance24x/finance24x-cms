@@ -585,6 +585,62 @@ export interface ApiHeaderHeader extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiHomepageSectionHomepageSection
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'homepage_sections';
+  info: {
+    description: 'Dynamic sections for the homepage (grid, grid-with-date, or news layout)';
+    displayName: 'Homepage Section';
+    pluralName: 'homepage-sections';
+    singularName: 'homepage-section';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    buttonText: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'view all'>;
+    buttonUrl: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    enabled: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<true>;
+    gridItems: Schema.Attribute.Component<'section.grid-item', true>;
+    gridItemsWithDate: Schema.Attribute.Component<
+      'section.grid-item-with-date',
+      true
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::homepage-section.homepage-section'
+    > &
+      Schema.Attribute.Private;
+    newsItems: Schema.Attribute.Component<'section.news-item', true>;
+    order: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    sectionType: Schema.Attribute.Enumeration<
+      ['grid', 'grid-with-date', 'news']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'grid'>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiMarketTickerMarketTicker extends Struct.SingleTypeSchema {
   collectionName: 'market_tickers';
   info: {
@@ -1128,6 +1184,7 @@ declare module '@strapi/strapi' {
       'api::contact-page.contact-page': ApiContactPageContactPage;
       'api::footer.footer': ApiFooterFooter;
       'api::header.header': ApiHeaderHeader;
+      'api::homepage-section.homepage-section': ApiHomepageSectionHomepageSection;
       'api::market-ticker.market-ticker': ApiMarketTickerMarketTicker;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

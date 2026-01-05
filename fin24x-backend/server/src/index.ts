@@ -30,7 +30,7 @@ export default {
           .findMany({
             where: {
               role: publicRole.id,
-              action: { $in: ['api::header.header.find', 'api::header.header.findOne', 'api::footer.footer.find', 'api::footer.footer.findOne', 'api::market-ticker.market-ticker.find', 'api::market-ticker.market-ticker.findOne'] },
+              action: { $in: ['api::header.header.find', 'api::header.header.findOne', 'api::footer.footer.find', 'api::footer.footer.findOne', 'api::market-ticker.market-ticker.find', 'api::market-ticker.market-ticker.findOne', 'api::homepage-section.homepage-section.find', 'api::homepage-section.homepage-section.findOne'] },
             },
           });
 
@@ -180,6 +180,53 @@ export default {
             },
           });
           console.log('✅ Created public permission for market-ticker.findOne');
+        }
+
+        // Enable permissions for homepage-section
+        const homepageSectionFind = permissions.find(p => p.action === 'api::homepage-section.homepage-section.find');
+        const homepageSectionFindOne = permissions.find(p => p.action === 'api::homepage-section.homepage-section.findOne');
+
+        if (homepageSectionFind && !homepageSectionFind.enabled) {
+          await strapi
+            .query('plugin::users-permissions.permission')
+            .update({
+              where: { id: homepageSectionFind.id },
+              data: { enabled: true },
+            });
+          console.log('✅ Enabled public access for homepage-section.find');
+        }
+
+        if (homepageSectionFindOne && !homepageSectionFindOne.enabled) {
+          await strapi
+            .query('plugin::users-permissions.permission')
+            .update({
+              where: { id: homepageSectionFindOne.id },
+              data: { enabled: true },
+            });
+          console.log('✅ Enabled public access for homepage-section.findOne');
+        }
+
+        // Create permissions if they don't exist
+        if (!permissionActions.includes('api::homepage-section.homepage-section.find')) {
+          await strapi.query('plugin::users-permissions.permission').create({
+            data: {
+              action: 'api::homepage-section.homepage-section.find',
+              role: publicRole.id,
+              enabled: true,
+            },
+          });
+          console.log('✅ Created public permission for homepage-section.find');
+        }
+
+        if (!permissionActions.includes('api::homepage-section.homepage-section.findOne')) {
+          await strapi.query('plugin::users-permissions.permission').create({
+            data: {
+              action: 'api::homepage-section.homepage-section.findOne',
+              role: publicRole.id,
+              enabled: true,
+            },
+          });
+          console.log('✅ Created public permission for homepage-section.findOne');
         }
       }
     } catch (error) {

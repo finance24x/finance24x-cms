@@ -1,0 +1,65 @@
+{
+  "kind": "collectionType",
+  "collectionName": "homepage_sections",
+  "info": {
+    "singularName": "homepage-section",
+    "pluralName": "homepage-sections",
+    "displayName": "Homepage Section",
+    "description": "Dynamic sections for the homepage (grid, grid-with-date, or news layout)"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "sectionType": {
+      "type": "enumeration",
+      "enum": ["grid", "grid-with-date", "news"],
+      "required": true,
+      "default": "grid"
+    },
+    "buttonText": {
+      "type": "string",
+      "required": false,
+      "default": "view all"
+    },
+    "buttonUrl": {
+      "type": "string",
+      "required": false
+    },
+    "order": {
+      "type": "integer",
+      "required": true,
+      "default": 0,
+      "min": 0
+    },
+    "enabled": {
+      "type": "boolean",
+      "required": true,
+      "default": true
+    },
+    "gridItems": {
+      "type": "component",
+      "repeatable": true,
+      "component": "section.grid-item",
+      "required": false
+    },
+    "gridItemsWithDate": {
+      "type": "component",
+      "repeatable": true,
+      "component": "section.grid-item-with-date",
+      "required": false
+    },
+    "newsItems": {
+      "type": "component",
+      "repeatable": true,
+      "component": "section.news-item",
+      "required": false
+    }
+  }
+}
+
