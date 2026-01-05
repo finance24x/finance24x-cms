@@ -6,7 +6,6 @@
 class HomepageSectionsManager {
   constructor() {
     this.sectionsContainer = document.getElementById('homepage-sections-container');
-    this.defaultImage = 'images/news_1.jpg';
   }
 
   /**
@@ -75,14 +74,14 @@ class HomepageSectionsManager {
       let sectionHtml = '';
       switch (section.sectionType) {
         case 'news':
-          sectionHtml = this.renderNewsSection(section, articles, bgClass, i);
+          sectionHtml = this.renderNewsSection(section, articles, bgClass, i, category);
           break;
         case 'grid-with-date':
-          sectionHtml = this.renderGridWithDateSection(section, articles, bgClass, i);
+          sectionHtml = this.renderGridWithDateSection(section, articles, bgClass, i, category);
           break;
         case 'grid':
         default:
-          sectionHtml = this.renderGridSection(section, articles, bgClass, i);
+          sectionHtml = this.renderGridSection(section, articles, bgClass, i, category);
           break;
       }
       
@@ -93,9 +92,10 @@ class HomepageSectionsManager {
   /**
    * Render News Section (Large post + small posts)
    */
-  renderNewsSection(section, articles, bgClass, index) {
+  renderNewsSection(section, articles, bgClass, index, category) {
     const mainArticle = articles[0];
     const sideArticles = articles.slice(1, 6);
+    const categoryUrl = category?.slug ? `/${category.slug}` : '#';
 
     return `
       <div class="news content-section section-${index + 1} ${bgClass}">
@@ -104,7 +104,7 @@ class HomepageSectionsManager {
             <div class="col">
               <div class="section_title_container d-flex flex-row align-items-center justify-content-between">
                 <h2 class="section_title mb-0">${section.title}</h2>
-                <div class="courses_button trans_200"><a href="${section.buttonUrl || '#'}">${section.buttonText || 'view all'}</a></div>
+                <div class="courses_button trans_200"><a href="${categoryUrl}">${section.buttonText || 'view all'}</a></div>
               </div>
             </div>
           </div>
@@ -126,7 +126,9 @@ class HomepageSectionsManager {
   /**
    * Render Grid Section (Cards layout)
    */
-  renderGridSection(section, articles, bgClass, index) {
+  renderGridSection(section, articles, bgClass, index, category) {
+    const categoryUrl = category?.slug ? `/${category.slug}` : '#';
+    
     return `
       <div class="courses content-section section-${index + 1} ${bgClass}">
         <div class="container">
@@ -134,7 +136,7 @@ class HomepageSectionsManager {
             <div class="col">
               <div class="section_title_container d-flex flex-row align-items-center justify-content-between">
                 <h2 class="section_title mb-0">${section.title}</h2>
-                <div class="courses_button trans_200"><a href="${section.buttonUrl || '#'}">${section.buttonText || 'view all'}</a></div>
+                <div class="courses_button trans_200"><a href="${categoryUrl}">${section.buttonText || 'view all'}</a></div>
               </div>
             </div>
           </div>
@@ -149,7 +151,9 @@ class HomepageSectionsManager {
   /**
    * Render Grid with Date Section (Event-like cards with dates)
    */
-  renderGridWithDateSection(section, articles, bgClass, index) {
+  renderGridWithDateSection(section, articles, bgClass, index, category) {
+    const categoryUrl = category?.slug ? `/${category.slug}` : '#';
+    
     return `
       <div class="events content-section section-${index + 1} ${bgClass}">
         <div class="container">
@@ -157,7 +161,7 @@ class HomepageSectionsManager {
             <div class="col">
               <div class="section_title_container d-flex flex-row align-items-center justify-content-between">
                 <h2 class="section_title mb-0">${section.title}</h2>
-                <div class="courses_button trans_200"><a href="${section.buttonUrl || '#'}">${section.buttonText || 'view all'}</a></div>
+                <div class="courses_button trans_200"><a href="${categoryUrl}">${section.buttonText || 'view all'}</a></div>
               </div>
             </div>
           </div>
@@ -173,14 +177,15 @@ class HomepageSectionsManager {
    * Render Large News Post
    */
   renderLargeNewsPost(article) {
-    const imageUrl = article.image?.url 
-      ? `${API_CONFIG.BASE_URL}${article.image.url}` 
-      : this.defaultImage;
+    const hasImage = article.image?.url;
+    const imageHtml = hasImage 
+      ? `<div class="news_post_image"><img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}"></div>`
+      : '';
     
     return `
       <div class="news_post_large_container">
         <div class="news_post_large">
-          <div class="news_post_image"><img src="${imageUrl}" alt="${article.title}"></div>
+          ${imageHtml}
           <div class="news_post_large_title"><a href="blog_single.html?slug=${article.slug}">${article.title}</a></div>
           <div class="news_post_meta">
             <ul>
@@ -217,16 +222,17 @@ class HomepageSectionsManager {
    * Render Grid Card
    */
   renderGridCard(article) {
-    const imageUrl = article.image?.url 
-      ? `${API_CONFIG.BASE_URL}${article.image.url}` 
-      : this.defaultImage;
+    const hasImage = article.image?.url;
+    const imageHtml = hasImage 
+      ? `<div class="course_image"><img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}"></div>`
+      : '';
     
     const categoryName = article.category?.name || 'Article';
     
     return `
       <div class="col-lg-3 course_col">
         <div class="course">
-          <div class="course_image"><img src="${imageUrl}" alt="${article.title}"></div>
+          ${imageHtml}
           <div class="course_body">
             <h3 class="course_title"><a href="blog_single.html?slug=${article.slug}">${article.title}</a></h3>
             <div class="course_teacher">${article.author || 'Admin'}</div>
@@ -252,9 +258,10 @@ class HomepageSectionsManager {
    * Render Event Card (with date)
    */
   renderEventCard(article) {
-    const imageUrl = article.image?.url 
-      ? `${API_CONFIG.BASE_URL}${article.image.url}` 
-      : this.defaultImage;
+    const hasImage = article.image?.url;
+    const imageHtml = hasImage 
+      ? `<div class="event_image"><img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}"></div>`
+      : '';
     
     const date = new Date(article.publishedDate);
     const day = date.getDate().toString().padStart(2, '0');
@@ -263,7 +270,7 @@ class HomepageSectionsManager {
     return `
       <div class="col-lg-3 event_col">
         <div class="event">
-          <div class="event_image"><img src="${imageUrl}" alt="${article.title}"></div>
+          ${imageHtml}
           <div class="event_body d-flex flex-row align-items-start justify-content-start">
             <div class="event_date">
               <div class="d-flex flex-column align-items-center justify-content-center trans_200">

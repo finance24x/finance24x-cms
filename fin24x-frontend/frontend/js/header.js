@@ -55,7 +55,7 @@ function renderNavigationLinks(categories, currentPage = '') {
   
   // Render main navigation links (using category name as label and slug as URL)
   mainCategories.forEach(category => {
-    const url = `/category/${category.slug}`;
+    const url = `/${category.slug}`;
     const isActive = currentPage === url ? 'class="active"' : '';
     html += `<li ${isActive}><a href="${url}">${category.name || ''}</a></li>`;
   });
@@ -68,7 +68,7 @@ function renderNavigationLinks(categories, currentPage = '') {
       </a>
       <ul class="dropdown-menu">
         ${dropdownCategories.map(category => {
-          const url = `/category/${category.slug}`;
+          const url = `/${category.slug}`;
           const isActive = currentPage === url ? 'class="active"' : '';
           return `<li ${isActive}><a href="${url}">${category.name || ''}</a></li>`;
         }).join('')}
@@ -88,7 +88,7 @@ function renderMobileMenuLinks(categories) {
   // Categories are already filtered and sorted by the API query
   // Show all categories in mobile menu
   return categories.map(category => {
-    const url = `/category/${category.slug}`;
+    const url = `/${category.slug}`;
     return `<li class="menu_mm"><a href="${url}">${category.name || ''}</a></li>`;
   }).join('');
 }
