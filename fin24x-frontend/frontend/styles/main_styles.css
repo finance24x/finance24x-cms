@@ -362,10 +362,6 @@ section
 *********************************/
 
 .logo,
-.logo_text
-{
-	display: inline-block;
-}
 .logo
 {
 	width: 60px;
@@ -388,12 +384,35 @@ section
 	line-height: 0.75;
 	color: #384158;
 	vertical-align: middle;
-	margin-left: 7px;
+	margin-left: 0;
 	-webkit-transition: all 200ms ease;
 	-moz-transition: all 200ms ease;
 	-ms-transition: all 200ms ease;
 	-o-transition: all 200ms ease;
 	transition: all 200ms ease;
+}
+.logo_image
+{
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 10px;
+	max-height: 50px;
+	width: auto;
+	-webkit-transition: all 200ms ease;
+	-moz-transition: all 200ms ease;
+	-ms-transition: all 200ms ease;
+	-o-transition: all 200ms ease;
+	transition: all 200ms ease;
+}
+.logo_container a
+{
+	display: flex;
+	align-items: center;
+	text-decoration: none;
+}
+.header.scrolled .logo_image
+{
+	max-height: 40px;
 }
 .logo_text span
 {

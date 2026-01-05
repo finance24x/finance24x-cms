@@ -76,22 +76,32 @@ function renderMobileMenuLinks(navigationLinks) {
   }).join('');
 }
 
-// Render logo
+// Render logo - shows both image and text side by side
 function renderLogo(logoText, logoImage) {
+  let logoHTML = '<a href="index.html" class="d-flex flex-row align-items-center">';
+  
+  // Add logo image if available
   if (logoImage && logoImage.url) {
-    return `<a href="index.html"><img src="${getApiUrl('').replace('/api', '')}${logoImage.url}" alt="${logoText || 'Logo'}" style="max-height: 50px;"></a>`;
+    const imageUrl = `${getApiUrl('').replace('/api', '')}${logoImage.url}`;
+    logoHTML += `<img src="${imageUrl}" alt="${logoText || 'Logo'}" class="logo_image" style="max-height: 50px; margin-right: 10px;">`;
   }
   
+  // Add logo text if available
   if (logoText) {
     // Split logo text if it contains a span indicator (e.g., "Fin24x" -> "Fin<span>24x</span>")
     const parts = logoText.split(/(\d+)/);
     if (parts.length > 1) {
-      return `<a href="index.html"><div class="logo_text">${parts[0]}<span>${parts[1]}</span></div></a>`;
+      logoHTML += `<div class="logo_text">${parts[0]}<span>${parts[1]}</span></div>`;
+    } else {
+      logoHTML += `<div class="logo_text">${logoText}</div>`;
     }
-    return `<a href="index.html"><div class="logo_text">${logoText}</div></a>`;
+  } else if (!logoImage || !logoImage.url) {
+    // Fallback if neither image nor text is available
+    logoHTML += '<div class="logo_text">Fin<span>24x</span></div>';
   }
   
-  return '<a href="index.html"><div class="logo_text">Fin<span>24x</span></div></a>';
+  logoHTML += '</a>';
+  return logoHTML;
 }
 
 // Render header component
