@@ -6,7 +6,7 @@
 // Fetch header data from Strapi
 async function fetchHeader() {
   try {
-    const response = await fetch(getApiUrl('/header?populate=*'));
+    const response = await fetch(getApiUrl('/header?populate[logo]=*'));
     if (!response.ok) {
       throw new Error('Failed to fetch header');
     }
@@ -18,44 +18,59 @@ async function fetchHeader() {
   }
 }
 
-// Render header navigation links with dropdown
-function renderNavigationLinks(navigationLinks, currentPage = '') {
-  if (!navigationLinks || navigationLinks.length === 0) {
+// Fetch categories from Strapi
+async function fetchCategories() {
+  try {
+    const response = await fetch(getApiUrl('/categories?sort=order:asc&filters[enabled][$eq]=true'));
+    if (!response.ok) {
+      throw new Error('Failed to fetch categories');
+    }
+    const data = await response.json();
+    return data.data || [];
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    return [];
+  }
+}
+
+// Render header navigation links with dropdown (using categories)
+function renderNavigationLinks(categories, currentPage = '') {
+  if (!categories || categories.length === 0) {
     return '<li><a href="index.html">Home</a></li>';
   }
 
-  console.log('Total navigation links:', navigationLinks.length);
-  console.log('All links:', navigationLinks.map(l => l.label));
+  console.log('Total navigation categories:', categories.length);
+  console.log('All categories:', categories.map(c => c.name));
 
-  // Show first 5 links in main nav
-  const mainLinks = navigationLinks.slice(0, 5);
-  // Rest go in dropdown (all remaining links - no truncation)
-  const dropdownLinks = navigationLinks.slice(5);
+  // Categories are already filtered and sorted by the API query
+  // Show first 5 categories in main nav
+  const mainCategories = categories.slice(0, 5);
+  // Rest go in dropdown
+  const dropdownCategories = categories.slice(5);
   
-  console.log('Main nav will show:', mainLinks.length, 'links');
-  console.log('Dropdown will show:', dropdownLinks.length, 'links');
-
-  console.log('Main nav links (5):', mainLinks.map(l => l.label));
-  console.log('Dropdown links:', dropdownLinks.map(l => l.label));
+  console.log('Main nav will show:', mainCategories.length, 'categories');
+  console.log('Dropdown will show:', dropdownCategories.length, 'categories');
 
   let html = '';
   
-  // Render main navigation links
-  mainLinks.forEach(link => {
-    const isActive = currentPage === link.url ? 'class="active"' : '';
-    html += `<li ${isActive}><a href="${link.url || '#'}">${link.label || ''}</a></li>`;
+  // Render main navigation links (using category name as label and slug as URL)
+  mainCategories.forEach(category => {
+    const url = `/category/${category.slug}`;
+    const isActive = currentPage === url ? 'class="active"' : '';
+    html += `<li ${isActive}><a href="${url}">${category.name || ''}</a></li>`;
   });
 
-  // Render dropdown if there are remaining links
-  if (dropdownLinks.length > 0) {
+  // Render dropdown if there are remaining categories
+  if (dropdownCategories.length > 0) {
     html += `<li class="dropdown">
       <a href="#" class="dropdown-toggle">
         More <i class="fa fa-chevron-down" aria-hidden="true"></i>
       </a>
       <ul class="dropdown-menu">
-        ${dropdownLinks.map(link => {
-          const isActive = currentPage === link.url ? 'class="active"' : '';
-          return `<li ${isActive}><a href="${link.url || '#'}">${link.label || ''}</a></li>`;
+        ${dropdownCategories.map(category => {
+          const url = `/category/${category.slug}`;
+          const isActive = currentPage === url ? 'class="active"' : '';
+          return `<li ${isActive}><a href="${url}">${category.name || ''}</a></li>`;
         }).join('')}
       </ul>
     </li>`;
@@ -64,15 +79,17 @@ function renderNavigationLinks(navigationLinks, currentPage = '') {
   return html;
 }
 
-// Render mobile menu navigation links
-function renderMobileMenuLinks(navigationLinks) {
-  if (!navigationLinks || navigationLinks.length === 0) {
+// Render mobile menu navigation links (using categories)
+function renderMobileMenuLinks(categories) {
+  if (!categories || categories.length === 0) {
     return '<li class="menu_mm"><a href="index.html">Home</a></li>';
   }
 
-  // Show all links in mobile menu
-  return navigationLinks.map(link => {
-    return `<li class="menu_mm"><a href="${link.url || '#'}">${link.label || ''}</a></li>`;
+  // Categories are already filtered and sorted by the API query
+  // Show all categories in mobile menu
+  return categories.map(category => {
+    const url = `/category/${category.slug}`;
+    return `<li class="menu_mm"><a href="${url}">${category.name || ''}</a></li>`;
   }).join('');
 }
 
@@ -108,11 +125,14 @@ function renderLogo(logoText, logoImage) {
 
 // Render header component
 async function renderHeader(currentPage = '') {
+  // Fetch header data (logo only)
   const headerData = await fetchHeader();
+  
+  // Fetch categories separately
+  const categories = await fetchCategories();
   
   if (!headerData) {
     console.warn('Header data not available, using fallback');
-    return;
   }
 
   const headerContainer = document.querySelector('.header');
@@ -123,20 +143,20 @@ async function renderHeader(currentPage = '') {
 
   // Render logo
   const logoContainer = headerContainer.querySelector('.logo_container');
-  if (logoContainer) {
+  if (logoContainer && headerData) {
     logoContainer.innerHTML = renderLogo(headerData.logoText, headerData.logo);
   }
 
-  // Render main navigation
+  // Render main navigation (using categories fetched directly)
   const mainNav = headerContainer.querySelector('.main_nav');
-  if (mainNav && headerData.navigationLinks) {
-    mainNav.innerHTML = renderNavigationLinks(headerData.navigationLinks, currentPage);
+  if (mainNav) {
+    mainNav.innerHTML = renderNavigationLinks(categories, currentPage);
   }
 
-  // Render mobile menu navigation
+  // Render mobile menu navigation (using categories fetched directly)
   const mobileMenuNav = document.querySelector('.menu_nav ul.menu_mm');
-  if (mobileMenuNav && headerData.navigationLinks) {
-    mobileMenuNav.innerHTML = renderMobileMenuLinks(headerData.navigationLinks);
+  if (mobileMenuNav) {
+    mobileMenuNav.innerHTML = renderMobileMenuLinks(categories);
   }
 
   // Handle dropdown toggle (click and hover) - use setTimeout to ensure DOM is ready

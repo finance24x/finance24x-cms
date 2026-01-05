@@ -430,81 +430,80 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiAboutPageAboutPage extends Struct.SingleTypeSchema {
-  collectionName: 'about_pages';
+export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
+  collectionName: 'articles';
   info: {
-    description: 'About us page content';
-    displayName: 'About Page';
-    pluralName: 'about-pages';
-    singularName: 'about-page';
+    description: 'Articles/Posts that can be organized by category and displayed in sections';
+    displayName: 'Article';
+    pluralName: 'articles';
+    singularName: 'article';
   };
   options: {
     draftAndPublish: true;
   };
   attributes: {
-    aboutContent: Schema.Attribute.RichText;
-    aboutImage: Schema.Attribute.Media<'images'>;
-    aboutTitle: Schema.Attribute.String;
+    author: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'admin'>;
+    category: Schema.Attribute.Relation<'manyToOne', 'api::category.category'>;
+    content: Schema.Attribute.RichText;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    hero: Schema.Attribute.Component<'sections.hero', false>;
+    excerpt: Schema.Attribute.Text;
+    image: Schema.Attribute.Media<'images'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
-      'api::about-page.about-page'
+      'api::article.article'
     > &
       Schema.Attribute.Private;
-    missionContent: Schema.Attribute.Text;
-    missionTitle: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'Our Mission'>;
+    premium: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     publishedAt: Schema.Attribute.DateTime;
-    seo: Schema.Attribute.Component<'seo.meta', false>;
-    stats: Schema.Attribute.Component<'sections.stats-item', true>;
-    teamDescription: Schema.Attribute.Text;
-    teamTitle: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'Meet Our Team'>;
+    publishedDate: Schema.Attribute.Date & Schema.Attribute.Required;
+    slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
+    tags: Schema.Attribute.JSON;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    visionContent: Schema.Attribute.Text;
-    visionTitle: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'Our Vision'>;
+    views: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
   };
 }
 
-export interface ApiContactPageContactPage extends Struct.SingleTypeSchema {
-  collectionName: 'contact_pages';
+export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
+  collectionName: 'categories';
   info: {
-    description: 'Contact us page content';
-    displayName: 'Contact Page';
-    pluralName: 'contact-pages';
-    singularName: 'contact-page';
+    description: 'Categories for organizing articles (matches homepage sections)';
+    displayName: 'Category';
+    pluralName: 'categories';
+    singularName: 'category';
   };
   options: {
     draftAndPublish: true;
   };
   attributes: {
-    contactInfo: Schema.Attribute.Component<'layout.contact-info', false>;
+    articles: Schema.Attribute.Relation<'oneToMany', 'api::article.article'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    formDescription: Schema.Attribute.Text;
-    formTitle: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'Get In Touch'>;
-    hero: Schema.Attribute.Component<'sections.hero', false>;
+    description: Schema.Attribute.Text;
+    enabled: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
-      'api::contact-page.contact-page'
+      'api::category.category'
     > &
       Schema.Attribute.Private;
-    mapEmbedUrl: Schema.Attribute.String;
-    officeHours: Schema.Attribute.Text;
-    officeHoursTitle: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'Office Hours'>;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     publishedAt: Schema.Attribute.DateTime;
-    seo: Schema.Attribute.Component<'seo.meta', false>;
+    SectionName: Schema.Attribute.String;
+    slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -577,7 +576,10 @@ export interface ApiHeaderHeader extends Struct.SingleTypeSchema {
     logoText: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'Unicat'>;
-    navigationLinks: Schema.Attribute.Component<'layout.link', true>;
+    navigationCategories: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::category.category'
+    >;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -589,7 +591,7 @@ export interface ApiHomepageSectionHomepageSection
   extends Struct.CollectionTypeSchema {
   collectionName: 'homepage_sections';
   info: {
-    description: 'Dynamic sections for the homepage (grid, grid-with-date, or news layout)';
+    description: 'Dynamic sections for the homepage with featured items and category reference';
     displayName: 'Homepage Section';
     pluralName: 'homepage-sections';
     singularName: 'homepage-section';
@@ -601,24 +603,29 @@ export interface ApiHomepageSectionHomepageSection
     buttonText: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'view all'>;
     buttonUrl: Schema.Attribute.String;
+    category: Schema.Attribute.Relation<'manyToOne', 'api::category.category'> &
+      Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     enabled: Schema.Attribute.Boolean &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<true>;
-    gridItems: Schema.Attribute.Component<'section.grid-item', true>;
-    gridItemsWithDate: Schema.Attribute.Component<
-      'section.grid-item-with-date',
-      true
-    >;
+    itemsToShow: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 10;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<5>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::homepage-section.homepage-section'
     > &
       Schema.Attribute.Private;
-    newsItems: Schema.Attribute.Component<'section.news-item', true>;
     order: Schema.Attribute.Integer &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMax<
@@ -1180,8 +1187,8 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
-      'api::about-page.about-page': ApiAboutPageAboutPage;
-      'api::contact-page.contact-page': ApiContactPageContactPage;
+      'api::article.article': ApiArticleArticle;
+      'api::category.category': ApiCategoryCategory;
       'api::footer.footer': ApiFooterFooter;
       'api::header.header': ApiHeaderHeader;
       'api::homepage-section.homepage-section': ApiHomepageSectionHomepageSection;

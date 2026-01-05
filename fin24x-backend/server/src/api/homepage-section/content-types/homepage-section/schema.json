@@ -5,7 +5,7 @@
     "singularName": "homepage-section",
     "pluralName": "homepage-sections",
     "displayName": "Homepage Section",
-    "description": "Dynamic sections for the homepage (grid, grid-with-date, or news layout)"
+    "description": "Dynamic sections for the homepage with featured items and category reference"
   },
   "options": {
     "draftAndPublish": true
@@ -22,6 +22,13 @@
       "required": true,
       "default": "grid"
     },
+    "category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::category.category",
+      "required": true,
+      "description": "Category this section represents (for filtering articles)"
+    },
     "buttonText": {
       "type": "string",
       "required": false,
@@ -29,7 +36,8 @@
     },
     "buttonUrl": {
       "type": "string",
-      "required": false
+      "required": false,
+      "description": "URL for 'View All' button (can be auto-generated from category slug)"
     },
     "order": {
       "type": "integer",
@@ -42,24 +50,13 @@
       "required": true,
       "default": true
     },
-    "gridItems": {
-      "type": "component",
-      "repeatable": true,
-      "component": "section.grid-item",
-      "required": false
-    },
-    "gridItemsWithDate": {
-      "type": "component",
-      "repeatable": true,
-      "component": "section.grid-item-with-date",
-      "required": false
-    },
-    "newsItems": {
-      "type": "component",
-      "repeatable": true,
-      "component": "section.news-item",
-      "required": false
+    "itemsToShow": {
+      "type": "integer",
+      "required": false,
+      "default": 5,
+      "min": 1,
+      "max": 10,
+      "description": "Number of latest articles to show on homepage (default: 5)"
     }
   }
 }
-

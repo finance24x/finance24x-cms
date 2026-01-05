@@ -23,10 +23,12 @@
       "required": false,
       "allowedTypes": ["images"]
     },
-    "navigationLinks": {
-      "type": "component",
-      "repeatable": true,
-      "component": "layout.link"
+    "navigationCategories": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::category.category",
+      "required": false,
+      "description": "Categories to display in navigation (uses category name as label and slug as URL)"
     }
   }
 }
