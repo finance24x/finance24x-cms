@@ -1176,7 +1176,7 @@ section
 	width: 100%;
 	padding-top: 40px; /* Reduced from 93px */
 	padding-bottom: 100px;
-	background: #FFFFFF; /* First section - white */
+	background: #f0f1f3; /* First section - grey */
 }
 .courses_row
 {
@@ -1521,7 +1521,7 @@ section
 	width: 100%;
 	padding-top: 40px; /* Reduced from 93px to match courses */
 	padding-bottom: 70px;
-	background: #f0f1f3; /* Second section - darker gray */
+	background: #FFFFFF; /* Second section - white */
 }
 .events_row
 {
@@ -1765,7 +1765,7 @@ section
 	width: 100%;
 	padding-top: 40px; /* Reduced from 93px to match courses/events */
 	padding-bottom: 60px; /* Reduced from 100px */
-	background: #FFFFFF; /* Third section - white */
+	background: #f0f1f3; /* Third section - grey */
 }
 .news_row
 {
