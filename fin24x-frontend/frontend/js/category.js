@@ -178,7 +178,7 @@ class CategoryPageManager {
       : '';
     
     const excerpt = article.excerpt || this.truncateText(article.content, 250);
-    const readTime = this.estimateReadTime(article.content);
+    const readTime = this.getReadTime(article);
 
     return `
       <div class="featured-article">
@@ -208,7 +208,7 @@ class CategoryPageManager {
       ? `<div class="card-thumb"><img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}"></div>`
       : '<div class="card-thumb card-thumb-placeholder"></div>';
     
-    const readTime = this.estimateReadTime(article.content);
+    const readTime = this.getReadTime(article);
     const excerpt = article.excerpt || this.truncateText(article.content, 80);
 
     return `
@@ -231,11 +231,16 @@ class CategoryPageManager {
   }
 
   /**
-   * Estimate read time based on content length
+   * Get read time from article or estimate based on content
    */
-  estimateReadTime(content) {
-    if (!content) return 2;
-    const text = content.replace(/<[^>]*>/g, '');
+  getReadTime(article) {
+    // Use minutesToread from Strapi if available
+    if (article.minutesToread) {
+      return article.minutesToread;
+    }
+    // Fallback: estimate based on content
+    if (!article.content) return 2;
+    const text = article.content.replace(/<[^>]*>/g, '');
     const words = text.split(/\s+/).length;
     return Math.max(1, Math.ceil(words / 200));
   }
@@ -276,7 +281,7 @@ class CategoryPageManager {
       : '<div class="mini-card-image mini-card-placeholder"></div>';
     
     const excerpt = article.excerpt || this.truncateText(article.content, 60);
-    const readTime = this.estimateReadTime(article.content);
+    const readTime = this.getReadTime(article);
 
     return `
       <div class="mini-card">
