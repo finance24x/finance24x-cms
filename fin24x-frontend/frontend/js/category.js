@@ -123,9 +123,6 @@ class CategoryPageManager {
     // Render articles
     this.articlesGrid.innerHTML = articles.map(article => this.renderArticleCard(article)).join('');
     
-    // Update article count
-    document.getElementById('category-meta').textContent = `${this.totalArticles} article${this.totalArticles !== 1 ? 's' : ''}`;
-    
     // Render pagination
     this.renderPagination();
   }
@@ -152,7 +149,7 @@ class CategoryPageManager {
           </h3>
           <div class="article-card-meta">
             <span>${article.author || 'Admin'}</span>
-            <span>|</span>
+            <span class="separator">•</span>
             <span>${date}</span>
           </div>
           <p class="article-card-excerpt">${excerpt}</p>
