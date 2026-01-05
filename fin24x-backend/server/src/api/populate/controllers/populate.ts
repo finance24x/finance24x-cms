@@ -4,23 +4,24 @@
  */
 
 import type { Core } from '@strapi/strapi';
-import { createDefaultCategories, createHomepageSections } from '../../../utils/populate-data';
-import { seedArticles } from '../../../utils/seed-articles';
+import { seedCategories } from '../../../seed/category/code';
+import { seedHomepageSections } from '../../../seed/homepage-section/code';
+import { seedArticles } from '../../../seed/articles/code';
 
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
   async populateCategories(ctx) {
     try {
-      const result = await createDefaultCategories(strapi);
+      const result = await seedCategories(strapi);
       ctx.body = {
         success: true,
-        message: 'Categories populated successfully',
+        message: 'Categories seeded successfully',
         data: result,
       };
     } catch (error: any) {
       ctx.status = 500;
       ctx.body = {
         success: false,
-        message: 'Error populating categories',
+        message: 'Error seeding categories',
         error: error?.message || error,
       };
     }
@@ -28,17 +29,17 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async populateHomepageSections(ctx) {
     try {
-      const result = await createHomepageSections(strapi);
+      const result = await seedHomepageSections(strapi);
       ctx.body = {
         success: true,
-        message: 'Homepage sections populated successfully',
+        message: 'Homepage sections seeded successfully',
         data: result,
       };
     } catch (error: any) {
       ctx.status = 500;
       ctx.body = {
         success: false,
-        message: 'Error populating homepage sections',
+        message: 'Error seeding homepage sections',
         error: error?.message || error,
       };
     }
@@ -46,12 +47,12 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async populateAll(ctx) {
     try {
-      const categoriesResult = await createDefaultCategories(strapi);
-      const sectionsResult = await createHomepageSections(strapi);
+      const categoriesResult = await seedCategories(strapi);
+      const sectionsResult = await seedHomepageSections(strapi);
       
       ctx.body = {
         success: true,
-        message: 'All data populated successfully',
+        message: 'All data seeded successfully',
         data: {
           categories: categoriesResult,
           homepageSections: sectionsResult,
@@ -61,7 +62,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       ctx.status = 500;
       ctx.body = {
         success: false,
-        message: 'Error populating data',
+        message: 'Error seeding data',
         error: error?.message || error,
       };
     }
