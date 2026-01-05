@@ -6,7 +6,7 @@
 // Fetch header data from Strapi
 async function fetchHeader() {
   try {
-    const response = await fetch(getApiUrl('/header?populate[logo]=*'));
+    const response = await fetch(getApiUrl('/header?populate=logo'));
     if (!response.ok) {
       throw new Error('Failed to fetch header');
     }
