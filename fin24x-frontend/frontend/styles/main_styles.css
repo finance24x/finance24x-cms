@@ -1176,7 +1176,6 @@ section
 	width: 100%;
 	padding-top: 40px; /* Reduced from 93px */
 	padding-bottom: 100px;
-	background: #f0f1f3; /* First section - grey */
 }
 .courses_row
 {
@@ -1521,7 +1520,6 @@ section
 	width: 100%;
 	padding-top: 40px; /* Reduced from 93px to match courses */
 	padding-bottom: 70px;
-	background: #FFFFFF; /* Second section - white */
 }
 .events_row
 {
@@ -1765,8 +1763,33 @@ section
 	width: 100%;
 	padding-top: 40px; /* Reduced from 93px to match courses/events */
 	padding-bottom: 60px; /* Reduced from 100px */
-	background: #f0f1f3; /* Third section - grey */
 }
+
+/* Alternating backgrounds for content sections */
+.content-section.section-1,
+.content-section.section-3,
+.content-section.section-5,
+.content-section.section-7,
+.content-section.section-9
+{
+	background: #f0f1f3 !important; /* Grey */
+}
+
+.content-section.section-2,
+.content-section.section-4,
+.content-section.section-6,
+.content-section.section-8,
+.content-section.section-10
+{
+	background: #FFFFFF !important; /* White */
+}
+
+/* Hide section_background on all content sections */
+.content-section .section_background
+{
+	display: none !important;
+}
+
 .news_row
 {
 	margin-top: 10px; /* Further reduced from 20px */
