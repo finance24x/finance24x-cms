@@ -1389,14 +1389,18 @@ section
 }
 .courses_button
 {
-	width: 210px;
-	height: 46px;
-	border-radius: 3px;
-	background: #14bdee;
+	width: auto;
+	height: auto;
+	min-width: 100px;
+	padding: 8px 20px;
+	border-radius: 4px;
+	background: transparent;
+	border: 1px solid #384158;
 	text-align: center;
 	margin: 0;
-	box-shadow: 0px 5px 40px rgba(29,34,47,0.15);
+	box-shadow: none;
 	flex-shrink: 0; /* Prevent button from shrinking */
+	transition: all 0.3s ease;
 }
 
 /* When button is in section_title_container, remove auto margins */
@@ -1407,15 +1411,23 @@ section
 }
 .courses_button:hover
 {
-	box-shadow: 0px 5px 40px rgba(29,34,47,0.45);
+	background: #384158;
+	border-color: #384158;
+	box-shadow: 0px 2px 8px rgba(56,65,88,0.2);
 }
 .courses_button a
 {
 	display: block;
-	font-size: 14px;
+	font-size: 13px;
 	font-weight: 500;
 	text-transform: uppercase;
-	line-height: 46px;
+	line-height: 1.4;
+	color: #384158;
+	text-decoration: none;
+	transition: all 0.3s ease;
+}
+.courses_button:hover a
+{
 	color: #FFFFFF;
 }
 
@@ -2461,10 +2473,11 @@ section
 	background: var(--bg-secondary);
 }
 
+/* Keep footer background original in dark mode - no changes */
 .dark-mode .footer_background
 {
-	opacity: 0.4; /* Increased to make it visible in dark mode */
-	filter: brightness(0.8) contrast(1.1); /* Adjust brightness and contrast for dark mode */
+	opacity: 1; /* Keep original opacity */
+	filter: none; /* No filters - keep original appearance */
 }
 
 .dark-mode .footer_title
@@ -2522,20 +2535,25 @@ section
 }
 
 /* Dark Mode Buttons */
+.dark-mode .courses_button
+{
+	border-color: var(--border-color);
+	background: transparent;
+}
 .dark-mode .courses_button a
 {
 	color: var(--text-primary);
-	border-color: var(--border-color);
 }
-
+.dark-mode .courses_button:hover
+{
+	background: var(--bg-tertiary);
+	border-color: var(--text-primary);
+}
 .dark-mode .courses_button:hover a
 {
-	background: #14bdee;
-	border-color: #14bdee;
-	color: #fff;
+	color: var(--text-primary);
 }
-	margin: 0;
-}
+
 .footer_links_container ul li a
 {
 	font-size: 14px;

@@ -88,10 +88,12 @@ function renderLogo(logoText, logoImage) {
   
   // Add logo text if available
   if (logoText) {
-    // Split logo text if it contains a span indicator (e.g., "Fin24x" -> "Fin<span>24x</span>")
+    // Split logo text if it contains numbers (e.g., "Finance24x" -> "Finance<span>24x</span>")
     const parts = logoText.split(/(\d+)/);
     if (parts.length > 1) {
-      logoHTML += `<div class="logo_text">${parts[0]}<span>${parts[1]}</span></div>`;
+      // Combine all parts after the first (number + any text after number)
+      const numberAndAfter = parts.slice(1).join('');
+      logoHTML += `<div class="logo_text">${parts[0]}<span>${numberAndAfter}</span></div>`;
     } else {
       logoHTML += `<div class="logo_text">${logoText}</div>`;
     }
