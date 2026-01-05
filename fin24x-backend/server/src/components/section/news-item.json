@@ -1,0 +1,47 @@
+{
+  "collectionName": "components_section_news_items",
+  "info": {
+    "displayName": "News Item",
+    "icon": "file",
+    "description": "Item for news-type sections (large or small news articles)"
+  },
+  "options": {},
+  "attributes": {
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"],
+      "description": "Required for large news items, optional for small"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "author": {
+      "type": "string",
+      "required": true,
+      "default": "admin"
+    },
+    "publishDate": {
+      "type": "date",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": false,
+      "description": "Description/excerpt (typically for large news items)"
+    },
+    "isLarge": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Mark as large featured article (left side)"
+    },
+    "url": {
+      "type": "string",
+      "required": true
+    }
+  }
+}
+

@@ -602,9 +602,7 @@ export interface ApiHomepageSectionHomepageSection
   attributes: {
     buttonText: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'view all'>;
-    buttonUrl: Schema.Attribute.String;
-    category: Schema.Attribute.Relation<'manyToOne', 'api::category.category'> &
-      Schema.Attribute.Required;
+    category: Schema.Attribute.Relation<'manyToOne', 'api::category.category'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

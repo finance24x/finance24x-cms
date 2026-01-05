@@ -18,26 +18,24 @@
     },
     "sectionType": {
       "type": "enumeration",
-      "enum": ["grid", "grid-with-date", "news"],
       "required": true,
-      "default": "grid"
+      "default": "grid",
+      "enum": [
+        "grid",
+        "grid-with-date",
+        "news"
+      ]
     },
     "category": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::category.category",
-      "required": true,
       "description": "Category this section represents (for filtering articles)"
     },
     "buttonText": {
       "type": "string",
-      "required": false,
-      "default": "view all"
-    },
-    "buttonUrl": {
-      "type": "string",
-      "required": false,
-      "description": "URL for 'View All' button (can be auto-generated from category slug)"
+      "default": "view all",
+      "required": false
     },
     "order": {
       "type": "integer",
@@ -55,8 +53,7 @@
       "required": false,
       "default": 5,
       "min": 1,
-      "max": 10,
-      "description": "Number of latest articles to show on homepage (default: 5)"
+      "max": 10
     }
   }
 }
