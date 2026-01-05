@@ -27,8 +27,7 @@
     },
     "excerpt": {
       "type": "text",
-      "required": false,
-      "description": "Short description/excerpt for listings"
+      "required": false
     },
     "image": {
       "type": "media",
@@ -40,8 +39,8 @@
     },
     "author": {
       "type": "string",
-      "required": true,
-      "default": "admin"
+      "default": "admin",
+      "required": true
     },
     "publishedDate": {
       "type": "date",
@@ -56,8 +55,7 @@
     "premium": {
       "type": "boolean",
       "required": false,
-      "default": false,
-      "description": "Mark as premium article (for future premium section)"
+      "default": false
     },
     "views": {
       "type": "integer",
@@ -66,8 +64,10 @@
     },
     "tags": {
       "type": "json",
-      "required": false,
-      "description": "Array of tags for additional filtering"
+      "required": false
+    },
+    "minutesToread": {
+      "type": "integer"
     }
   }
 }

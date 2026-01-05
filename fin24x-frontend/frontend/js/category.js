@@ -5,11 +5,12 @@
 
 class CategoryPageManager {
   constructor() {
-    this.articlesGrid = document.getElementById('articles-grid');
+    this.articlesContainer = document.getElementById('articles-container');
     this.paginationContainer = document.getElementById('pagination-container');
     this.pagination = document.getElementById('pagination');
     this.currentPage = 1;
-    this.pageSize = 12;
+    this.pageSize = 20;
+    this.cardsLimit = 6; // Articles 2-7 shown as cards (after featured)
     this.category = null;
     this.totalArticles = 0;
   }
@@ -73,7 +74,7 @@ class CategoryPageManager {
   async fetchArticles(page = 1) {
     const start = (page - 1) * this.pageSize;
     const url = getApiUrl(
-      `/articles?populate=category&filters[category][documentId][$eq]=${this.category.documentId}&pagination[start]=${start}&pagination[limit]=${this.pageSize}&sort=publishedDate:desc`
+      `/articles?populate[category]=true&populate[image]=true&filters[category][documentId][$eq]=${this.category.documentId}&pagination[start]=${start}&pagination[limit]=${this.pageSize}&sort=publishedDate:desc`
     );
     const response = await fetch(url);
     const data = await response.json();
@@ -89,9 +90,7 @@ class CategoryPageManager {
     // Update page title
     document.title = `${this.category.name} - Finance24x`;
     
-    // Update category header
-    document.getElementById('category-title').textContent = this.category.name;
-    document.getElementById('category-description').textContent = this.category.description || '';
+    // Update breadcrumb
     document.getElementById('breadcrumb-category').textContent = this.category.name;
   }
 
@@ -100,8 +99,8 @@ class CategoryPageManager {
    */
   async loadArticles() {
     // Show loading
-    this.articlesGrid.innerHTML = `
-      <div class="loading-container" style="grid-column: 1 / -1;">
+    this.articlesContainer.innerHTML = `
+      <div class="loading-container">
         <div class="spinner"></div>
         <p>Loading articles...</p>
       </div>
@@ -110,7 +109,7 @@ class CategoryPageManager {
     const articles = await this.fetchArticles(this.currentPage);
     
     if (articles.length === 0) {
-      this.articlesGrid.innerHTML = `
+      this.articlesContainer.innerHTML = `
         <div class="no-articles">
           <h3>No articles found</h3>
           <p>There are no articles in this category yet.</p>
@@ -120,17 +119,116 @@ class CategoryPageManager {
       return;
     }
 
-    // Render articles
-    this.articlesGrid.innerHTML = articles.map(article => this.renderArticleCard(article)).join('');
+    // Split articles: featured (1), cards (2-7), list (8+)
+    const featuredArticle = articles[0];
+    const cardArticles = articles.slice(1, 1 + this.cardsLimit);
+    const listArticles = articles.slice(1 + this.cardsLimit);
+
+    let html = '';
+    
+    // Render featured article
+    html += this.renderFeaturedArticle(featuredArticle);
+    
+    // Render card articles in 2-column grid
+    if (cardArticles.length > 0) {
+      html += `<div class="articles-cards-section">
+        <div class="articles-cards-grid">
+          ${cardArticles.map(article => this.renderArticleCard(article)).join('')}
+        </div>
+      </div>`;
+    }
+    
+    // Render list articles if any
+    if (listArticles.length > 0) {
+      html += `<div class="articles-list-section">
+        <div class="articles-list-container">
+          ${listArticles.map(article => this.renderArticleListItem(article)).join('')}
+        </div>
+      </div>`;
+    }
+
+    this.articlesContainer.innerHTML = html;
     
     // Render pagination
     this.renderPagination();
   }
 
   /**
-   * Render a single article card
+   * Render featured article (first article - large layout)
+   */
+  renderFeaturedArticle(article) {
+    const hasImage = article.image?.url;
+    const imageHtml = hasImage 
+      ? `<div class="featured-image"><img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}"></div>`
+      : '';
+    
+    const excerpt = article.excerpt || this.truncateText(article.content, 250);
+    const readTime = this.estimateReadTime(article.content);
+
+    return `
+      <div class="featured-article">
+        <div class="featured-content">
+          <div class="featured-category">${this.category?.name || 'Article'}</div>
+          <h1 class="featured-title">
+            <a href="/blog_single.html?slug=${article.slug}">${article.title}</a>
+          </h1>
+          <p class="featured-excerpt">${excerpt}</p>
+          <div class="featured-meta">
+            <span class="read-time">${readTime} min read</span>
+            <span class="separator">•</span>
+            <span class="author">By ${article.author || 'Admin'}</span>
+          </div>
+        </div>
+        ${imageHtml}
+      </div>
+    `;
+  }
+
+  /**
+   * Render a single article card (horizontal with thumbnail)
    */
   renderArticleCard(article) {
+    const hasImage = article.image?.url;
+    const imageHtml = hasImage 
+      ? `<div class="card-thumb"><img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}"></div>`
+      : '<div class="card-thumb card-thumb-placeholder"></div>';
+    
+    const readTime = this.estimateReadTime(article.content);
+    const excerpt = article.excerpt || this.truncateText(article.content, 80);
+
+    return `
+      <div class="article-card-horizontal">
+        ${imageHtml}
+        <div class="card-content">
+          <div class="card-category">${this.category?.name || 'Article'}</div>
+          <h3 class="card-title">
+            <a href="/blog_single.html?slug=${article.slug}">${article.title}</a>
+          </h3>
+          <p class="card-excerpt">${excerpt}</p>
+          <div class="card-meta">
+            <span>${readTime} min read</span>
+            <span class="separator">•</span>
+            <span>By ${article.author || 'Admin'}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Estimate read time based on content length
+   */
+  estimateReadTime(content) {
+    if (!content) return 2;
+    const text = content.replace(/<[^>]*>/g, '');
+    const words = text.split(/\s+/).length;
+    return Math.max(1, Math.ceil(words / 200));
+  }
+
+  /**
+   * Render a compact list item (for articles after the first 6)
+   */
+  renderArticleListItem(article) {
     const date = article.publishedDate 
       ? new Date(article.publishedDate).toLocaleDateString('en-US', { 
           year: 'numeric', 
@@ -139,20 +237,15 @@ class CategoryPageManager {
         })
       : '';
 
-    const excerpt = article.excerpt || this.truncateText(article.content, 120);
-
     return `
-      <div class="article-card">
-        <div class="article-card-body">
-          <h3 class="article-card-title">
-            <a href="/blog_single.html?slug=${article.slug}">${article.title}</a>
-          </h3>
-          <div class="article-card-meta">
-            <span>${article.author || 'Admin'}</span>
-            <span class="separator">•</span>
-            <span>${date}</span>
-          </div>
-          <p class="article-card-excerpt">${excerpt}</p>
+      <div class="article-list-item">
+        <h4 class="article-list-title">
+          <a href="/blog_single.html?slug=${article.slug}">${article.title}</a>
+        </h4>
+        <div class="article-list-meta">
+          <span>${article.author || 'Admin'}</span>
+          <span class="separator">|</span>
+          <span>${date}</span>
         </div>
       </div>
     `;

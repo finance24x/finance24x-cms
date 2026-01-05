@@ -458,6 +458,7 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
       'api::article.article'
     > &
       Schema.Attribute.Private;
+    minutesToread: Schema.Attribute.Integer;
     premium: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     publishedAt: Schema.Attribute.DateTime;
     publishedDate: Schema.Attribute.Date & Schema.Attribute.Required;
