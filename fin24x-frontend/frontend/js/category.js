@@ -119,15 +119,15 @@ class CategoryPageManager {
       return;
     }
 
-    // Split articles: featured (1), cards (2-7), remaining split into list+grid
+    // Split articles: featured (1), cards (2-7), split section (8-15), extra (16+)
     const featuredArticle = articles[0];
     const cardArticles = articles.slice(1, 1 + this.cardsLimit);
     const remainingArticles = articles.slice(1 + this.cardsLimit);
     
-    // Split remaining: first 5 for list, next 3 for mini grid
+    // For split section: 5 for list (left), 3 for mini cards (right)
     const listArticles = remainingArticles.slice(0, 5);
-    const miniGridArticles = remainingArticles.slice(5, 8);
-    const extraListArticles = remainingArticles.slice(8);
+    const miniCardArticles = remainingArticles.slice(5, 8);
+    const extraArticles = remainingArticles.slice(8);
 
     let html = '';
     
@@ -143,22 +143,22 @@ class CategoryPageManager {
       </div>`;
     }
     
-    // Render split section: list on left, mini grid on right
-    if (listArticles.length > 0 || miniGridArticles.length > 0) {
+    // Render split section: 5 list items (left) + 3 mini cards (right)
+    if (listArticles.length > 0 || miniCardArticles.length > 0) {
       html += `<div class="articles-split-section">
-        <div class="split-left">
+        <div class="split-list-column">
           ${listArticles.map(article => this.renderArticleListItem(article)).join('')}
         </div>
-        <div class="split-right">
-          ${miniGridArticles.map(article => this.renderMiniCard(article)).join('')}
+        <div class="split-grid-column">
+          ${miniCardArticles.map(article => this.renderMiniCard(article)).join('')}
         </div>
       </div>`;
     }
     
-    // Render extra list articles if any (beyond the 8 in split section)
-    if (extraListArticles.length > 0) {
+    // Render extra articles as cards
+    if (extraArticles.length > 0) {
       html += `<div class="articles-extra-section">
-        ${extraListArticles.map(article => this.renderArticleListItem(article)).join('')}
+        ${extraArticles.map(article => this.renderArticleCard(article)).join('')}
       </div>`;
     }
 
@@ -241,14 +241,14 @@ class CategoryPageManager {
   }
 
   /**
-   * Render a compact list item (for articles after the first 6)
+   * Render article list item (no image, for split section left)
    */
   renderArticleListItem(article) {
     const date = article.publishedDate 
       ? new Date(article.publishedDate).toLocaleDateString('en-US', { 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
+          month: 'short', 
+          day: 'numeric',
+          year: 'numeric'
         })
       : '';
 
@@ -267,20 +267,32 @@ class CategoryPageManager {
   }
 
   /**
-   * Render mini card for right side grid
+   * Render mini card (horizontal with image, for split section right)
    */
   renderMiniCard(article) {
     const hasImage = article.image?.url;
     const imageHtml = hasImage 
       ? `<div class="mini-card-image"><img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}"></div>`
       : '<div class="mini-card-image mini-card-placeholder"></div>';
+    
+    const excerpt = article.excerpt || this.truncateText(article.content, 60);
+    const readTime = this.estimateReadTime(article.content);
 
     return `
       <div class="mini-card">
         ${imageHtml}
-        <h4 class="mini-card-title">
-          <a href="/blog_single.html?slug=${article.slug}">${article.title}</a>
-        </h4>
+        <div class="mini-card-content">
+          <div class="mini-card-category">${this.category?.name || 'Article'}</div>
+          <h4 class="mini-card-title">
+            <a href="/blog_single.html?slug=${article.slug}">${article.title}</a>
+          </h4>
+          <p class="mini-card-excerpt">${excerpt}</p>
+          <div class="mini-card-meta">
+            <span>${readTime} min read</span>
+            <span class="separator">•</span>
+            <span>By ${article.author || 'Admin'}</span>
+          </div>
+        </div>
       </div>
     `;
   }
