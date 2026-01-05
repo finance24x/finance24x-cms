@@ -119,10 +119,15 @@ class CategoryPageManager {
       return;
     }
 
-    // Split articles: featured (1), cards (2-7), list (8+)
+    // Split articles: featured (1), cards (2-7), remaining split into list+grid
     const featuredArticle = articles[0];
     const cardArticles = articles.slice(1, 1 + this.cardsLimit);
-    const listArticles = articles.slice(1 + this.cardsLimit);
+    const remainingArticles = articles.slice(1 + this.cardsLimit);
+    
+    // Split remaining: first 5 for list, next 3 for mini grid
+    const listArticles = remainingArticles.slice(0, 5);
+    const miniGridArticles = remainingArticles.slice(5, 8);
+    const extraListArticles = remainingArticles.slice(8);
 
     let html = '';
     
@@ -138,12 +143,22 @@ class CategoryPageManager {
       </div>`;
     }
     
-    // Render list articles if any
-    if (listArticles.length > 0) {
-      html += `<div class="articles-list-section">
-        <div class="articles-list-container">
+    // Render split section: list on left, mini grid on right
+    if (listArticles.length > 0 || miniGridArticles.length > 0) {
+      html += `<div class="articles-split-section">
+        <div class="split-left">
           ${listArticles.map(article => this.renderArticleListItem(article)).join('')}
         </div>
+        <div class="split-right">
+          ${miniGridArticles.map(article => this.renderMiniCard(article)).join('')}
+        </div>
+      </div>`;
+    }
+    
+    // Render extra list articles if any (beyond the 8 in split section)
+    if (extraListArticles.length > 0) {
+      html += `<div class="articles-extra-section">
+        ${extraListArticles.map(article => this.renderArticleListItem(article)).join('')}
       </div>`;
     }
 
@@ -247,6 +262,25 @@ class CategoryPageManager {
           <span class="separator">|</span>
           <span>${date}</span>
         </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Render mini card for right side grid
+   */
+  renderMiniCard(article) {
+    const hasImage = article.image?.url;
+    const imageHtml = hasImage 
+      ? `<div class="mini-card-image"><img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}"></div>`
+      : '<div class="mini-card-image mini-card-placeholder"></div>';
+
+    return `
+      <div class="mini-card">
+        ${imageHtml}
+        <h4 class="mini-card-title">
+          <a href="/blog_single.html?slug=${article.slug}">${article.title}</a>
+        </h4>
       </div>
     `;
   }
