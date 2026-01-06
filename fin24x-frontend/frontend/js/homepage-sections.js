@@ -267,7 +267,7 @@ class HomepageSectionsManager {
             <div class="grid-card-meta">
               <span>${article.minutesToread || 3} min read</span>
               <span class="separator">•</span>
-              <span>By ${article.author || 'Admin'}</span>
+              <span>${this.formatDate(article.publishedDate)}</span>
             </div>
           </div>
         </div>
@@ -296,7 +296,7 @@ class HomepageSectionsManager {
             <div class="grid-card-meta">
               <span>${article.minutesToread || 3} min read</span>
               <span class="separator">•</span>
-              <span>${article.author || 'Admin'}</span>
+              <span>${this.formatDate(article.publishedDate)}</span>
             </div>
           </div>
         </div>
@@ -332,7 +332,9 @@ class HomepageSectionsManager {
             <h3 class="grid-card-title"><a href="blog_single.html?slug=${article.slug}">${article.title}</a></h3>
             <p class="grid-card-excerpt">${article.excerpt || this.truncateText(article.content, 80)}</p>
             <div class="grid-card-meta">
-              <span>By ${article.author || 'Admin'}</span>
+              <span>${article.minutesToread || 3} min read</span>
+              <span class="separator">•</span>
+              <span>${this.formatDate(article.publishedDate)}</span>
             </div>
           </div>
         </div>

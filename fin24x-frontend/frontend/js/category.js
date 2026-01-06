@@ -206,7 +206,7 @@ class CategoryPageManager {
           <div class="featured-meta">
             <span class="read-time">${readTime} min read</span>
             <span class="separator">•</span>
-            <span class="author">By ${article.author || 'Admin'}</span>
+            <span class="date">${this.formatDate(article.publishedDate)}</span>
           </div>
         </div>
         ${imageHtml}
@@ -238,7 +238,7 @@ class CategoryPageManager {
           <div class="card-meta">
             <span>${readTime} min read</span>
             <span class="separator">•</span>
-            <span>By ${article.author || 'Admin'}</span>
+            <span>${this.formatDate(article.publishedDate)}</span>
           </div>
         </div>
       </div>
@@ -246,18 +246,24 @@ class CategoryPageManager {
   }
 
   /**
-   * Get read time from article or estimate based on content
+   * Get read time from article
    */
   getReadTime(article) {
-    // Use minutesToread from Strapi if available
-    if (article.minutesToread) {
-      return article.minutesToread;
-    }
-    // Fallback: estimate based on content
-    if (!article.content) return 2;
-    const text = article.content.replace(/<[^>]*>/g, '');
-    const words = text.split(/\s+/).length;
-    return Math.max(1, Math.ceil(words / 200));
+    // Use minutesToread from Strapi, default to 3 if not set
+    return article.minutesToread || 3;
+  }
+
+  /**
+   * Format date to readable string
+   */
+  formatDate(dateStr) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric',
+      year: 'numeric'
+    });
   }
 
   /**
@@ -278,9 +284,9 @@ class CategoryPageManager {
           <a href="/blog_single.html?slug=${article.slug}">${article.title}</a>
         </h4>
         <div class="article-list-meta">
-          <span>${article.author || 'Admin'}</span>
+          <span>${this.getReadTime(article)} min read</span>
           <span class="separator">|</span>
-          <span>${date}</span>
+          <span>${this.formatDate(article.publishedDate)}</span>
         </div>
       </div>
     `;
@@ -310,7 +316,7 @@ class CategoryPageManager {
           <div class="mini-card-meta">
             <span>${readTime} min read</span>
             <span class="separator">•</span>
-            <span>By ${article.author || 'Admin'}</span>
+            <span>${this.formatDate(article.publishedDate)}</span>
           </div>
         </div>
       </div>
