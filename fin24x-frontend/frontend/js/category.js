@@ -9,7 +9,7 @@ class CategoryPageManager {
     this.paginationContainer = document.getElementById('pagination-container');
     this.pagination = document.getElementById('pagination');
     this.currentPage = 1;
-    this.pageSize = 20;
+    this.pageSize = 21;
     this.cardsLimit = 6; // Articles 2-7 shown as cards (after featured)
     this.category = null;
     this.totalArticles = 0;
@@ -50,10 +50,56 @@ class CategoryPageManager {
       // Load related categories if any
       await this.loadRelatedCategories();
       
+      // Load related tags from tag groups
+      this.loadRelatedTags();
+      
     } catch (error) {
       console.error('Error loading category:', error);
       this.showError('Failed to load category');
     }
+  }
+
+  /**
+   * Load and render related tags from tag groups
+   */
+  loadRelatedTags() {
+    const tagGroups = this.category.relatedtaggroups;
+    
+    if (!tagGroups || tagGroups.length === 0) {
+      return;
+    }
+
+    const container = document.getElementById('category-tags-container');
+    if (!container) return;
+
+    // Collect all tags from all tag groups (limit to 20)
+    let allTags = [];
+    for (const group of tagGroups) {
+      if (group.tags && group.tags.length > 0) {
+        allTags = allTags.concat(group.tags);
+      }
+    }
+
+    // Remove duplicates and limit to 20
+    const uniqueTags = allTags.filter((tag, index, self) => 
+      index === self.findIndex(t => t.slug === tag.slug)
+    ).slice(0, 20);
+
+    if (uniqueTags.length === 0) {
+      return;
+    }
+
+    container.style.display = 'block';
+    container.innerHTML = `
+      <div class="container">
+        <div class="category-tags-header">
+          <span class="category-tags-title">TOP SEARCHES:</span>
+        </div>
+        <div class="category-tags-list">
+          ${uniqueTags.map(tag => `<a href="/tag/${tag.slug}" class="category-tag-pill">${tag.name}</a>`).join('')}
+        </div>
+      </div>
+    `;
   }
 
   /**
@@ -197,7 +243,7 @@ class CategoryPageManager {
    * Fetch category details by slug (with related categories)
    */
   async fetchCategory(slug) {
-    const url = getApiUrl(`/categories?filters[slug][$eq]=${slug}&populate[relatedcategories]=true`);
+    const url = getApiUrl(`/categories?filters[slug][$eq]=${slug}&populate[relatedcategories]=true&populate[relatedtaggroups][populate][tags]=true`);
     const response = await fetch(url);
     const data = await response.json();
     return data.data && data.data.length > 0 ? data.data[0] : null;

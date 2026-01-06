@@ -114,20 +114,12 @@ class TagPageManager {
     // Update meta description
     if (this.tag.description) {
       document.getElementById('meta-description').setAttribute('content', this.tag.description);
-      document.getElementById('tag-description').textContent = this.tag.description;
     }
     
-    // Update stats
-    const similarCount = this.tag.similarTags?.length || 0;
+    // Update related tags count
     const relatedCount = this.tag.relatedTags?.length || 0;
-    
-    if (similarCount > 0) {
-      document.getElementById('tag-similar-count').style.display = 'flex';
-      document.getElementById('similar-count').textContent = similarCount;
-    }
-    
     if (relatedCount > 0) {
-      document.getElementById('tag-related-count').style.display = 'flex';
+      document.getElementById('tag-related-count').style.display = 'inline';
       document.getElementById('related-count').textContent = relatedCount;
     }
   }
@@ -192,8 +184,7 @@ class TagPageManager {
     
     // Update article count
     document.getElementById('tag-article-count').innerHTML = `
-      <i class="fa fa-newspaper-o"></i>
-      <span><strong>${this.totalArticles}</strong> article${this.totalArticles !== 1 ? 's' : ''}</span>
+      <i class="fa fa-newspaper-o"></i> ${this.totalArticles} article${this.totalArticles !== 1 ? 's' : ''}
     `;
     
     if (articles.length === 0) {

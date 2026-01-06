@@ -45,86 +45,38 @@
 }
 
 /* Tag Header */
-.tag-header {
-  padding: 50px 0 40px;
-  background: linear-gradient(135deg, #e8e8e8 0%, #e2e8f0 100%);
-  color: #310404;
-  position: relative;
-  overflow: hidden;
-  border-bottom: 1px solid #e0e0e0;
+/* Tag Info Bar - Simple */
+.tag-info-bar {
+  padding: 30px 0;
+  margin-top: 25px;
+  background: transparent;
+  border-bottom: 1px solid #eee;
 }
-.tag-header::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -10%;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(20,189,238,0.08) 0%, transparent 70%);
-  pointer-events: none;
-}
-.tag-header-content {
-  position: relative;
-  z-index: 1;
-}
-.tag-group-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 20px;
-  font-size: 0.8rem;
-  color: rgba(255,255,255,0.8);
-  text-decoration: none;
-  margin-bottom: 15px;
-  transition: all 0.2s ease;
-}
-.tag-group-badge:hover {
-  background: rgba(255,255,255,0.2);
-  color: #fff;
-  text-decoration: none;
-}
-.tag-group-badge i {
-  font-size: 0.7rem;
-}
-.tag-title {
-  font-size: 2.0rem;
-  font-weight: 600;
-  color: #8c5959;
-  margin: 0 0 15px 0;
-  line-height: 1.2;
-}
-.tag-title i {
-  font-size: 2rem;
-  margin-right: 12px;
-  color: #14bdee;
-}
-.tag-description {
-  font-size: 1.rem;
-  color: #555;
-  margin: 0 0 30px 0;
-  max-width: 700px;
-  line-height: 1.8;
-}
-.tag-stats {
+.tag-info-content {
   display: flex;
-  gap: 25px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+.tag-info-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+.tag-info-stats {
+  display: flex;
+  gap: 20px;
   flex-wrap: wrap;
 }
-.tag-stat {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.9rem;
+.tag-info-stat {
+  font-size: 0.85rem;
   color: #666;
 }
-.tag-stat i {
+.tag-info-stat i {
   color: #14bdee;
-}
-.tag-stat strong {
-  color: #1a1a1a;
+  margin-right: 4px;
 }
 
 /* Similar & Related Tags Section */
@@ -241,15 +193,15 @@
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
-  background: #fff;
-  border: 1px solid #e8e8e8;
+  background: #f8f9fa;
+  border: 1px solid #f8f9fa;
   border-radius: 8px;
   text-decoration: none;
   transition: all 0.2s ease;
 }
 .sidebar-tag-item:hover {
   border-color: #14bdee;
-  background: #fff;
+  background: #f8f9fa;
   text-decoration: none;
   transform: translateX(3px);
 }
@@ -589,11 +541,14 @@
 
 /* ==================== DARK MODE ==================== */
 :root {
-  --bg-primary: #1a1a2e;
-  --bg-secondary: #16213e;
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2d2d2d;
+  --bg-tertiary: #3a3a3a;
   --text-primary: #eee;
   --text-secondary: #aaa;
-  --border-color: #2a2a4a;
+  --text-muted: #888;
+  --border-color: #404040;
+  --primary-color: #14bdee;
 }
 .dark-mode .breadcrumb-container {
   background: var(--bg-secondary);
@@ -602,21 +557,14 @@
 .dark-mode .breadcrumb-item.active {
   color: var(--text-secondary);
 }
-.dark-mode .tag-header {
-  background: linear-gradient(135deg, #1e1e2e 0%, #2d2d3d 100%);
+.dark-mode .tag-info-bar {
   border-bottom-color: var(--border-color);
 }
-.dark-mode .tag-title {
+.dark-mode .tag-info-title {
   color: var(--text-primary);
 }
-.dark-mode .tag-description {
+.dark-mode .tag-info-stat {
   color: var(--text-secondary);
-}
-.dark-mode .tag-stat {
-  color: var(--text-secondary);
-}
-.dark-mode .tag-stat strong {
-  color: var(--text-primary);
 }
 .dark-mode .tags-section {
   background: var(--bg-secondary);
@@ -649,12 +597,12 @@
   border-bottom-color: var(--border-color);
 }
 .dark-mode .sidebar-tag-item {
-  background: var(--bg-primary);
-  border-color: var(--border-color);
+  background: var(--bg-secondary);
+  border-color: var(--bg-secondary);
 }
 .dark-mode .sidebar-tag-item:hover {
   border-color: #14bdee;
-  background: var(--bg-primary);
+  background: var(--bg-secondary);
 }
 .dark-mode .sidebar-tag-name {
   color: var(--text-primary);
@@ -784,28 +732,18 @@
 		</div>
 	</div>
 
-	<!-- Tag Header -->
-	<div class="tag-header">
+	<!-- Tag Info Bar -->
+	<div class="tag-info-bar">
 		<div class="container">
-			<div class="tag-header-content">
-				<h1 class="tag-title">
-					<i class="fa fa-tag"></i>
-					<span id="tag-title">Loading...</span>
-				</h1>
-				<p class="tag-description" id="tag-description"></p>
-				<div class="tag-stats">
-					<div class="tag-stat" id="tag-article-count">
-						<i class="fa fa-newspaper-o"></i>
-						<span>Loading articles...</span>
-					</div>
-					<div class="tag-stat" id="tag-similar-count" style="display: none;">
-						<i class="fa fa-clone"></i>
-						<span><strong id="similar-count">0</strong> similar tags</span>
-					</div>
-					<div class="tag-stat" id="tag-related-count" style="display: none;">
-						<i class="fa fa-link"></i>
-						<span><strong id="related-count">0</strong> related tags</span>
-					</div>
+			<div class="tag-info-content">
+				<h1 class="tag-info-title" id="tag-title">Loading...</h1>
+				<div class="tag-info-stats">
+					<span class="tag-info-stat" id="tag-article-count">
+						<i class="fa fa-newspaper-o"></i> <span>0</span> articles
+					</span>
+					<span class="tag-info-stat" id="tag-related-count" style="display: none;">
+						<i class="fa fa-link"></i> <span id="related-count">0</span> related tags
+					</span>
 				</div>
 			</div>
 		</div>
