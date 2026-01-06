@@ -476,39 +476,50 @@
 .error-left-section {
   flex: 0 0 70%;
   text-align: center;
-  padding: 40px;
-  background: #fff;
+  padding: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  position: relative;
 }
 .error-right-section {
   flex: 0 0 calc(30% - 40px);
 }
 .error-image-container {
-  margin-bottom: 30px;
+  margin-bottom: 12px;
 }
 .error-image {
   max-width: 100%;
-  max-height: 280px;
+  max-height: 200px;
   object-fit: contain;
 }
 .error-page-title {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #1a1a2e;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 .error-page-message {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #666;
-  margin-bottom: 30px;
-  line-height: 1.6;
+  margin-bottom: 16px;
+  line-height: 1.5;
 }
 .error-page-actions {
   display: flex;
   gap: 16px;
   justify-content: center;
   flex-wrap: wrap;
+  padding: 30px;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, transparent 100%);
+  width: 100%;
 }
 .error-btn {
   display: inline-flex;
@@ -546,74 +557,82 @@
 .popular-tags-sidebar {
   background: #f8f9fa;
   border-radius: 12px;
-  padding: 24px;
+  padding: 16px 20px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.04);
   height: 100%;
 }
 .popular-tags-header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 1.1rem;
+  gap: 8px;
+  font-size: 1rem;
   font-weight: 600;
   color: #14bdee;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 .popular-tags-header i {
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 .popular-tags-divider {
   height: 1px;
   background: #e0e0e0;
-  margin-bottom: 20px;
+  margin-bottom: 8px;
 }
 .popular-tags-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  max-height: 350px;
+  gap: 0;
+  max-height: 260px;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
 }
 .popular-tags-list::-webkit-scrollbar {
-  width: 6px;
+  width: 3px;
 }
 .popular-tags-list::-webkit-scrollbar-track {
   background: transparent;
 }
 .popular-tags-list::-webkit-scrollbar-thumb {
-  background: #ddd;
-  border-radius: 3px;
+  background: transparent;
+  border-radius: 2px;
+}
+.popular-tags-list:hover::-webkit-scrollbar-thumb {
+  background: rgba(150,150,150,0.3);
+}
+.popular-tags-list:hover {
+  scrollbar-color: rgba(150,150,150,0.3) transparent;
 }
 .popular-tag-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  background: #fff;
-  border-radius: 8px;
+  gap: 10px;
+  padding: 10px 0;
+  background: transparent;
   text-decoration: none;
   transition: all 0.2s ease;
-  border: 1px solid transparent;
+  border-bottom: 1px solid #e8e8e8;
+}
+.popular-tag-item:last-child {
+  border-bottom: none;
 }
 .popular-tag-item:hover {
-  background: #fff;
-  border-color: #14bdee;
   transform: translateX(4px);
 }
 .popular-tag-icon {
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   background: linear-gradient(135deg, #14bdee, #0ea5d3);
-  border-radius: 8px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 .popular-tag-name {
   flex: 1;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 500;
   color: #333;
 }
@@ -1183,7 +1202,6 @@
 
 /* Dark mode - Error Page */
 .dark-mode .error-left-section {
-  background: var(--bg-secondary);
   box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 .dark-mode .error-page-title {
@@ -1220,11 +1238,11 @@
   background: var(--border-color);
 }
 .dark-mode .popular-tag-item {
-  background: var(--bg-primary);
+  background: transparent;
+  border-bottom-color: var(--border-color);
 }
 .dark-mode .popular-tag-item:hover {
-  background: var(--bg-primary);
-  border-color: #14bdee;
+  background: transparent;
 }
 .dark-mode .popular-tag-name {
   color: var(--text-primary);

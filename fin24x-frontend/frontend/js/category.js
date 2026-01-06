@@ -728,13 +728,8 @@ class CategoryPageManager {
     this.articlesContainer.innerHTML = `
       <div class="error-page-wrapper">
         <div class="error-page-split">
-          <!-- Left side: Image and message (65%) -->
-          <div class="error-left-section">
-            <div class="error-image-container">
-              <img src="${imageUrl}" alt="Page Not Found" class="error-image">
-            </div>
-            <h1 class="error-page-title">Page Not Found</h1>
-            <p class="error-page-message">The page you're looking for doesn't exist or may have been moved.</p>
+          <!-- Left side: Image background with buttons -->
+          <div class="error-left-section" style="background-image: url('${imageUrl}');">
             <div class="error-page-actions">
               <a href="/" class="error-btn primary">
                 <i class="fa fa-home"></i> Home Page
