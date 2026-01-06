@@ -14,22 +14,32 @@
   "attributes": {
     "logoText": {
       "type": "string",
-      "required": true,
-      "default": "Unicat"
+      "default": "Unicat",
+      "required": true
     },
     "logo": {
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "navigationCategories": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::category.category",
-      "required": false,
       "description": "Categories to display in navigation (uses category name as label and slug as URL)"
+    },
+    "CategoryNotFound": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
     }
   }
 }
-

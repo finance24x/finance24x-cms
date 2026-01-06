@@ -366,6 +366,30 @@ export default {
           });
           console.log('✅ Created public permission for tag-group.findOne');
         }
+
+        // Enable permissions for popular-tag
+        const popularTagFind = permissions.find(p => p.action === 'api::popular-tag.popular-tag.find');
+
+        if (popularTagFind && !popularTagFind.enabled) {
+          await strapi
+            .query('plugin::users-permissions.permission')
+            .update({
+              where: { id: popularTagFind.id },
+              data: { enabled: true },
+            });
+          console.log('✅ Enabled public access for popular-tag.find');
+        }
+
+        if (!permissionActions.includes('api::popular-tag.popular-tag.find')) {
+          await strapi.query('plugin::users-permissions.permission').create({
+            data: {
+              action: 'api::popular-tag.popular-tag.find',
+              role: publicRole.id,
+              enabled: true,
+            },
+          });
+          console.log('✅ Created public permission for popular-tag.find');
+        }
       }
     } catch (error) {
       console.error('❌ Error setting up public permissions:', error);

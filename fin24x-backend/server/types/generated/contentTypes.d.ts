@@ -572,6 +572,9 @@ export interface ApiHeaderHeader extends Struct.SingleTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    CategoryNotFound: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios'
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -678,6 +681,34 @@ export interface ApiMarketTickerMarketTicker extends Struct.SingleTypeSchema {
       Schema.Attribute.Private;
     marketItems: Schema.Attribute.Component<'market.market-item', true>;
     publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPopularTagPopularTag extends Struct.SingleTypeSchema {
+  collectionName: 'popular_tags';
+  info: {
+    displayName: 'PopularTag';
+    pluralName: 'popular-tags';
+    singularName: 'popular-tag';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::popular-tag.popular-tag'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    tags: Schema.Attribute.Relation<'oneToMany', 'api::tag.tag'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1272,6 +1303,7 @@ declare module '@strapi/strapi' {
       'api::header.header': ApiHeaderHeader;
       'api::homepage-section.homepage-section': ApiHomepageSectionHomepageSection;
       'api::market-ticker.market-ticker': ApiMarketTickerMarketTicker;
+      'api::popular-tag.popular-tag': ApiPopularTagPopularTag;
       'api::tag-group.tag-group': ApiTagGroupTagGroup;
       'api::tag.tag': ApiTagTag;
       'plugin::content-releases.release': PluginContentReleasesRelease;
