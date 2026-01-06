@@ -47,10 +47,130 @@ class CategoryPageManager {
       // Fetch and render articles
       await this.loadArticles();
       
+      // Load related categories if any
+      await this.loadRelatedCategories();
+      
     } catch (error) {
       console.error('Error loading category:', error);
       this.showError('Failed to load category');
     }
+  }
+
+  /**
+   * Load and render related categories with their articles
+   */
+  async loadRelatedCategories() {
+    const relatedCategories = this.category.relatedcategories;
+    
+    // If no related categories, don't show anything
+    if (!relatedCategories || relatedCategories.length === 0) {
+      return;
+    }
+
+    const relatedContainer = document.getElementById('related-categories-container');
+    if (!relatedContainer) return;
+
+    let html = '';
+
+    // For each related category, fetch articles and render carousel
+    for (const relatedCat of relatedCategories) {
+      const articles = await this.fetchArticlesForCategory(relatedCat.documentId, 10);
+      
+      if (articles.length > 0) {
+        html += this.renderRelatedCategoryCarousel(relatedCat, articles);
+      }
+    }
+
+    relatedContainer.innerHTML = html;
+
+    // Initialize carousel scroll functionality
+    this.initCarouselScrolling();
+  }
+
+  /**
+   * Render a related category carousel section
+   */
+  renderRelatedCategoryCarousel(category, articles) {
+    const carouselId = `carousel-${category.slug}`;
+    
+    return `
+      <div class="related-category-section">
+        <div class="container">
+          <div class="related-category-header">
+            <h3 class="related-category-title">${category.name}</h3>
+            <a href="/${category.slug}" class="related-category-link">View All <i class="fa fa-arrow-right"></i></a>
+          </div>
+          <div class="related-carousel-wrapper">
+            <button class="carousel-nav carousel-prev" data-carousel="${carouselId}" aria-label="Previous">
+              <i class="fa fa-chevron-left"></i>
+            </button>
+            <div class="related-carousel" id="${carouselId}">
+              <div class="carousel-track">
+                ${articles.map(article => this.renderCarouselCard(article, category)).join('')}
+              </div>
+            </div>
+            <button class="carousel-nav carousel-next" data-carousel="${carouselId}" aria-label="Next">
+              <i class="fa fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Render a vertical card for the carousel
+   */
+  renderCarouselCard(article, category) {
+    const hasImage = article.image?.url;
+    const imageHtml = hasImage 
+      ? `<img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}">`
+      : '<div class="carousel-card-placeholder"></div>';
+    
+    const excerpt = article.excerpt || this.truncateText(article.content, 60);
+    const readTime = this.getReadTime(article);
+
+    return `
+      <div class="carousel-card">
+        <div class="carousel-card-image">
+          ${imageHtml}
+        </div>
+        <div class="carousel-card-content">
+          <h4 class="carousel-card-title">
+            <a href="/blog_single.html?slug=${article.slug}">${article.title}</a>
+          </h4>
+          <p class="carousel-card-excerpt">${excerpt}</p>
+          <div class="carousel-card-meta">
+            <span>${readTime} min read</span>
+            <span class="separator">•</span>
+            <span>${this.formatDate(article.publishedDate)}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Initialize carousel scrolling functionality
+   */
+  initCarouselScrolling() {
+    document.querySelectorAll('.carousel-nav').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const carouselId = btn.dataset.carousel;
+        const carousel = document.getElementById(carouselId);
+        if (!carousel) return;
+
+        const cardWidth = carousel.querySelector('.carousel-card')?.offsetWidth || 280;
+        const gap = 20; // Gap between cards
+        const scrollAmount = cardWidth + gap; // Scroll by 1 card
+
+        if (btn.classList.contains('carousel-prev')) {
+          carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        } else {
+          carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+      });
+    });
   }
 
   /**
@@ -74,13 +194,25 @@ class CategoryPageManager {
   }
 
   /**
-   * Fetch category details by slug
+   * Fetch category details by slug (with related categories)
    */
   async fetchCategory(slug) {
-    const url = getApiUrl(`/categories?filters[slug][$eq]=${slug}`);
+    const url = getApiUrl(`/categories?filters[slug][$eq]=${slug}&populate[relatedcategories]=true`);
     const response = await fetch(url);
     const data = await response.json();
     return data.data && data.data.length > 0 ? data.data[0] : null;
+  }
+
+  /**
+   * Fetch articles for a specific category (for related categories)
+   */
+  async fetchArticlesForCategory(categoryDocumentId, limit = 10) {
+    const url = getApiUrl(
+      `/articles?populate[category]=true&populate[image]=true&filters[category][documentId][$eq]=${categoryDocumentId}&pagination[limit]=${limit}&sort=publishedDate:desc`
+    );
+    const response = await fetch(url);
+    const data = await response.json();
+    return data.data || [];
   }
 
   /**
