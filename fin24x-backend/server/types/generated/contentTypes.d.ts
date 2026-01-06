@@ -507,6 +507,10 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
       'oneToMany',
       'api::category.category'
     >;
+    relatedtaggroups: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::tag-group.tag-group'
+    >;
     SectionName: Schema.Attribute.String;
     slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;

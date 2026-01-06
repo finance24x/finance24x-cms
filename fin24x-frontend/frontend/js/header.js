@@ -36,7 +36,7 @@ async function fetchCategories() {
 // Render header navigation links with dropdown (using categories)
 function renderNavigationLinks(categories, currentPage = '') {
   if (!categories || categories.length === 0) {
-    return '<li><a href="index.html">Home</a></li>';
+    return '<li><a href="/">Home</a></li>';
   }
 
   console.log('Total navigation categories:', categories.length);
@@ -82,7 +82,7 @@ function renderNavigationLinks(categories, currentPage = '') {
 // Render mobile menu navigation links (using categories)
 function renderMobileMenuLinks(categories) {
   if (!categories || categories.length === 0) {
-    return '<li class="menu_mm"><a href="index.html">Home</a></li>';
+    return '<li class="menu_mm"><a href="/">Home</a></li>';
   }
 
   // Categories are already filtered and sorted by the API query
@@ -95,7 +95,7 @@ function renderMobileMenuLinks(categories) {
 
 // Render logo - shows both image and text side by side
 function renderLogo(logoText, logoImage) {
-  let logoHTML = '<a href="index.html" class="d-flex flex-row align-items-center">';
+  let logoHTML = '<a href="/" class="d-flex flex-row align-items-center">';
   
   // Add logo image if available
   if (logoImage && logoImage.url) {

@@ -49,6 +49,11 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::category.category"
+    },
+    "relatedtaggroups": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::tag-group.tag-group"
     }
   }
 }

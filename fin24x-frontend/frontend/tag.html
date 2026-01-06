@@ -47,10 +47,11 @@
 /* Tag Header */
 .tag-header {
   padding: 50px 0 40px;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  color: #fff;
+  background: linear-gradient(135deg, #e8e8e8 0%, #e2e8f0 100%);
+  color: #310404;
   position: relative;
   overflow: hidden;
+  border-bottom: 1px solid #e0e0e0;
 }
 .tag-header::before {
   content: '';
@@ -59,7 +60,7 @@
   right: -10%;
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(20,189,238,0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(20,189,238,0.08) 0%, transparent 70%);
   pointer-events: none;
 }
 .tag-header-content {
@@ -89,9 +90,9 @@
   font-size: 0.7rem;
 }
 .tag-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #fff;
+  font-size: 2.0rem;
+  font-weight: 600;
+  color: #8c5959;
   margin: 0 0 15px 0;
   line-height: 1.2;
 }
@@ -101,11 +102,11 @@
   color: #14bdee;
 }
 .tag-description {
-  font-size: 1.1rem;
-  color: rgba(255,255,255,0.75);
+  font-size: 1.rem;
+  color: #555;
   margin: 0 0 30px 0;
   max-width: 700px;
-  line-height: 1.6;
+  line-height: 1.8;
 }
 .tag-stats {
   display: flex;
@@ -117,13 +118,13 @@
   align-items: center;
   gap: 8px;
   font-size: 0.9rem;
-  color: rgba(255,255,255,0.7);
+  color: #666;
 }
 .tag-stat i {
   color: #14bdee;
 }
 .tag-stat strong {
-  color: #fff;
+  color: #1a1a1a;
 }
 
 /* Similar & Related Tags Section */
@@ -602,7 +603,20 @@
   color: var(--text-secondary);
 }
 .dark-mode .tag-header {
-  background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
+  background: linear-gradient(135deg, #1e1e2e 0%, #2d2d3d 100%);
+  border-bottom-color: var(--border-color);
+}
+.dark-mode .tag-title {
+  color: var(--text-primary);
+}
+.dark-mode .tag-description {
+  color: var(--text-secondary);
+}
+.dark-mode .tag-stat {
+  color: var(--text-secondary);
+}
+.dark-mode .tag-stat strong {
+  color: var(--text-primary);
 }
 .dark-mode .tags-section {
   background: var(--bg-secondary);
