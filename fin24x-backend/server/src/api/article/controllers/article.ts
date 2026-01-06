@@ -5,54 +5,43 @@
 import { factories } from '@strapi/strapi';
 
 export default factories.createCoreController('api::article.article', ({ strapi }) => ({
-  async find(ctx) {
-    // Ensure deep population for category and image
-    const { query } = ctx;
-    
-    let populate: any = query.populate;
-    
-    if (populate === '*' || populate === true || (typeof populate === 'string' && populate.includes('*'))) {
-      populate = {
-        category: '*',
-        image: '*',
-      };
-      query.populate = populate;
-    } else if (typeof populate === 'object' && populate !== null) {
-      query.populate = {
-        ...populate,
-        category: (populate as any).category || '*',
-        image: (populate as any).image || '*',
-      };
-    }
+  /**
+   * Increment view count for an article
+   * POST /api/articles/:id/view
+   */
+  async incrementView(ctx) {
+    const { id } = ctx.params;
 
-    // Default sorting by publishedDate (latest first) if not specified
-    if (!query.sort) {
-      query.sort = { publishedDate: 'desc' };
-    }
+    try {
+      // Find the article by documentId (get published version)
+      const article = await strapi.documents('api::article.article').findOne({
+        documentId: id,
+        fields: ['views'],
+        status: 'published',
+      });
 
-    return await super.find(ctx);
-  },
-  async findOne(ctx) {
-    // Ensure deep population for category and image
-    const { query } = ctx;
-    
-    let populate: any = query.populate;
-    
-    if (populate === '*' || populate === true || (typeof populate === 'string' && populate.includes('*'))) {
-      populate = {
-        category: '*',
-        image: '*',
-      };
-      query.populate = populate;
-    } else if (typeof populate === 'object' && populate !== null) {
-      query.populate = {
-        ...populate,
-        category: (populate as any).category || '*',
-        image: (populate as any).image || '*',
-      };
-    }
+      if (!article) {
+        return ctx.notFound('Article not found');
+      }
 
-    return await super.findOne(ctx);
+      // Increment the view count using raw query to avoid draft/publish issues
+      const currentViews = article.views || 0;
+      const newViews = currentViews + 1;
+
+      // Use entityService to update and publish in one go
+      await strapi.db.query('api::article.article').updateMany({
+        where: { documentId: id },
+        data: { views: newViews },
+      });
+
+      return ctx.send({
+        data: {
+          views: newViews,
+        },
+      });
+    } catch (error) {
+      console.error('Error incrementing view count:', error);
+      return ctx.badRequest('Failed to increment view count');
+    }
   },
 }));
-

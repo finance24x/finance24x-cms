@@ -7,9 +7,8 @@ class ArticlePageManager {
   constructor() {
     this.articleContainer = document.getElementById('article-content');
     this.sidebarContainer = document.getElementById('article-sidebar');
-    this.relatedSection = document.getElementById('related-articles-section');
-    this.relatedGrid = document.getElementById('related-articles-grid');
     this.article = null;
+    this.categories = [];
   }
 
   async init() {
@@ -21,18 +20,36 @@ class ArticlePageManager {
     }
 
     try {
-      this.article = await this.fetchArticle(articleSlug);
+      // Fetch article and sidebar data in parallel
+      const [article, latestArticles, tags] = await Promise.all([
+        this.fetchArticle(articleSlug),
+        this.fetchLatestArticles(),
+        this.fetchPopularTags()
+      ]);
+
+      this.article = article;
 
       if (!this.article) {
         this.showError('Article not found');
         return;
       }
 
+      // Increment view count and update the article's view count
+      const updatedViews = await this.incrementViewCount();
+      if (updatedViews !== null) {
+        this.article.views = updatedViews;
+      } else {
+        // If increment failed, at least show current views + 1
+        this.article.views = (this.article.views || 0) + 1;
+      }
+
+      // Fetch related articles from the same category (after we know the category)
+      const relatedArticles = await this.fetchRelatedArticles();
+
       // Update page
       this.updatePageMeta();
       this.renderArticle();
-      this.renderSidebar();
-      await this.loadRelatedArticles();
+      this.renderSidebar(latestArticles, relatedArticles, tags);
 
     } catch (error) {
       console.error('Error loading article:', error);
@@ -66,6 +83,79 @@ class ArticlePageManager {
   }
 
   /**
+   * Fetch latest articles for sidebar (10 articles, show 5 with scroll)
+   */
+  async fetchLatestArticles() {
+    const url = getApiUrl('/articles?populate[image]=true&populate[category]=true&pagination[limit]=10&sort=publishedDate:desc');
+    const response = await fetch(url);
+    const data = await response.json();
+    return data.data || [];
+  }
+
+  /**
+   * Fetch related articles from the same category (5 articles, excluding current)
+   */
+  async fetchRelatedArticles() {
+    if (!this.article?.category?.documentId) return [];
+    
+    try {
+      const categoryDocId = this.article.category.documentId;
+      const currentArticleId = this.article.documentId;
+      
+      const url = getApiUrl(
+        `/articles?populate[image]=true&populate[category]=true&filters[category][documentId][$eq]=${categoryDocId}&filters[documentId][$ne]=${currentArticleId}&pagination[limit]=5&sort=publishedDate:desc`
+      );
+      const response = await fetch(url);
+      const data = await response.json();
+      return data.data || [];
+    } catch (error) {
+      console.error('Failed to fetch related articles:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Increment view count for the current article
+   * @returns {Promise<number|null>} The new view count, or null if failed
+   */
+  async incrementViewCount() {
+    if (!this.article?.documentId) return null;
+    
+    try {
+      const url = getApiUrl(`/articles/${this.article.documentId}/view`);
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        return result.data?.views || null;
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to increment view count:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Fetch popular tags
+   */
+  async fetchPopularTags() {
+    try {
+      const url = getApiUrl('/popular-tag?populate[tags]=true');
+      const response = await fetch(url);
+      const data = await response.json();
+      return data.data?.tags || [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /**
    * Update page title and meta
    */
   updatePageMeta() {
@@ -86,7 +176,7 @@ class ArticlePageManager {
       categoryLink.href = `/${this.article.category.slug}`;
     }
     
-    articleBreadcrumb.textContent = this.truncateText(this.article.title, 50);
+    articleBreadcrumb.textContent = this.truncateText(this.article.title, 40);
   }
 
   /**
@@ -95,39 +185,30 @@ class ArticlePageManager {
   renderArticle() {
     const hasImage = this.article.image?.url;
     const imageUrl = hasImage ? `${API_CONFIG.BASE_URL}${this.article.image.url}` : '';
-    const categoryName = this.article.category?.name || 'Article';
-    const categorySlug = this.article.category?.slug || 'article';
+    const publishDate = this.formatDateLong(this.article.publishedDate);
+    const author = this.article.author || 'admin';
+    const views = this.article.views || 0;
     const readTime = this.article.minutesToread || 3;
-    const publishDate = this.formatDate(this.article.publishedDate);
-    const author = this.article.author || 'Admin';
 
-    // Render tags
+    // Build tags for footer
     const tagsHtml = this.article.tags && this.article.tags.length > 0
-      ? `<div class="article-tags">
-          ${this.article.tags.map(tag => 
-            `<a href="/tag/${tag.slug}" class="article-tag">${tag.name}</a>`
-          ).join('')}
-        </div>`
+      ? this.article.tags.map(tag => 
+          `<a href="/tag/${tag.slug}">${tag.name}</a>`
+        ).join(', ')
       : '';
 
     this.articleContainer.innerHTML = `
-      <header class="article-header">
-        <a href="/${categorySlug}" class="article-category">${categoryName}</a>
-        <h1 class="article-title">${this.article.title}</h1>
-        <div class="article-meta">
-          <span class="meta-author">
-            <i class="fa fa-user"></i> ${author}
-          </span>
-          <span class="meta-separator">•</span>
-          <span class="meta-date">
-            <i class="fa fa-calendar"></i> ${publishDate}
-          </span>
-          <span class="meta-separator">•</span>
-          <span class="meta-read-time">
-            <i class="fa fa-clock-o"></i> ${readTime} min read
-          </span>
-        </div>
-      </header>
+      <h1 class="article-title">${this.article.title}</h1>
+      
+      <div class="article-meta">
+        <span>Post on <a href="#">${publishDate}</a></span>
+        <span class="meta-separator">|</span>
+        <span>By <a href="#">${author}</a></span>
+        <span class="meta-separator">|</span>
+        <span><i class="fa fa-eye"></i> ${this.formatViews(views)} views</span>
+        <span class="meta-separator">|</span>
+        <span><i class="fa fa-clock-o"></i> ${readTime} min read</span>
+      </div>
 
       ${hasImage ? `
       <div class="article-featured-image">
@@ -135,130 +216,207 @@ class ArticlePageManager {
       </div>
       ` : ''}
 
+      ${this.article.excerpt ? `
+      <div class="article-excerpt-quote">
+        <span class="excerpt-bar"></span>
+        <p class="excerpt-text">${this.article.excerpt}</p>
+      </div>
+      ` : ''}
+
       <div class="article-body">
-        ${this.article.content || '<p>No content available.</p>'}
+        ${this.formatContent(this.article.content)}
       </div>
 
-      ${tagsHtml}
+      <div class="article-footer">
+        ${tagsHtml ? `
+        <div class="article-tags-footer">
+          <span class="tags-label">Tags:</span>
+          ${tagsHtml}
+        </div>
+        ` : ''}
+        
+        <div class="article-share">
+          <span class="share-label">Share:</span>
+          <div class="share-buttons">
+            <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}" target="_blank" class="share-btn">
+              <i class="fa fa-facebook"></i>
+            </a>
+            <a href="https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(this.article.title)}" target="_blank" class="share-btn">
+              <i class="fa fa-twitter"></i>
+            </a>
+            <a href="https://plus.google.com/share?url=${encodeURIComponent(window.location.href)}" target="_blank" class="share-btn">
+              <i class="fa fa-google-plus"></i>
+            </a>
+            <a href="https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent(this.article.title)}" target="_blank" class="share-btn">
+              <i class="fa fa-linkedin"></i>
+            </a>
+            <a href="mailto:?subject=${encodeURIComponent(this.article.title)}&body=${encodeURIComponent(window.location.href)}" class="share-btn">
+              <i class="fa fa-envelope"></i>
+            </a>
+          </div>
+        </div>
+      </div>
 
-      <div class="article-share">
-        <span class="share-label">Share:</span>
-        <div class="share-buttons">
-          <a href="https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(this.article.title)}" target="_blank" class="share-btn twitter">
-            <i class="fa fa-twitter"></i>
-          </a>
-          <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}" target="_blank" class="share-btn facebook">
-            <i class="fa fa-facebook"></i>
-          </a>
-          <a href="https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent(this.article.title)}" target="_blank" class="share-btn linkedin">
-            <i class="fa fa-linkedin"></i>
-          </a>
-          <a href="mailto:?subject=${encodeURIComponent(this.article.title)}&body=${encodeURIComponent(window.location.href)}" class="share-btn email">
-            <i class="fa fa-envelope"></i>
-          </a>
+      <!-- Article Ad Space (Below Share) -->
+      <div class="article-ad-placeholder">
+        <div class="article-ad-box">
+          <span>Advertisement</span>
         </div>
       </div>
     `;
   }
 
   /**
-   * Render sidebar
+   * Format content - handle HTML or plain text
    */
-  renderSidebar() {
-    const categoryName = this.article.category?.name || 'Articles';
-    const categorySlug = this.article.category?.slug || '';
+  formatContent(content) {
+    if (!content) return '<p>No content available.</p>';
+    
+    // Check if marked library is available
+    if (typeof marked !== 'undefined') {
+      // Configure marked options
+      marked.setOptions({
+        breaks: true,        // Convert \n to <br>
+        gfm: true,           // GitHub Flavored Markdown
+        headerIds: true,     // Add IDs to headers
+        mangle: false,       // Don't mangle email addresses
+      });
+      
+      // Parse Markdown to HTML
+      return marked.parse(content);
+    }
+    
+    // Fallback: If content is already HTML, return as is
+    if (content.includes('<p>') || content.includes('<div>')) {
+      return content;
+    }
+    
+    // Fallback: wrap in paragraphs
+    return content.split('\n\n').map(p => `<p>${p}</p>`).join('');
+  }
+
+  /**
+   * Render sidebar with latest articles and tags (no categories)
+   */
+  renderSidebar(latestArticles, relatedArticles, tags) {
+    // Get current article's category for "View All" link
+    const category = this.article?.category;
+    const viewAllHtml = category 
+      ? `<a href="/${category.slug}" class="view-all-link">View All →</a>`
+      : '';
+
+    // Latest Articles HTML
+    const latestHtml = latestArticles.length > 0
+      ? latestArticles.map(article => this.renderSidebarArticle(article)).join('')
+      : '<p>No articles</p>';
+
+    // Related Articles HTML (same category)
+    const relatedHtml = relatedArticles.length > 0
+      ? relatedArticles.map(article => this.renderSidebarArticle(article)).join('')
+      : '';
+
+    // Tags HTML
+    const tagsHtml = tags.length > 0
+      ? tags.map(tag => 
+          `<a href="/tag/${tag.slug}" class="sidebar-tag">${tag.name}</a>`
+        ).join('')
+      : '';
 
     this.sidebarContainer.innerHTML = `
-      <div class="sidebar-widget sidebar-about">
-        <h4 class="widget-title">About This Article</h4>
-        <div class="about-stats">
-          <div class="stat-item">
-            <i class="fa fa-clock-o"></i>
-            <span>${this.article.minutesToread || 3} min read</span>
-          </div>
-          <div class="stat-item">
-            <i class="fa fa-calendar"></i>
-            <span>${this.formatDate(this.article.publishedDate)}</span>
-          </div>
-          <div class="stat-item">
-            <i class="fa fa-folder-o"></i>
-            <a href="/${categorySlug}">${categoryName}</a>
-          </div>
+      <!-- Ad Placeholder 1 (Top) -->
+      <div class="sidebar-section sidebar-ad-placeholder">
+        <div class="ad-placeholder-box">
+          <span>Ad Space</span>
         </div>
       </div>
 
-      ${this.article.tags && this.article.tags.length > 0 ? `
-      <div class="sidebar-widget sidebar-tags">
-        <h4 class="widget-title">Tags</h4>
-        <div class="tags-list">
-          ${this.article.tags.map(tag => 
-            `<a href="/tag/${tag.slug}" class="sidebar-tag">${tag.name}</a>`
-          ).join('')}
+      <!-- Latest Articles -->
+      <div class="sidebar-section">
+        <h3 class="sidebar-section-title">Latest Articles</h3>
+        <div class="latest-articles latest-articles-scrollable">
+          ${latestHtml}
+        </div>
+      </div>
+
+      <!-- Ad Placeholder 2 -->
+      <div class="sidebar-section sidebar-ad-placeholder">
+        <div class="ad-placeholder-box ad-placeholder-small">
+          <span>Ad Space</span>
+        </div>
+      </div>
+
+      ${relatedHtml ? `
+      <!-- Related Articles (Same Category) -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-header">
+          <h3 class="sidebar-section-title">Related Articles</h3>
+          ${viewAllHtml}
+        </div>
+        <div class="latest-articles">
+          ${relatedHtml}
         </div>
       </div>
       ` : ''}
 
-      <div class="sidebar-widget sidebar-category">
-        <h4 class="widget-title">More from ${categoryName}</h4>
-        <a href="/${categorySlug}" class="category-link">
-          View all articles <i class="fa fa-arrow-right"></i>
-        </a>
+      ${tagsHtml ? `
+      <!-- Tags -->
+      <div class="sidebar-section">
+        <h3 class="sidebar-section-title">Tags</h3>
+        <div class="sidebar-tags-list">
+          ${tagsHtml}
+        </div>
       </div>
+
+      <!-- Ad Placeholder 3 (Below Tags) -->
+      <div class="sidebar-section sidebar-ad-placeholder">
+        <div class="ad-placeholder-box">
+          <span>Ad Space</span>
+        </div>
+      </div>
+      ` : ''}
     `;
   }
 
   /**
-   * Load related articles
+   * Render a single sidebar article item (used for Latest & Related)
    */
-  async loadRelatedArticles() {
-    if (!this.article.category) return;
-
-    try {
-      const url = getApiUrl(
-        `/articles?filters[category][documentId][$eq]=${this.article.category.documentId}&filters[slug][$ne]=${this.article.slug}&populate[image]=true&populate[category]=true&pagination[limit]=4&sort=publishedDate:desc`
-      );
-      const response = await fetch(url);
-      const data = await response.json();
-      const articles = data.data || [];
-
-      if (articles.length > 0) {
-        this.relatedSection.style.display = 'block';
-        this.relatedGrid.innerHTML = articles.map(article => this.renderRelatedCard(article)).join('');
-      }
-    } catch (error) {
-      console.error('Error loading related articles:', error);
-    }
-  }
-
-  /**
-   * Render related article card
-   */
-  renderRelatedCard(article) {
+  renderSidebarArticle(article) {
     const hasImage = article.image?.url;
     const imageHtml = hasImage
       ? `<img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}">`
-      : '<div class="related-card-placeholder"></div>';
-    
+      : '<div class="latest-article-image-placeholder"></div>';
     const categorySlug = article.category?.slug || 'article';
-    const readTime = article.minutesToread || 3;
-
+    const date = this.formatDateLong(article.publishedDate);
+    const views = article.views || 0;
+    
     return `
-      <div class="related-card">
-        <div class="related-card-image">
+      <div class="latest-article">
+        <div class="latest-article-image">
           <a href="/${categorySlug}/${article.slug}">${imageHtml}</a>
         </div>
-        <div class="related-card-content">
-          <h4 class="related-card-title">
+        <div class="latest-article-content">
+          <h4 class="latest-article-title">
             <a href="/${categorySlug}/${article.slug}">${article.title}</a>
           </h4>
-          <div class="related-card-meta">
-            <span>${readTime} min read</span>
-            <span class="separator">•</span>
-            <span>${this.formatDate(article.publishedDate)}</span>
+          <div class="latest-article-meta">
+            <span class="latest-article-date">${date}</span>
+            <span class="latest-article-views"><i class="fa fa-eye"></i> ${this.formatViews(views)}</span>
           </div>
         </div>
       </div>
     `;
+  }
+
+  /**
+   * Format views count (e.g., 1500 -> 1.5K)
+   */
+  formatViews(views) {
+    if (views >= 1000000) {
+      return (views / 1000000).toFixed(1) + 'M';
+    } else if (views >= 1000) {
+      return (views / 1000).toFixed(1) + 'K';
+    }
+    return views.toString();
   }
 
   /**
@@ -281,13 +439,13 @@ class ArticlePageManager {
   }
 
   /**
-   * Format date
+   * Format date - long format (May 5, 2018)
    */
-  formatDate(dateStr) {
+  formatDateLong(dateStr) {
     if (!dateStr) return '';
     const date = new Date(dateStr);
     return date.toLocaleDateString('en-US', {
-      month: 'short',
+      month: 'long',
       day: 'numeric',
       year: 'numeric'
     });
@@ -309,4 +467,3 @@ document.addEventListener('DOMContentLoaded', () => {
   const manager = new ArticlePageManager();
   manager.init();
 });
-
