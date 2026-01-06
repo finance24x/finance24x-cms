@@ -43,7 +43,7 @@ class HomepageSectionsManager {
    * Fetch articles for a specific category
    */
   async fetchArticlesByCategory(categoryDocumentId, limit = 5) {
-    const url = getApiUrl(`/articles?populate[category]=true&populate[image]=true&filters[category][documentId][$eq]=${categoryDocumentId}&pagination[limit]=${limit}&sort=publishedDate:desc`);
+    const url = getApiUrl(`/articles?populate[category]=true&populate[image]=true&populate[tags]=true&filters[category][documentId][$eq]=${categoryDocumentId}&pagination[limit]=${limit}&sort=publishedDate:desc`);
     const response = await fetch(url);
     const data = await response.json();
     return data.data || [];

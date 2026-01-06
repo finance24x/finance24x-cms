@@ -45,6 +45,16 @@ export default {
         auth: false, // Allow public access for manual population
       },
     },
+    {
+      method: 'POST',
+      path: '/populate/tags',
+      handler: 'populate.populateTags',
+      config: {
+        policies: [],
+        middlewares: [],
+        auth: false, // Allow public access for manual population
+      },
+    },
   ],
 };
 

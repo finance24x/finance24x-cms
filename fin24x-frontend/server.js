@@ -17,6 +17,11 @@ app.get('/blog_single.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'blog_single.html'));
 });
 
+// Tag pages - /tag/:slug
+app.get('/tag/:slug', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'tag.html'));
+});
+
 // Category pages - serve category.html for any slug that looks like a category
 // This should be last to avoid catching other routes
 app.get('/:slug', (req, res, next) => {

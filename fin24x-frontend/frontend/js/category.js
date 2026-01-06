@@ -208,7 +208,7 @@ class CategoryPageManager {
    */
   async fetchArticlesForCategory(categoryDocumentId, limit = 10) {
     const url = getApiUrl(
-      `/articles?populate[category]=true&populate[image]=true&filters[category][documentId][$eq]=${categoryDocumentId}&pagination[limit]=${limit}&sort=publishedDate:desc`
+      `/articles?populate[category]=true&populate[image]=true&populate[tags]=true&filters[category][documentId][$eq]=${categoryDocumentId}&pagination[limit]=${limit}&sort=publishedDate:desc`
     );
     const response = await fetch(url);
     const data = await response.json();
@@ -221,7 +221,7 @@ class CategoryPageManager {
   async fetchArticles(page = 1) {
     const start = (page - 1) * this.pageSize;
     const url = getApiUrl(
-      `/articles?populate[category]=true&populate[image]=true&filters[category][documentId][$eq]=${this.category.documentId}&pagination[start]=${start}&pagination[limit]=${this.pageSize}&sort=publishedDate:desc`
+      `/articles?populate[category]=true&populate[image]=true&populate[tags]=true&filters[category][documentId][$eq]=${this.category.documentId}&pagination[start]=${start}&pagination[limit]=${this.pageSize}&sort=publishedDate:desc`
     );
     const response = await fetch(url);
     const data = await response.json();
@@ -326,6 +326,7 @@ class CategoryPageManager {
     
     const excerpt = article.excerpt || this.truncateText(article.content, 250);
     const readTime = this.getReadTime(article);
+    const tagsHtml = this.renderTags(article.tags, 5);
 
     return `
       <div class="featured-article">
@@ -335,6 +336,7 @@ class CategoryPageManager {
             <a href="/blog_single.html?slug=${article.slug}">${article.title}</a>
           </h1>
           <p class="featured-excerpt">${excerpt}</p>
+          ${tagsHtml}
           <div class="featured-meta">
             <span class="read-time">${readTime} min read</span>
             <span class="separator">•</span>
@@ -357,6 +359,7 @@ class CategoryPageManager {
     
     const readTime = this.getReadTime(article);
     const excerpt = article.excerpt || this.truncateText(article.content, 80);
+    const tagsHtml = this.renderTags(article.tags, 3);
 
     return `
       <div class="article-card-horizontal">
@@ -367,6 +370,7 @@ class CategoryPageManager {
             <a href="/blog_single.html?slug=${article.slug}">${article.title}</a>
           </h3>
           <p class="card-excerpt">${excerpt}</p>
+          ${tagsHtml}
           <div class="card-meta">
             <span>${readTime} min read</span>
             <span class="separator">•</span>
@@ -375,6 +379,28 @@ class CategoryPageManager {
         </div>
       </div>
     `;
+  }
+
+  /**
+   * Render tags as clickable links
+   */
+  renderTags(tags, limit = 3) {
+    if (!tags || tags.length === 0) return '';
+    
+    const displayTags = tags.slice(0, limit);
+    const remaining = tags.length - limit;
+    
+    let html = '<div class="article-tags">';
+    html += displayTags.map(tag => 
+      `<a href="/tag/${tag.slug}" class="article-tag">${tag.name}</a>`
+    ).join('');
+    
+    if (remaining > 0) {
+      html += `<span class="article-tags-more">+${remaining}</span>`;
+    }
+    
+    html += '</div>';
+    return html;
   }
 
   /**

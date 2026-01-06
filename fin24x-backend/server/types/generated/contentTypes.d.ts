@@ -463,7 +463,7 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     publishedDate: Schema.Attribute.Date & Schema.Attribute.Required;
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
-    tags: Schema.Attribute.JSON;
+    tags: Schema.Attribute.Relation<'manyToMany', 'api::tag.tag'>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -674,6 +674,37 @@ export interface ApiMarketTickerMarketTicker extends Struct.SingleTypeSchema {
       Schema.Attribute.Private;
     marketItems: Schema.Attribute.Component<'market.market-item', true>;
     publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiTagTag extends Struct.CollectionTypeSchema {
+  collectionName: 'tags';
+  info: {
+    description: 'Tags for categorizing and filtering articles';
+    displayName: 'Tag';
+    pluralName: 'tags';
+    singularName: 'tag';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    articles: Schema.Attribute.Relation<'manyToMany', 'api::article.article'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::tag.tag'> &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1196,6 +1227,7 @@ declare module '@strapi/strapi' {
       'api::header.header': ApiHeaderHeader;
       'api::homepage-section.homepage-section': ApiHomepageSectionHomepageSection;
       'api::market-ticker.market-ticker': ApiMarketTickerMarketTicker;
+      'api::tag.tag': ApiTagTag;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

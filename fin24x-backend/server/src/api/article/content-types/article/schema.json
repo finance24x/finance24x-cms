@@ -63,8 +63,10 @@
       "default": 0
     },
     "tags": {
-      "type": "json",
-      "required": false
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::tag.tag",
+      "inversedBy": "articles"
     },
     "minutesToread": {
       "type": "integer",
