@@ -131,6 +131,34 @@
 .carousel-card-meta .separator {
   margin: 0 4px;
 }
+
+/* Carousel Card with Date Badge */
+.carousel-card-with-date .carousel-card-image {
+  position: relative;
+}
+.carousel-card-date-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #14bdee;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  text-align: center;
+  line-height: 1;
+}
+.carousel-card-date-badge .date-day {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.carousel-card-date-badge .date-month {
+  display: block;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-top: 2px;
+}
 .carousel-nav {
   flex-shrink: 0;
   width: 40px;

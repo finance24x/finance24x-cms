@@ -64,8 +64,12 @@ class HomepageSectionsManager {
         continue;
       }
 
+      // Determine article limit - carousel sections get 10 items
+      const isCarousel = section.sectionType === 'grid-vertical' || section.sectionType === 'grid-with-date';
+      const limit = isCarousel ? 10 : (section.itemsToShow || 5);
+
       // Fetch articles for this category
-      const articles = await this.fetchArticlesByCategory(category.documentId, section.itemsToShow || 5);
+      const articles = await this.fetchArticlesByCategory(category.documentId, limit);
       
       // Determine background class (alternate grey/white)
       const bgClass = i % 2 === 0 ? '' : 'section-alt-bg';
@@ -90,6 +94,32 @@ class HomepageSectionsManager {
       
       this.sectionsContainer.innerHTML += sectionHtml;
     }
+
+    // Initialize carousel scrolling after all sections are rendered
+    this.initCarouselScrolling();
+  }
+
+  /**
+   * Initialize carousel scrolling functionality (same as category page)
+   */
+  initCarouselScrolling() {
+    document.querySelectorAll('.carousel-nav').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const carouselId = btn.dataset.carousel;
+        const carousel = document.getElementById(carouselId);
+        if (!carousel) return;
+
+        const cardWidth = carousel.querySelector('.carousel-card')?.offsetWidth || 280;
+        const gap = 20;
+        const scrollAmount = cardWidth + gap;
+
+        if (btn.classList.contains('carousel-prev')) {
+          carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        } else {
+          carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+      });
+    });
   }
 
   /**
@@ -152,24 +182,31 @@ class HomepageSectionsManager {
   }
 
   /**
-   * Render Grid Vertical Section (Vertical cards - image on top)
+   * Render Grid Vertical Section (Carousel - same as category page)
    */
   renderGridVerticalSection(section, articles, bgClass, index, category) {
     const categoryUrl = category?.slug ? `/${category.slug}` : '#';
+    const carouselId = `carousel-vertical-${index}`;
     
     return `
-      <div class="courses content-section section-${index + 1} ${bgClass}">
+      <div class="related-category-section content-section section-${index + 1} ${bgClass}">
         <div class="container">
-          <div class="row">
-            <div class="col">
-              <div class="section_title_container d-flex flex-row align-items-center justify-content-between">
-                <h2 class="section_title mb-0">${section.title}</h2>
-                <div class="courses_button trans_200"><a href="${categoryUrl}">${section.buttonText || 'view all'}</a></div>
+          <div class="related-category-header">
+            <h3 class="related-category-title">${section.title}</h3>
+            <a href="${categoryUrl}" class="related-category-link">${section.buttonText || 'View All'} <i class="fa fa-arrow-right"></i></a>
+          </div>
+          <div class="related-carousel-wrapper">
+            <button class="carousel-nav carousel-prev" data-carousel="${carouselId}" aria-label="Previous">
+              <i class="fa fa-chevron-left"></i>
+            </button>
+            <div class="related-carousel" id="${carouselId}">
+              <div class="carousel-track">
+                ${articles.slice(0, 10).map(article => this.renderCarouselCard(article)).join('')}
               </div>
             </div>
-          </div>
-          <div class="row courses_row">
-            ${articles.slice(0, 4).map(article => this.renderVerticalCard(article)).join('')}
+            <button class="carousel-nav carousel-next" data-carousel="${carouselId}" aria-label="Next">
+              <i class="fa fa-chevron-right"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -177,24 +214,31 @@ class HomepageSectionsManager {
   }
 
   /**
-   * Render Grid with Date Section (Vertical cards with date - 4 per row)
+   * Render Grid with Date Section (Carousel with date badges)
    */
   renderGridWithDateSection(section, articles, bgClass, index, category) {
     const categoryUrl = category?.slug ? `/${category.slug}` : '#';
+    const carouselId = `carousel-date-${index}`;
     
     return `
-      <div class="courses content-section section-${index + 1} ${bgClass}">
+      <div class="related-category-section content-section section-${index + 1} ${bgClass}">
         <div class="container">
-          <div class="row">
-            <div class="col">
-              <div class="section_title_container d-flex flex-row align-items-center justify-content-between">
-                <h2 class="section_title mb-0">${section.title}</h2>
-                <div class="courses_button trans_200"><a href="${categoryUrl}">${section.buttonText || 'view all'}</a></div>
+          <div class="related-category-header">
+            <h3 class="related-category-title">${section.title}</h3>
+            <a href="${categoryUrl}" class="related-category-link">${section.buttonText || 'View All'} <i class="fa fa-arrow-right"></i></a>
+          </div>
+          <div class="related-carousel-wrapper">
+            <button class="carousel-nav carousel-prev" data-carousel="${carouselId}" aria-label="Previous">
+              <i class="fa fa-chevron-left"></i>
+            </button>
+            <div class="related-carousel" id="${carouselId}">
+              <div class="carousel-track">
+                ${articles.slice(0, 10).map(article => this.renderCarouselCardWithDate(article)).join('')}
               </div>
             </div>
-          </div>
-          <div class="row courses_row">
-            ${articles.slice(0, 4).map(article => this.renderVerticalCardWithDate(article)).join('')}
+            <button class="carousel-nav carousel-next" data-carousel="${carouselId}" aria-label="Next">
+              <i class="fa fa-chevron-right"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -276,28 +320,28 @@ class HomepageSectionsManager {
   }
 
   /**
-   * Render Vertical Card (image on top, content below) - 4 per row
+   * Render Carousel Card (same structure as category page)
    */
-  renderVerticalCard(article) {
+  renderCarouselCard(article) {
     const hasImage = article.image?.url;
     const imageHtml = hasImage 
-      ? `<div class="grid-card-image"><img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}"></div>`
-      : '<div class="grid-card-image grid-card-placeholder"></div>';
-    
-    const categoryName = article.category?.name || 'Article';
+      ? `<img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}">`
+      : '<div class="carousel-card-placeholder"></div>';
     
     return `
-      <div class="col-lg-3 col-md-6 grid_card_col">
-        <div class="grid-card-vertical">
+      <div class="carousel-card">
+        <div class="carousel-card-image">
           ${imageHtml}
-          <div class="grid-card-content">
-            <h3 class="grid-card-title"><a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a></h3>
-            <p class="grid-card-excerpt">${article.excerpt || this.truncateText(article.content, 80)}</p>
-            <div class="grid-card-meta">
-              <span>${article.minutesToread || 3} min read</span>
-              <span class="separator">•</span>
-              <span>${this.formatDate(article.publishedDate)}</span>
-            </div>
+        </div>
+        <div class="carousel-card-content">
+          <h4 class="carousel-card-title">
+            <a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a>
+          </h4>
+          <p class="carousel-card-excerpt">${article.excerpt || this.truncateText(article.content, 60)}</p>
+          <div class="carousel-card-meta">
+            <span>${article.minutesToread || 3} min read</span>
+            <span class="separator">•</span>
+            <span>${this.formatDate(article.publishedDate)}</span>
           </div>
         </div>
       </div>
@@ -305,37 +349,36 @@ class HomepageSectionsManager {
   }
 
   /**
-   * Render Vertical Card with Date (image on top with date badge) - 4 per row
+   * Render Carousel Card with Date Badge
    */
-  renderVerticalCardWithDate(article) {
+  renderCarouselCardWithDate(article) {
     const hasImage = article.image?.url;
     const imageHtml = hasImage 
-      ? `<div class="grid-card-image"><img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}"></div>`
-      : '<div class="grid-card-image grid-card-placeholder"></div>';
+      ? `<img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}">`
+      : '<div class="carousel-card-placeholder"></div>';
     
-    const categoryName = article.category?.name || 'Article';
     const date = new Date(article.publishedDate);
     const day = date.getDate().toString().padStart(2, '0');
     const month = date.toLocaleString('en', { month: 'short' });
     
     return `
-      <div class="col-lg-3 col-md-6 grid_card_col">
-        <div class="grid-card-vertical grid-card-with-date">
-          <div class="grid-card-image-wrapper">
-            ${imageHtml}
-            <div class="grid-card-date-badge">
-              <span class="date-day">${day}</span>
-              <span class="date-month">${month}</span>
-            </div>
+      <div class="carousel-card carousel-card-with-date">
+        <div class="carousel-card-image">
+          ${imageHtml}
+          <div class="carousel-card-date-badge">
+            <span class="date-day">${day}</span>
+            <span class="date-month">${month}</span>
           </div>
-          <div class="grid-card-content">
-            <h3 class="grid-card-title"><a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a></h3>
-            <p class="grid-card-excerpt">${article.excerpt || this.truncateText(article.content, 80)}</p>
-            <div class="grid-card-meta">
-              <span>${article.minutesToread || 3} min read</span>
-              <span class="separator">•</span>
-              <span>${this.formatDate(article.publishedDate)}</span>
-            </div>
+        </div>
+        <div class="carousel-card-content">
+          <h4 class="carousel-card-title">
+            <a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a>
+          </h4>
+          <p class="carousel-card-excerpt">${article.excerpt || this.truncateText(article.content, 60)}</p>
+          <div class="carousel-card-meta">
+            <span>${article.minutesToread || 3} min read</span>
+            <span class="separator">•</span>
+            <span>${this.formatDate(article.publishedDate)}</span>
           </div>
         </div>
       </div>
