@@ -1,6 +1,6 @@
 /**
  * Tag Page Manager
- * Fetches and renders articles for a specific tag
+ * Fetches and renders articles for a specific tag with tag group, similar tags, and related tags
  */
 
 class TagPageManager {
@@ -9,7 +9,7 @@ class TagPageManager {
     this.paginationContainer = document.getElementById('pagination-container');
     this.pagination = document.getElementById('pagination');
     this.currentPage = 1;
-    this.pageSize = 20;
+    this.pageSize = 10;
     this.tag = null;
     this.totalArticles = 0;
   }
@@ -33,7 +33,7 @@ class TagPageManager {
     document.getElementById('tag-title').textContent = formattedSlug;
 
     try {
-      // Fetch tag details
+      // Fetch tag details with relations
       this.tag = await this.fetchTag(slug);
       
       if (!this.tag) {
@@ -43,6 +43,10 @@ class TagPageManager {
 
       // Update page with actual tag info
       this.updateTagInfo();
+      
+      // Render similar and related tags
+      this.renderSimilarTags();
+      this.renderRelatedTags();
       
       // Fetch and render articles
       await this.loadArticles();
@@ -74,10 +78,10 @@ class TagPageManager {
   }
 
   /**
-   * Fetch tag details by slug
+   * Fetch tag details by slug with relations
    */
   async fetchTag(slug) {
-    const url = getApiUrl(`/tags?filters[slug][$eq]=${slug}`);
+    const url = getApiUrl(`/tags?filters[slug][$eq]=${slug}&populate[tagGroup]=true&populate[similarTags]=true&populate[relatedTags]=true`);
     const response = await fetch(url);
     const data = await response.json();
     return data.data && data.data.length > 0 ? data.data[0] : null;
@@ -102,18 +106,97 @@ class TagPageManager {
    * Update page with tag information
    */
   updateTagInfo() {
-    // Update page title
+    // Update page title and meta
     document.title = `${this.tag.name} - Finance24x`;
-    
-    // Update breadcrumb
+    document.getElementById('tag-title').textContent = this.tag.name;
     document.getElementById('breadcrumb-tag').textContent = this.tag.name;
     
-    // Update tag header
-    document.getElementById('tag-title').textContent = this.tag.name;
-    
+    // Update meta description
     if (this.tag.description) {
+      document.getElementById('meta-description').setAttribute('content', this.tag.description);
       document.getElementById('tag-description').textContent = this.tag.description;
     }
+    
+    // Update stats
+    const similarCount = this.tag.similarTags?.length || 0;
+    const relatedCount = this.tag.relatedTags?.length || 0;
+    
+    if (similarCount > 0) {
+      document.getElementById('tag-similar-count').style.display = 'flex';
+      document.getElementById('similar-count').textContent = similarCount;
+    }
+    
+    if (relatedCount > 0) {
+      document.getElementById('tag-related-count').style.display = 'flex';
+      document.getElementById('related-count').textContent = relatedCount;
+    }
+  }
+
+  /**
+   * Render similar tags
+   */
+  renderSimilarTags() {
+    const similarTags = this.tag.similarTags || [];
+    if (similarTags.length === 0) return;
+    
+    document.getElementById('tags-section').style.display = 'block';
+    document.getElementById('similar-tags-container').style.display = 'block';
+    
+    const container = document.getElementById('similar-tags-row');
+    container.innerHTML = similarTags.map(tag => `
+      <a href="/tag/${tag.slug}" class="tag-pill similar">
+        <i class="fa fa-tag"></i>
+        ${tag.name}
+      </a>
+    `).join('');
+  }
+
+  /**
+   * Render related tags as carousel
+   */
+  renderRelatedTags() {
+    const relatedTags = this.tag.relatedTags || [];
+    if (relatedTags.length === 0) return;
+    
+    document.getElementById('tags-section').style.display = 'block';
+    document.getElementById('related-tags-container').style.display = 'block';
+    
+    const container = document.getElementById('related-tags-track');
+    container.innerHTML = relatedTags.map(tag => `
+      <a href="/tag/${tag.slug}" class="related-tag-card">
+        <div class="related-tag-icon">
+          <i class="fa fa-tag"></i>
+        </div>
+        <div class="related-tag-info">
+          <p class="related-tag-name">${tag.name}</p>
+          <p class="related-tag-count">View →</p>
+        </div>
+      </a>
+    `).join('');
+    
+    // Initialize carousel navigation
+    this.initRelatedCarousel();
+  }
+
+  /**
+   * Initialize related tags carousel navigation
+   */
+  initRelatedCarousel() {
+    const carousel = document.getElementById('related-tags-carousel');
+    const prevBtn = document.getElementById('related-carousel-prev');
+    const nextBtn = document.getElementById('related-carousel-next');
+    
+    if (!carousel || !prevBtn || !nextBtn) return;
+    
+    const scrollAmount = 180; // Card width + gap
+    
+    prevBtn.addEventListener('click', () => {
+      carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    });
+    
+    nextBtn.addEventListener('click', () => {
+      carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    });
   }
 
   /**
@@ -131,8 +214,10 @@ class TagPageManager {
     const articles = await this.fetchArticles(this.currentPage);
     
     // Update article count
-    document.getElementById('tag-article-count').textContent = 
-      `${this.totalArticles} article${this.totalArticles !== 1 ? 's' : ''} tagged`;
+    document.getElementById('tag-article-count').innerHTML = `
+      <i class="fa fa-newspaper-o"></i>
+      <span><strong>${this.totalArticles}</strong> article${this.totalArticles !== 1 ? 's' : ''}</span>
+    `;
     
     if (articles.length === 0) {
       this.articlesContainer.innerHTML = `
@@ -145,11 +230,58 @@ class TagPageManager {
       return;
     }
 
-    // Render articles
-    this.articlesContainer.innerHTML = articles.map(article => this.renderArticleCard(article)).join('');
+    // Render featured article + grid
+    const featuredArticle = articles[0];
+    const gridArticles = articles.slice(1);
+    
+    let html = '';
+    
+    // Featured article
+    html += this.renderFeaturedArticle(featuredArticle);
+    
+    // Articles grid
+    if (gridArticles.length > 0) {
+      html += `<div class="articles-grid">
+        ${gridArticles.map(article => this.renderArticleCard(article)).join('')}
+      </div>`;
+    }
+    
+    this.articlesContainer.innerHTML = html;
     
     // Render pagination
     this.renderPagination();
+  }
+
+  /**
+   * Render featured article
+   */
+  renderFeaturedArticle(article) {
+    const hasImage = article.image?.url;
+    const imageHtml = hasImage 
+      ? `<div class="featured-image"><img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}"></div>`
+      : '';
+    
+    const categoryName = article.category?.name || 'Article';
+    const readTime = article.minutesToread || 3;
+    const excerpt = article.excerpt || this.truncateText(article.content, 200);
+
+    return `
+      <div class="featured-article">
+        <div class="featured-content">
+          <div class="featured-category">${categoryName}</div>
+          <h2 class="featured-title">
+            <a href="/blog_single.html?slug=${article.slug}">${article.title}</a>
+          </h2>
+          <p class="featured-excerpt">${excerpt}</p>
+          <div class="featured-meta">
+            <span>${readTime} min read</span>
+            <span class="separator">•</span>
+            <span>${this.formatDate(article.publishedDate)}</span>
+          </div>
+        </div>
+        ${imageHtml}
+      </div>
+    `;
   }
 
   /**
@@ -266,8 +398,8 @@ class TagPageManager {
         if (page >= 1 && page <= totalPages && page !== this.currentPage) {
           this.currentPage = page;
           this.loadArticles();
-          // Scroll to top of articles
-          window.scrollTo({ top: 300, behavior: 'smooth' });
+          // Scroll to articles section
+          document.getElementById('articles-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       });
     });
@@ -289,6 +421,7 @@ class TagPageManager {
   showError(message) {
     document.getElementById('tag-title').textContent = 'Error';
     document.getElementById('tag-description').textContent = message;
+    document.getElementById('tag-article-count').innerHTML = '';
     this.articlesContainer.innerHTML = `
       <div class="no-articles">
         <h3>${message}</h3>
@@ -303,4 +436,3 @@ document.addEventListener('DOMContentLoaded', () => {
   const manager = new TagPageManager();
   manager.init();
 });
-

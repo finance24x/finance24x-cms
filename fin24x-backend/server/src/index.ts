@@ -320,6 +320,52 @@ export default {
           });
           console.log('✅ Created public permission for category.findOne');
         }
+
+        // Enable permissions for tag
+        if (!permissionActions.includes('api::tag.tag.find')) {
+          await strapi.query('plugin::users-permissions.permission').create({
+            data: {
+              action: 'api::tag.tag.find',
+              role: publicRole.id,
+              enabled: true,
+            },
+          });
+          console.log('✅ Created public permission for tag.find');
+        }
+
+        if (!permissionActions.includes('api::tag.tag.findOne')) {
+          await strapi.query('plugin::users-permissions.permission').create({
+            data: {
+              action: 'api::tag.tag.findOne',
+              role: publicRole.id,
+              enabled: true,
+            },
+          });
+          console.log('✅ Created public permission for tag.findOne');
+        }
+
+        // Enable permissions for tag-group
+        if (!permissionActions.includes('api::tag-group.tag-group.find')) {
+          await strapi.query('plugin::users-permissions.permission').create({
+            data: {
+              action: 'api::tag-group.tag-group.find',
+              role: publicRole.id,
+              enabled: true,
+            },
+          });
+          console.log('✅ Created public permission for tag-group.find');
+        }
+
+        if (!permissionActions.includes('api::tag-group.tag-group.findOne')) {
+          await strapi.query('plugin::users-permissions.permission').create({
+            data: {
+              action: 'api::tag-group.tag-group.findOne',
+              role: publicRole.id,
+              enabled: true,
+            },
+          });
+          console.log('✅ Created public permission for tag-group.findOne');
+        }
       }
     } catch (error) {
       console.error('❌ Error setting up public permissions:', error);
