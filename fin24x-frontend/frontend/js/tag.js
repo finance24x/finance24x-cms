@@ -9,7 +9,7 @@ class TagPageManager {
     this.paginationContainer = document.getElementById('pagination-container');
     this.pagination = document.getElementById('pagination');
     this.currentPage = 1;
-    this.pageSize = 10;
+    this.pageSize = 11;
     this.tag = null;
     this.totalArticles = 0;
   }
@@ -152,51 +152,28 @@ class TagPageManager {
   }
 
   /**
-   * Render related tags as carousel
+   * Render related tags in sidebar
    */
   renderRelatedTags() {
     const relatedTags = this.tag.relatedTags || [];
     if (relatedTags.length === 0) return;
     
-    document.getElementById('tags-section').style.display = 'block';
-    document.getElementById('related-tags-container').style.display = 'block';
+    const sidebar = document.getElementById('related-tags-sidebar');
+    const container = document.getElementById('sidebar-tags-list');
     
-    const container = document.getElementById('related-tags-track');
+    if (!sidebar || !container) return;
+    
+    sidebar.style.display = 'block';
+    
     container.innerHTML = relatedTags.map(tag => `
-      <a href="/tag/${tag.slug}" class="related-tag-card">
-        <div class="related-tag-icon">
+      <a href="/tag/${tag.slug}" class="sidebar-tag-item">
+        <div class="sidebar-tag-icon">
           <i class="fa fa-tag"></i>
         </div>
-        <div class="related-tag-info">
-          <p class="related-tag-name">${tag.name}</p>
-          <p class="related-tag-count">View →</p>
-        </div>
+        <span class="sidebar-tag-name">${tag.name}</span>
+        <i class="fa fa-chevron-right sidebar-tag-arrow"></i>
       </a>
     `).join('');
-    
-    // Initialize carousel navigation
-    this.initRelatedCarousel();
-  }
-
-  /**
-   * Initialize related tags carousel navigation
-   */
-  initRelatedCarousel() {
-    const carousel = document.getElementById('related-tags-carousel');
-    const prevBtn = document.getElementById('related-carousel-prev');
-    const nextBtn = document.getElementById('related-carousel-next');
-    
-    if (!carousel || !prevBtn || !nextBtn) return;
-    
-    const scrollAmount = 180; // Card width + gap
-    
-    prevBtn.addEventListener('click', () => {
-      carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-    });
-    
-    nextBtn.addEventListener('click', () => {
-      carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    });
   }
 
   /**
@@ -220,40 +197,46 @@ class TagPageManager {
     `;
     
     if (articles.length === 0) {
-      this.articlesContainer.innerHTML = `
-        <div class="no-articles">
-          <h3>No articles found</h3>
-          <p>There are no articles with this tag yet.</p>
-        </div>
-      `;
+      // Hide featured article wrapper but keep sidebar visible if there are related tags
+      const featuredWrapper = document.getElementById('featured-article-wrapper');
+      if (featuredWrapper) {
+        featuredWrapper.innerHTML = `
+          <div class="no-articles">
+            <h3>No articles found</h3>
+            <p>There are no articles with this tag yet.</p>
+          </div>
+        `;
+      }
+      this.articlesContainer.innerHTML = '';
       this.paginationContainer.style.display = 'none';
       return;
     }
 
-    // Render featured article + grid
+    // Render featured article in sidebar layout
     const featuredArticle = articles[0];
     const gridArticles = articles.slice(1);
     
-    let html = '';
-    
-    // Featured article
-    html += this.renderFeaturedArticle(featuredArticle);
-    
-    // Articles grid
-    if (gridArticles.length > 0) {
-      html += `<div class="articles-grid">
-        ${gridArticles.map(article => this.renderArticleCard(article)).join('')}
-      </div>`;
+    // Featured article in wrapper (left side)
+    const featuredWrapper = document.getElementById('featured-article-wrapper');
+    if (featuredWrapper) {
+      featuredWrapper.innerHTML = this.renderFeaturedArticle(featuredArticle);
     }
     
-    this.articlesContainer.innerHTML = html;
+    // Articles grid (below)
+    if (gridArticles.length > 0) {
+      this.articlesContainer.innerHTML = `<div class="articles-grid">
+        ${gridArticles.map(article => this.renderArticleCard(article)).join('')}
+      </div>`;
+    } else {
+      this.articlesContainer.innerHTML = '';
+    }
     
     // Render pagination
     this.renderPagination();
   }
 
   /**
-   * Render featured article
+   * Render featured article (image on top, content below)
    */
   renderFeaturedArticle(article) {
     const hasImage = article.image?.url;
@@ -267,6 +250,7 @@ class TagPageManager {
 
     return `
       <div class="featured-article">
+        ${imageHtml}
         <div class="featured-content">
           <div class="featured-category">${categoryName}</div>
           <h2 class="featured-title">
@@ -279,7 +263,6 @@ class TagPageManager {
             <span>${this.formatDate(article.publishedDate)}</span>
           </div>
         </div>
-        ${imageHtml}
       </div>
     `;
   }

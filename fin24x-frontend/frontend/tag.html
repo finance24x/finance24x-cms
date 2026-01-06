@@ -183,98 +183,138 @@
   border-color: #0066cc;
   color: #fff;
 }
-/* Related Tags Carousel */
-.related-tags-carousel-wrapper {
-  position: relative;
+/* Featured + Sidebar Layout */
+.featured-with-sidebar {
+  display: grid;
+  grid-template-columns: 70% 30%;
+  gap: 30px;
+  margin-bottom: 40px;
+  padding-bottom: 35px;
+  border-bottom: 1px solid #eee;
+}
+.featured-article-wrapper {
+  min-width: 0;
+}
+.related-tags-sidebar {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  height: fit-content;
+}
+.sidebar-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+.sidebar-title i {
+  color: #14bdee;
+  margin-right: 8px;
+}
+.sidebar-tags-list {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 5px;
 }
-.related-tags-carousel {
-  flex-grow: 1;
-  overflow-x: hidden;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  margin: 0 10px;
+.sidebar-tags-list::-webkit-scrollbar {
+  width: 4px;
 }
-.related-tags-track {
-  display: flex;
-  gap: 12px;
+.sidebar-tags-list::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 2px;
 }
-.related-carousel-nav {
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  transition: all 0.2s;
-  z-index: 10;
-  flex-shrink: 0;
+.sidebar-tags-list::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 2px;
 }
-.related-carousel-nav:hover {
+.sidebar-tags-list::-webkit-scrollbar-thumb:hover {
   background: #14bdee;
-  color: #fff;
-  border-color: #14bdee;
 }
-.related-carousel-nav i {
-  font-size: 0.85rem;
-  color: #666;
-}
-.related-carousel-nav:hover i {
-  color: #fff;
-}
-.related-tag-card {
+.sidebar-tag-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 14px;
+  padding: 10px 12px;
   background: #fff;
   border: 1px solid #e8e8e8;
   border-radius: 8px;
   text-decoration: none;
   transition: all 0.2s ease;
-  flex-shrink: 0;
-  min-width: 160px;
 }
-.related-tag-card:hover {
+.sidebar-tag-item:hover {
   border-color: #14bdee;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  background: #fff;
   text-decoration: none;
-  transform: translateY(-2px);
+  transform: translateX(3px);
 }
-.related-tag-icon {
-  width: 32px;
-  height: 32px;
+.sidebar-tag-icon {
+  width: 28px;
+  height: 28px;
   background: linear-gradient(135deg, #14bdee 0%, #0a9ec8 100%);
-  border-radius: 8px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   flex-shrink: 0;
 }
-.related-tag-info {
-  flex: 1;
-  min-width: 0;
-}
-.related-tag-name {
+.sidebar-tag-name {
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 500;
   color: #1a1a1a;
-  margin: 0;
+  flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.related-tag-count {
+.sidebar-tag-arrow {
+  color: #ccc;
   font-size: 0.7rem;
-  color: #888;
-  margin: 0;
+  transition: color 0.2s;
+}
+.sidebar-tag-item:hover .sidebar-tag-arrow {
+  color: #14bdee;
+}
+
+/* Featured Article in Wrapper (without image on right) */
+.featured-article-wrapper .featured-article {
+  display: block;
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+.featured-article-wrapper .featured-image {
+  margin-bottom: 20px;
+  max-height: 280px;
+}
+.featured-article-wrapper .featured-image img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+@media (max-width: 992px) {
+  .featured-with-sidebar {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+  .related-tags-sidebar {
+    order: -1;
+  }
+  .sidebar-tags-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .sidebar-tag-item {
+    flex: 0 0 auto;
+  }
 }
 
 /* Articles Main Container */
@@ -584,32 +624,41 @@
   border-color: rgba(20, 189, 238, 0.3);
   color: #14bdee;
 }
-.dark-mode .related-carousel-nav {
+.dark-mode .featured-with-sidebar {
+  border-bottom-color: var(--border-color);
+}
+.dark-mode .related-tags-sidebar {
   background: var(--bg-secondary);
-  border-color: var(--border-color);
 }
-.dark-mode .related-carousel-nav i {
-  color: var(--text-secondary);
+.dark-mode .sidebar-title {
+  color: var(--text-primary);
+  border-bottom-color: var(--border-color);
 }
-.dark-mode .related-carousel-nav:hover {
-  background: #14bdee;
-  border-color: #14bdee;
-}
-.dark-mode .related-carousel-nav:hover i {
-  color: #fff;
-}
-.dark-mode .related-tag-card {
+.dark-mode .sidebar-tag-item {
   background: var(--bg-primary);
   border-color: var(--border-color);
 }
-.dark-mode .related-tag-card:hover {
+.dark-mode .sidebar-tag-item:hover {
   border-color: #14bdee;
+  background: var(--bg-primary);
 }
-.dark-mode .related-tag-name {
+.dark-mode .sidebar-tag-name {
   color: var(--text-primary);
 }
-.dark-mode .related-tag-count {
-  color: var(--text-secondary);
+.dark-mode .sidebar-tag-arrow {
+  color: var(--text-muted);
+}
+.dark-mode .sidebar-tag-item:hover .sidebar-tag-arrow {
+  color: #14bdee;
+}
+.dark-mode .sidebar-tags-list::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+}
+.dark-mode .sidebar-tags-list::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+}
+.dark-mode .sidebar-tags-list::-webkit-scrollbar-thumb:hover {
+  background: #14bdee;
 }
 .dark-mode .articles-main-container {
   background: var(--bg-primary);
@@ -689,9 +738,14 @@
 								</ul>
 							</nav>
 							<div class="header_right d-flex flex-row align-items-center justify-content-start">
-								<button class="dark-mode-toggle" id="dark-mode-toggle" title="Toggle Dark Mode">
-									<i class="fa fa-moon-o"></i>
-								</button>
+								<!-- Dark Mode Toggle -->
+								<div class="dark_mode_toggle">
+									<input type="checkbox" id="darkModeSwitch" class="dark_mode_switch">
+									<label for="darkModeSwitch" class="dark_mode_label">
+										<i class="fa fa-moon-o" aria-hidden="true"></i>
+										<i class="fa fa-sun-o" aria-hidden="true"></i>
+									</label>
+								</div>
 								<div class="hamburger" id="hamburger">
 									<i class="fa fa-bars"></i>
 								</div>
@@ -743,33 +797,14 @@
 		</div>
 	</div>
 
-	<!-- Similar & Related Tags Section -->
+	<!-- Similar Tags Section (if any) -->
 	<div class="tags-section" id="tags-section" style="display: none;">
 		<div class="container">
-			<!-- Similar Tags -->
-			<div id="similar-tags-container" style="display: none; margin-bottom: 25px;">
+			<div id="similar-tags-container" style="display: none;">
 				<div class="tags-section-title">
 					<i class="fa fa-clone"></i> Also known as
 				</div>
 				<div class="tags-row" id="similar-tags-row"></div>
-			</div>
-			
-			<!-- Related Tags -->
-			<div id="related-tags-container" style="display: none;">
-				<div class="tags-section-title">
-					<i class="fa fa-link"></i> Related Topics
-				</div>
-				<div class="related-tags-carousel-wrapper">
-					<button class="related-carousel-nav related-carousel-prev" id="related-carousel-prev" aria-label="Previous">
-						<i class="fa fa-chevron-left"></i>
-					</button>
-					<div class="related-tags-carousel" id="related-tags-carousel">
-						<div class="related-tags-track" id="related-tags-track"></div>
-					</div>
-					<button class="related-carousel-nav related-carousel-next" id="related-carousel-next" aria-label="Next">
-						<i class="fa fa-chevron-right"></i>
-					</button>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -777,6 +812,22 @@
 	<!-- Main Content Area -->
 	<div class="articles-main-container">
 		<div class="container">
+			<!-- Featured Article + Related Tags Row -->
+			<div class="featured-with-sidebar" id="featured-with-sidebar">
+				<div class="featured-article-wrapper" id="featured-article-wrapper">
+					<!-- Featured article will be rendered here -->
+				</div>
+				<div class="related-tags-sidebar" id="related-tags-sidebar" style="display: none;">
+					<div class="sidebar-title">
+						<i class="fa fa-link"></i> Related Topics
+					</div>
+					<div class="sidebar-tags-list" id="sidebar-tags-list">
+						<!-- Related tags will be rendered here -->
+					</div>
+				</div>
+			</div>
+			
+			<!-- Other Articles -->
 			<div id="articles-container">
 				<div class="loading-container">
 					<div class="spinner"></div>
