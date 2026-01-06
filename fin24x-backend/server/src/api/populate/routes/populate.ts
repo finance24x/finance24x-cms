@@ -55,6 +55,26 @@ export default {
         auth: false, // Allow public access for manual population
       },
     },
+    {
+      method: 'POST',
+      path: '/populate/tag-groups',
+      handler: 'populate.populateTagGroups',
+      config: {
+        policies: [],
+        middlewares: [],
+        auth: false, // Allow public access for manual population
+      },
+    },
+    {
+      method: 'POST',
+      path: '/populate/tags-with-groups',
+      handler: 'populate.populateTagsWithGroups',
+      config: {
+        policies: [],
+        middlewares: [],
+        auth: false, // Allow public access for manual population
+      },
+    },
   ],
 };
 

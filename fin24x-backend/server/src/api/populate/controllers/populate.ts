@@ -7,6 +7,7 @@ import type { Core } from '@strapi/strapi';
 import { seedCategories } from '../../../seed/category/code';
 import { seedHomepageSections } from '../../../seed/homepage-section/code';
 import { seedArticles } from '../../../seed/articles/code';
+import { seedTagGroups } from '../../../seed/tag-group/code';
 import { seedTags } from '../../../seed/tag/code';
 
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
@@ -100,6 +101,48 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       ctx.body = {
         success: false,
         message: 'Error seeding tags',
+        error: error?.message || error,
+      };
+    }
+  },
+
+  async populateTagGroups(ctx) {
+    try {
+      const result = await seedTagGroups(strapi);
+      ctx.body = {
+        success: true,
+        message: 'Tag groups seeded successfully',
+        data: result,
+      };
+    } catch (error: any) {
+      ctx.status = 500;
+      ctx.body = {
+        success: false,
+        message: 'Error seeding tag groups',
+        error: error?.message || error,
+      };
+    }
+  },
+
+  async populateTagsWithGroups(ctx) {
+    try {
+      // First seed tag groups, then tags
+      const tagGroupsResult = await seedTagGroups(strapi);
+      const tagsResult = await seedTags(strapi);
+      
+      ctx.body = {
+        success: true,
+        message: 'Tag groups and tags seeded successfully',
+        data: {
+          tagGroups: tagGroupsResult,
+          tags: tagsResult,
+        },
+      };
+    } catch (error: any) {
+      ctx.status = 500;
+      ctx.body = {
+        success: false,
+        message: 'Error seeding tag groups and tags',
         error: error?.message || error,
       };
     }

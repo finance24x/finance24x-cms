@@ -26,6 +26,22 @@
       "type": "text",
       "required": false
     },
+    "tagGroup": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::tag-group.tag-group",
+      "inversedBy": "tags"
+    },
+    "similarTags": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::tag.tag"
+    },
+    "relatedTags": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::tag.tag"
+    },
     "articles": {
       "type": "relation",
       "relation": "manyToMany",
@@ -34,4 +50,3 @@
     }
   }
 }
-
