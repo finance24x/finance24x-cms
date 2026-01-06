@@ -1,0 +1,56 @@
+/**
+ * Homepage - Dark Mode Styles
+ * All dark mode overrides for homepage components
+ */
+
+/* Section Background */
+.dark-mode .section-alt-bg {
+  background-color: var(--bg-secondary);
+}
+
+/* Grid Cards - Placeholders */
+.dark-mode .grid-card-placeholder {
+  background: var(--bg-secondary);
+}
+
+/* Grid Cards - Title */
+.dark-mode .grid-card-title {
+  color: var(--text-primary);
+}
+
+.dark-mode .grid-card-title a {
+  color: var(--text-primary);
+}
+
+/* Grid Cards - Excerpt */
+.dark-mode .grid-card-excerpt {
+  color: var(--text-secondary);
+}
+
+/* Grid Cards - Meta */
+.dark-mode .grid-card-meta {
+  color: var(--text-secondary);
+}
+
+/* Grid Cards - Vertical */
+.dark-mode .grid-card-vertical {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* No Articles */
+.dark-mode .no-articles {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+
+/* Loading Sections */
+.dark-mode .loading-sections {
+  color: var(--text-secondary);
+}
+
+.dark-mode .loading-sections .spinner {
+  border-color: var(--bg-secondary);
+  border-top-color: #14bdee;
+}
+
