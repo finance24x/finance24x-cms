@@ -22,6 +22,19 @@ app.get('/tag/:slug', (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'tag.html'));
 });
 
+// Article pages - /:category/:article-slug
+app.get('/:category/:article', (req, res, next) => {
+  const { category, article } = req.params;
+  
+  // Skip if it looks like a file request (has extension)
+  if (category.includes('.') || article.includes('.')) {
+    return next();
+  }
+  
+  // Serve article page
+  res.sendFile(path.join(__dirname, 'frontend', 'article.html'));
+});
+
 // Category pages - serve category.html for any slug that looks like a category
 // This should be last to avoid catching other routes
 app.get('/:slug', (req, res, next) => {

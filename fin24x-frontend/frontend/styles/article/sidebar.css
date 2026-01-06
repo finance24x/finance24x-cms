@@ -1,0 +1,102 @@
+/**
+ * Article Page - Sidebar Styles
+ * Sidebar widgets, tags, related content
+ */
+
+.article-sidebar {
+  position: sticky;
+  top: 20px;
+}
+
+/* Sidebar Widget */
+.sidebar-widget {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 25px;
+}
+.widget-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 15px 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* About Widget */
+.about-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: #555;
+}
+.stat-item i {
+  width: 20px;
+  color: #14bdee;
+}
+.stat-item a {
+  color: #14bdee;
+  text-decoration: none;
+}
+.stat-item a:hover {
+  text-decoration: underline;
+}
+
+/* Tags Widget */
+.tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.sidebar-tag {
+  display: inline-block;
+  padding: 5px 12px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  color: #555;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.sidebar-tag:hover {
+  background: #14bdee;
+  border-color: #14bdee;
+  color: #fff;
+  text-decoration: none;
+}
+
+/* Category Widget */
+.category-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #14bdee;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.category-link:hover {
+  color: #0ea5d3;
+  text-decoration: none;
+}
+.category-link i {
+  font-size: 0.75rem;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .article-sidebar {
+    position: static;
+    margin-top: 40px;
+  }
+}
+

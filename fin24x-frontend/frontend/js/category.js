@@ -183,7 +183,7 @@ class CategoryPageManager {
         </div>
         <div class="carousel-card-content">
           <h4 class="carousel-card-title">
-            <a href="/blog_single.html?slug=${article.slug}">${article.title}</a>
+            <a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a>
           </h4>
           <p class="carousel-card-excerpt">${excerpt}</p>
           <div class="carousel-card-meta">
@@ -380,7 +380,7 @@ class CategoryPageManager {
         <div class="featured-content">
           <div class="featured-category">${this.category?.name || 'Article'}</div>
           <h1 class="featured-title">
-            <a href="/blog_single.html?slug=${article.slug}">${article.title}</a>
+            <a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a>
           </h1>
           <p class="featured-excerpt">${excerpt}</p>
           ${tagsHtml}
@@ -415,7 +415,7 @@ class CategoryPageManager {
         <div class="card-content">
           <div class="card-category">${this.category?.name || 'Article'}</div>
           <h3 class="card-title">
-            <a href="/blog_single.html?slug=${article.slug}">${article.title}</a>
+            <a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a>
           </h3>
           <p class="card-excerpt">${excerpt}</p>
           ${tagsHtml}
@@ -487,7 +487,7 @@ class CategoryPageManager {
     return `
       <div class="article-list-item">
         <h4 class="article-list-title">
-          <a href="/blog_single.html?slug=${article.slug}">${article.title}</a>
+          <a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a>
         </h4>
         <div class="article-list-meta">
           <span>${this.getReadTime(article)} min read</span>
@@ -516,7 +516,7 @@ class CategoryPageManager {
         <div class="mini-card-content">
           <div class="mini-card-category">${this.category?.name || 'Article'}</div>
           <h4 class="mini-card-title">
-            <a href="/blog_single.html?slug=${article.slug}">${article.title}</a>
+            <a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a>
           </h4>
           <p class="mini-card-excerpt">${excerpt}</p>
           <div class="mini-card-meta">
@@ -825,13 +825,13 @@ class CategoryPageManager {
     return `
       <div class="error-horizontal-card">
         <div class="error-card-image">
-          <a href="/article/${article.slug}">
+          <a href="/${article.category?.slug || 'article'}/${article.slug}">
             ${imageUrl ? `<img src="${imageUrl}" alt="${article.title}">` : '<div class="error-card-placeholder"></div>'}
           </a>
         </div>
         <div class="error-card-content">
           <h4 class="error-card-title">
-            <a href="/article/${article.slug}">${article.title}</a>
+            <a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a>
           </h4>
           ${excerpt ? `<p class="error-card-excerpt">${excerpt}</p>` : ''}
           <div class="error-card-meta">
@@ -857,13 +857,13 @@ class CategoryPageManager {
     return `
       <div class="error-carousel-card">
         <div class="error-carousel-card-image">
-          <a href="/article/${article.slug}">
+          <a href="/${article.category?.slug || 'article'}/${article.slug}">
             ${imageUrl ? `<img src="${imageUrl}" alt="${article.title}">` : '<div class="no-image"></div>'}
           </a>
         </div>
         <div class="error-carousel-card-content">
           <h4 class="error-carousel-card-title">
-            <a href="/article/${article.slug}">${article.title}</a>
+            <a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a>
           </h4>
           ${excerpt ? `<p class="error-carousel-card-excerpt">${excerpt}</p>` : ''}
           <div class="error-carousel-card-meta">

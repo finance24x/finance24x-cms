@@ -245,7 +245,7 @@ class TagPageManager {
         <div class="featured-content">
           <div class="featured-category">${categoryName}</div>
           <h2 class="featured-title">
-            <a href="/blog_single.html?slug=${article.slug}">${article.title}</a>
+            <a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a>
           </h2>
           <p class="featured-excerpt">${excerpt}</p>
           <div class="featured-meta">
@@ -277,7 +277,7 @@ class TagPageManager {
         <div class="article-card-content">
           <div class="article-card-category">${categoryName}</div>
           <h3 class="article-card-title">
-            <a href="/blog_single.html?slug=${article.slug}">${article.title}</a>
+            <a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a>
           </h3>
           <p class="article-card-excerpt">${excerpt}</p>
           <div class="article-card-meta">

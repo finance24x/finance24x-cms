@@ -214,7 +214,7 @@ class HomepageSectionsManager {
       <div class="news_post_large_container">
         <div class="news_post_large">
           ${imageHtml}
-          <div class="news_post_large_title"><a href="blog_single.html?slug=${article.slug}">${article.title}</a></div>
+          <div class="news_post_large_title"><a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a></div>
           <div class="news_post_meta">
             <ul>
               <li><a href="#">${article.author || 'Admin'}</a></li>
@@ -235,7 +235,7 @@ class HomepageSectionsManager {
   renderSmallNewsPost(article) {
     return `
       <div class="news_post_small">
-        <div class="news_post_small_title"><a href="blog_single.html?slug=${article.slug}">${article.title}</a></div>
+        <div class="news_post_small_title"><a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a></div>
         <div class="news_post_meta">
           <ul>
             <li><a href="#">${article.author || 'Admin'}</a></li>
@@ -262,7 +262,7 @@ class HomepageSectionsManager {
         <div class="grid-card-horizontal">
           ${imageHtml}
           <div class="grid-card-content">
-            <h3 class="grid-card-title"><a href="blog_single.html?slug=${article.slug}">${article.title}</a></h3>
+            <h3 class="grid-card-title"><a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a></h3>
             <p class="grid-card-excerpt">${article.excerpt || this.truncateText(article.content, 80)}</p>
             <div class="grid-card-meta">
               <span>${article.minutesToread || 3} min read</span>
@@ -291,7 +291,7 @@ class HomepageSectionsManager {
         <div class="grid-card-vertical">
           ${imageHtml}
           <div class="grid-card-content">
-            <h3 class="grid-card-title"><a href="blog_single.html?slug=${article.slug}">${article.title}</a></h3>
+            <h3 class="grid-card-title"><a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a></h3>
             <p class="grid-card-excerpt">${article.excerpt || this.truncateText(article.content, 80)}</p>
             <div class="grid-card-meta">
               <span>${article.minutesToread || 3} min read</span>
@@ -329,7 +329,7 @@ class HomepageSectionsManager {
             </div>
           </div>
           <div class="grid-card-content">
-            <h3 class="grid-card-title"><a href="blog_single.html?slug=${article.slug}">${article.title}</a></h3>
+            <h3 class="grid-card-title"><a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a></h3>
             <p class="grid-card-excerpt">${article.excerpt || this.truncateText(article.content, 80)}</p>
             <div class="grid-card-meta">
               <span>${article.minutesToread || 3} min read</span>
