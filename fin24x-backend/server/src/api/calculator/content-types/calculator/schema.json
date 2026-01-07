@@ -135,6 +135,10 @@
     "enableCalculator": {
       "type": "boolean",
       "default": true
+    },
+    "views": {
+      "type": "biginteger",
+      "default": "5"
     }
   }
 }

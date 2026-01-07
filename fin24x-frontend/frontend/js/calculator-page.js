@@ -32,6 +32,15 @@ class CalculatorPageManager {
         return;
       }
 
+      // Increment view count and update the calculator's view count
+      const updatedViews = await this.incrementViewCount();
+      if (updatedViews !== null) {
+        this.calculator.views = updatedViews;
+      } else {
+        // If increment failed, at least show current views + 1
+        this.calculator.views = (this.calculator.views || 0) + 1;
+      }
+
       this.updatePageMeta();
       this.renderCalculator();
       this.renderSidebar();
@@ -62,6 +71,33 @@ class CalculatorPageManager {
     const response = await fetch(url);
     const data = await response.json();
     return data.data && data.data.length > 0 ? data.data[0] : null;
+  }
+
+  /**
+   * Increment view count for the current calculator
+   * @returns {Promise<number|null>} The new view count, or null if failed
+   */
+  async incrementViewCount() {
+    if (!this.calculator?.documentId) return null;
+    
+    try {
+      const url = getApiUrl(`/calculators/${this.calculator.documentId}/view`);
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        return result.data?.views || null;
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to increment view count:', error);
+      return null;
+    }
   }
 
   /**
@@ -125,6 +161,7 @@ class CalculatorPageManager {
   renderCalculator() {
     const icon = this.calculator.icon || 'fa-calculator';
     const iconColor = this.calculator.iconColor || '#14bdee';
+    const views = this.calculator.views || 0;
     
     // Format description
     const descriptionHtml = this.formatMarkdown(this.calculator.description || '');
@@ -142,6 +179,9 @@ class CalculatorPageManager {
         <div class="calculator-header-content">
           <h1 class="calculator-title">${this.calculator.title}</h1>
           <p class="calculator-excerpt">${this.calculator.excerpt || ''}</p>
+          <div class="calculator-meta">
+            <span><i class="fa fa-eye"></i> ${this.formatViews(views)} views</span>
+          </div>
         </div>
       </div>
 
@@ -331,6 +371,18 @@ class CalculatorPageManager {
       .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(' & ')
       .replace(/ & & /g, ' & ');
+  }
+
+  /**
+   * Format views count (e.g., 1500 -> 1.5K)
+   */
+  formatViews(views) {
+    if (views >= 1000000) {
+      return (views / 1000000).toFixed(1) + 'M';
+    } else if (views >= 1000) {
+      return (views / 1000).toFixed(1) + 'K';
+    }
+    return views.toString();
   }
 
   /**
