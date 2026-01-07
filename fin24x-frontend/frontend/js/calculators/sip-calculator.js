@@ -18,7 +18,7 @@ class SIPCalculator {
         ${CalculatorUtils.createSlider('sip-return', 'Expected Return Rate (p.a.)', 1, 30, this.expectedReturn, 0.5, '%', '')}
         ${CalculatorUtils.createSlider('sip-years', 'Investment Period', 1, 40, this.timePeriod, 1, ' years', '')}
         
-        <div style="text-align: center; margin-top: 10px;">
+        <div style="text-align: center; margin-top: 1px;">
           <button class="calc-btn" id="sip-calculate">
             <i class="fa fa-calculator"></i> Calculate Returns
           </button>

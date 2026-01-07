@@ -2635,9 +2635,7 @@ section
 /* Breadcrumb Container */
 .breadcrumb-container {
 	padding: 15px 0;
-	padding-top: 105px; /* Account for fixed header (90px) + original padding */
-	background: #f8f9fa;
-	border-bottom: 1px solid #eee;
+	padding-top: 110px;
 }
 
 /* Breadcrumb List */
@@ -2645,7 +2643,7 @@ section
 	margin: 0;
 	padding: 0;
 	background: transparent;
-	font-size: 0.85rem;
+	font-size: 0.95rem;
 	list-style: none;
 	display: flex;
 	flex-wrap: wrap;
@@ -2674,7 +2672,7 @@ section
 
 /* Breadcrumb Separator */
 .breadcrumb-item + .breadcrumb-item::before {
-	content: "›";
+	content: "|";
 	color: #999;
 	font-size: 1rem;
 	padding: 0 8px;
@@ -2683,12 +2681,12 @@ section
 
 /* Dark Mode Breadcrumb */
 .dark-mode .breadcrumb-container {
-	background: var(--bg-secondary);
 	border-bottom-color: var(--border-color);
 }
 
 .dark-mode .breadcrumb-item a {
 	color: #14bdee;
+	font-weight: bold;
 }
 
 .dark-mode .breadcrumb-item.active {
