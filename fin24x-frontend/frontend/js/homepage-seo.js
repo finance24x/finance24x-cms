@@ -4,12 +4,17 @@
 
 (async function() {
   try {
-    // Fetch header data to get logo
-    const response = await fetch(getApiUrl('/header?populate=logo'));
-    if (!response.ok) return;
-    
-    const result = await response.json();
-    const headerData = result.data;
+    // Use shared header data if available (reuse from header.js)
+    let headerData;
+    if (window.getHeaderData) {
+      headerData = await window.getHeaderData();
+    } else {
+      // Fallback if header.js hasn't loaded yet
+      const response = await fetch(getApiUrl('/header?populate=*'));
+      if (!response.ok) return;
+      const result = await response.json();
+      headerData = result.data;
+    }
     
     if (headerData?.logo?.url) {
       const logoUrl = `${API_CONFIG.BASE_URL}${headerData.logo.url}`;

@@ -3,20 +3,47 @@
  * Fetches and renders header from Strapi
  */
 
-// Fetch header data from Strapi
+// Shared header data cache
+let headerDataCache = null;
+let headerDataPromise = null;
+
+// Fetch header data from Strapi (with full populate for sharing)
 async function fetchHeader() {
-  try {
-    const response = await fetch(getApiUrl('/header?populate=logo'));
-    if (!response.ok) {
-      throw new Error('Failed to fetch header');
-    }
-    const data = await response.json();
-    return data.data;
-  } catch (error) {
-    console.error('Error fetching header:', error);
-    return null;
+  // If already fetching, return the same promise
+  if (headerDataPromise) {
+    return headerDataPromise;
   }
+  
+  // If cached, return cached data
+  if (headerDataCache) {
+    return headerDataCache;
+  }
+  
+  // Fetch with populate=* to get all data (logo, header_article, etc.)
+  headerDataPromise = (async () => {
+    try {
+      const response = await fetch(getApiUrl('/header?populate=*'));
+      if (!response.ok) {
+        throw new Error('Failed to fetch header');
+      }
+      const data = await response.json();
+      headerDataCache = data.data;
+      headerDataPromise = null; // Clear promise after completion
+      return headerDataCache;
+    } catch (error) {
+      console.error('Error fetching header:', error);
+      headerDataPromise = null; // Clear promise on error
+      return null;
+    }
+  })();
+  
+  return headerDataPromise;
 }
+
+// Export function to get header data (for other scripts)
+window.getHeaderData = async function() {
+  return await fetchHeader();
+};
 
 // Fetch categories from Strapi
 async function fetchCategories() {

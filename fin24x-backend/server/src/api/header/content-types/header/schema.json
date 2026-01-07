@@ -40,6 +40,11 @@
         "videos",
         "audios"
       ]
+    },
+    "header_article": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::article.article"
     }
   }
 }
