@@ -9,6 +9,7 @@ import { seedHomepageSections } from '../../../seed/homepage-section/code';
 import { seedArticles } from '../../../seed/articles/code';
 import { seedTagGroups } from '../../../seed/tag-group/code';
 import { seedTags } from '../../../seed/tag/code';
+import { seedStaticPages } from '../../../seed/static-page/code';
 
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
   async populateCategories(ctx) {
@@ -143,6 +144,24 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       ctx.body = {
         success: false,
         message: 'Error seeding tag groups and tags',
+        error: error?.message || error,
+      };
+    }
+  },
+
+  async populateStaticPages(ctx) {
+    try {
+      const result = await seedStaticPages(strapi);
+      ctx.body = {
+        success: true,
+        message: 'Static pages seeded successfully',
+        data: result,
+      };
+    } catch (error: any) {
+      ctx.status = 500;
+      ctx.body = {
+        success: false,
+        message: 'Error seeding static pages',
         error: error?.message || error,
       };
     }

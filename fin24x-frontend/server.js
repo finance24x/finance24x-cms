@@ -32,6 +32,11 @@ app.get('/sitemap.xml', async (req, res) => {
     const articlesData = await articlesRes.json();
     const articles = articlesData.data || [];
 
+    // Fetch all static pages
+    const staticPagesRes = await fetch(`${STRAPI_URL}/api/static-pages?pagination[limit]=100`);
+    const staticPagesData = await staticPagesRes.json();
+    const staticPages = staticPagesData.data || [];
+
     // Build sitemap XML
     let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -66,6 +71,18 @@ app.get('/sitemap.xml', async (req, res) => {
 `;
     }
 
+    // Add static pages
+    for (const page of staticPages) {
+      const lastmod = page.updatedAt ? page.updatedAt.split('T')[0] : new Date().toISOString().split('T')[0];
+      xml += `  <url>
+    <loc>${SITE_URL}/${page.slug}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+`;
+    }
+
     xml += `</urlset>`;
 
     res.type('application/xml');
@@ -89,6 +106,22 @@ app.get('/blog_single.html', (req, res) => {
 // Tag pages - /tag/:slug
 app.get('/tag/:slug', (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'tag.html'));
+});
+
+// Static Pages - explicit routes for legal/info pages
+const STATIC_PAGE_SLUGS = [
+  'copyright-notification',
+  'terms-of-use',
+  'privacy-policy',
+  'contact-us',
+  'about-us',
+  'disclaimer'
+];
+
+STATIC_PAGE_SLUGS.forEach(slug => {
+  app.get(`/${slug}`, (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'static-page.html'));
+  });
 });
 
 // Article pages - /:category/:article-slug

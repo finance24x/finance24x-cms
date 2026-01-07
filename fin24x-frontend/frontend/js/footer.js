@@ -63,7 +63,14 @@ function renderFooterLinks(links) {
   }
 
   return links.map(link => {
-    return `<li><a href="${link.url || '#'}">${link.label || ''}</a></li>`;
+    let url = link.url || '#';
+    
+    // Ensure internal links start with /
+    if (url !== '#' && !url.startsWith('http') && !url.startsWith('/')) {
+      url = '/' + url;
+    }
+    
+    return `<li><a href="${url}">${link.label || ''}</a></li>`;
   }).join('');
 }
 
@@ -162,18 +169,18 @@ function renderContactInfo(contactInfo) {
 // Render footer logo
 function renderFooterLogo(logoText, logoImage) {
   if (logoImage && logoImage.url) {
-    return `<a href="index.html"><img src="${getApiUrl('').replace('/api', '')}${logoImage.url}" alt="${logoText || 'Logo'}" style="max-height: 50px;"></a>`;
+    return `<a href="/"><img src="${getApiUrl('').replace('/api', '')}${logoImage.url}" alt="${logoText || 'Logo'}" style="max-height: 50px;"></a>`;
   }
   
   if (logoText) {
     const parts = logoText.split(/(\d+)/);
     if (parts.length > 1) {
-      return `<a href="index.html"><div class="footer_logo_text">${parts[0]}<span>${parts[1]}</span></div></a>`;
+      return `<a href="/"><div class="footer_logo_text">${parts[0]}<span>${parts[1]}</span></div></a>`;
     }
-    return `<a href="index.html"><div class="footer_logo_text">${logoText}</div></a>`;
+    return `<a href="/"><div class="footer_logo_text">${logoText}</div></a>`;
   }
   
-  return '<a href="index.html"><div class="footer_logo_text">Fin<span>24x</span></div></a>';
+  return '<a href="/"><div class="footer_logo_text">Fin<span>24x</span></div></a>';
 }
 
 // Render footer component

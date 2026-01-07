@@ -75,6 +75,16 @@ export default {
         auth: false, // Allow public access for manual population
       },
     },
+    {
+      method: 'POST',
+      path: '/populate/static-pages',
+      handler: 'populate.populateStaticPages',
+      config: {
+        policies: [],
+        middlewares: [],
+        auth: false, // Allow public access for manual population
+      },
+    },
   ],
 };
 

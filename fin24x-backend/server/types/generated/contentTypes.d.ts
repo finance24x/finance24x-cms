@@ -718,6 +718,61 @@ export interface ApiPopularTagPopularTag extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiStaticPageStaticPage extends Struct.CollectionTypeSchema {
+  collectionName: 'static_pages';
+  info: {
+    description: 'Static pages like About Us, Privacy Policy, Terms of Use, Contact Us';
+    displayName: 'Static Page';
+    pluralName: 'static-pages';
+    singularName: 'static-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    contactAddress: Schema.Attribute.Text;
+    contactEmail: Schema.Attribute.Email;
+    contactPhone: Schema.Attribute.String;
+    content: Schema.Attribute.RichText & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    excerpt: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+    featuredImage: Schema.Attribute.Media<'images'>;
+    footerOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::static-page.static-page'
+    > &
+      Schema.Attribute.Private;
+    metaDescription: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 160;
+      }>;
+    metaTitle: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 70;
+      }>;
+    pageType: Schema.Attribute.Enumeration<
+      ['general', 'legal', 'contact', 'about']
+    > &
+      Schema.Attribute.DefaultTo<'general'>;
+    publishedAt: Schema.Attribute.DateTime;
+    showContactForm: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    showInFooter: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiTagGroupTagGroup extends Struct.CollectionTypeSchema {
   collectionName: 'tag_groups';
   info: {
@@ -1307,6 +1362,7 @@ declare module '@strapi/strapi' {
       'api::homepage-section.homepage-section': ApiHomepageSectionHomepageSection;
       'api::market-ticker.market-ticker': ApiMarketTickerMarketTicker;
       'api::popular-tag.popular-tag': ApiPopularTagPopularTag;
+      'api::static-page.static-page': ApiStaticPageStaticPage;
       'api::tag-group.tag-group': ApiTagGroupTagGroup;
       'api::tag.tag': ApiTagTag;
       'plugin::content-releases.release': PluginContentReleasesRelease;
