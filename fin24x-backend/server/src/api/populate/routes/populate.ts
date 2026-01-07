@@ -85,6 +85,16 @@ export default {
         auth: false, // Allow public access for manual population
       },
     },
+    {
+      method: 'POST',
+      path: '/populate/calculators',
+      handler: 'populate.populateCalculators',
+      config: {
+        policies: [],
+        middlewares: [],
+        auth: false, // Allow public access for manual population
+      },
+    },
   ],
 };
 

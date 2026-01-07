@@ -64,6 +64,21 @@
         "videos",
         "audios"
       ]
+    },
+    "contentType": {
+      "type": "enumeration",
+      "enum": [
+        "articles",
+        "calculators",
+        "mixed"
+      ],
+      "default": "articles"
+    },
+    "calculators": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::calculator.calculator",
+      "mappedBy": "category"
     }
   }
 }

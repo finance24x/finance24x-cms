@@ -472,6 +472,90 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiCalculatorCalculator extends Struct.CollectionTypeSchema {
+  collectionName: 'calculators';
+  info: {
+    description: 'Financial and Health calculators';
+    displayName: 'Calculator';
+    pluralName: 'calculators';
+    singularName: 'calculator';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    calculatorCategory: Schema.Attribute.Enumeration<['finance', 'health']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'finance'>;
+    calculatorType: Schema.Attribute.Enumeration<
+      [
+        'sip',
+        'fd',
+        'ppf',
+        'income-tax',
+        'nps',
+        'gratuity',
+        'rd',
+        'retirement',
+        'compound-interest',
+        'simple-interest',
+        'ideal-weight',
+        'child-height',
+        'calorie',
+        'bmi',
+        'bmr',
+        'diabetes-risk',
+        'walk-calorie-burn',
+      ]
+    > &
+      Schema.Attribute.Required;
+    category: Schema.Attribute.Relation<'manyToOne', 'api::category.category'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.RichText;
+    disclaimer: Schema.Attribute.Text;
+    excerpt: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    faqs: Schema.Attribute.Component<'calculator.faq', true>;
+    featuredImage: Schema.Attribute.Media<'images'>;
+    formulaExplanation: Schema.Attribute.RichText;
+    howToUse: Schema.Attribute.RichText;
+    icon: Schema.Attribute.String & Schema.Attribute.DefaultTo<'fa-calculator'>;
+    iconColor: Schema.Attribute.String & Schema.Attribute.DefaultTo<'#14bdee'>;
+    isFeatured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    isPopular: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::calculator.calculator'
+    > &
+      Schema.Attribute.Private;
+    metaDescription: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 160;
+      }>;
+    metaTitle: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 70;
+      }>;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    relatedCalculators: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::calculator.calculator'
+    >;
+    slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
+    tags: Schema.Attribute.Relation<'manyToMany', 'api::tag.tag'>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   collectionName: 'categories';
   info: {
@@ -485,9 +569,17 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   };
   attributes: {
     articles: Schema.Attribute.Relation<'oneToMany', 'api::article.article'>;
+    calculators: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::calculator.calculator'
+    >;
     categoryImage: Schema.Attribute.Media<
       'images' | 'files' | 'videos' | 'audios'
     >;
+    contentType: Schema.Attribute.Enumeration<
+      ['articles', 'calculators', 'mixed']
+    > &
+      Schema.Attribute.DefaultTo<'articles'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1356,6 +1448,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::article.article': ApiArticleArticle;
+      'api::calculator.calculator': ApiCalculatorCalculator;
       'api::category.category': ApiCategoryCategory;
       'api::footer.footer': ApiFooterFooter;
       'api::header.header': ApiHeaderHeader;

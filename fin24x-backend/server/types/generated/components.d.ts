@@ -1,5 +1,18 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface CalculatorFaq extends Struct.ComponentSchema {
+  collectionName: 'components_calculator_faqs';
+  info: {
+    description: 'Frequently Asked Question';
+    displayName: 'FAQ';
+    icon: 'question-circle';
+  };
+  attributes: {
+    answer: Schema.Attribute.Text & Schema.Attribute.Required;
+    question: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface LayoutAppDownload extends Struct.ComponentSchema {
   collectionName: 'components_layout_app_downloads';
   info: {
@@ -239,6 +252,7 @@ export interface SeoMeta extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
+      'calculator.faq': CalculatorFaq;
       'layout.app-download': LayoutAppDownload;
       'layout.contact-info': LayoutContactInfo;
       'layout.link': LayoutLink;

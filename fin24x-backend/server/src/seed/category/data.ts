@@ -11,6 +11,7 @@ export interface CategoryData {
   description: string;
   order: number;
   enabled: boolean;
+  contentType?: 'articles' | 'calculators' | 'mixed';
 }
 
 export const categories: CategoryData[] = [
@@ -87,9 +88,10 @@ export const categories: CategoryData[] = [
   {
     name: 'Calculators',
     slug: 'calculators',
-    description: 'Financial calculators for EMI, SIP, tax planning, and retirement planning. Use our comprehensive suite of calculators to plan your finances and investments effectively.',
+    description: 'Financial and health calculators for SIP, FD, EMI, tax planning, BMI, calorie tracking, and more. Use our comprehensive suite of calculators to plan your finances and health effectively.',
     order: 11,
     enabled: true,
+    contentType: 'calculators',
   },
   {
     name: 'Bank Deposits',

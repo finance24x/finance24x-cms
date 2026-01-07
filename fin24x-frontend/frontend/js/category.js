@@ -44,8 +44,14 @@ class CategoryPageManager {
       // Update page with actual category info
       this.updateCategoryInfo();
       
-      // Fetch and render articles
-      await this.loadArticles();
+      // Check content type and load appropriate content
+      if (this.category.contentType === 'calculators') {
+        // Load calculators for calculator category
+        await this.loadCalculators();
+      } else {
+        // Fetch and render articles (default)
+        await this.loadArticles();
+      }
       
       // Load related categories if any
       await this.loadRelatedCategories();
@@ -57,6 +63,115 @@ class CategoryPageManager {
       console.error('Error loading category:', error);
       this.showError('Failed to load category');
     }
+  }
+
+  /**
+   * Fetch calculators for this category
+   */
+  async fetchCalculators() {
+    const url = getApiUrl(
+      `/calculators?populate[category]=true&populate[featuredImage]=true&filters[category][documentId][$eq]=${this.category.documentId}&sort=order:asc`
+    );
+    const response = await fetch(url);
+    const data = await response.json();
+    return data.data || [];
+  }
+
+  /**
+   * Load and render calculators
+   */
+  async loadCalculators() {
+    // Show loading
+    this.articlesContainer.innerHTML = `
+      <div class="loading-container">
+        <div class="spinner"></div>
+        <p>Loading calculators...</p>
+      </div>
+    `;
+
+    const calculators = await this.fetchCalculators();
+    
+    if (calculators.length === 0) {
+      this.articlesContainer.innerHTML = `
+        <div class="no-articles">
+          <h3>No calculators found</h3>
+          <p>Calculators are coming soon.</p>
+        </div>
+      `;
+      this.paginationContainer.style.display = 'none';
+      return;
+    }
+
+    // Group calculators by category
+    const financeCalcs = calculators.filter(c => c.calculatorCategory === 'finance');
+    const healthCalcs = calculators.filter(c => c.calculatorCategory === 'health');
+
+    let html = '';
+
+    // Finance Calculators Section
+    if (financeCalcs.length > 0) {
+      html += `
+        <div class="calculator-section">
+          <div class="calculator-section-header">
+            <h2 class="calculator-section-title">
+              <i class="fa fa-line-chart"></i> Finance Calculators
+            </h2>
+            <p class="calculator-section-desc">Plan your investments, taxes, and retirement with our free financial calculators</p>
+          </div>
+          <div class="calculator-grid">
+            ${financeCalcs.map(calc => this.renderCalculatorCard(calc)).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // Health Calculators Section
+    if (healthCalcs.length > 0) {
+      html += `
+        <div class="calculator-section">
+          <div class="calculator-section-header">
+            <h2 class="calculator-section-title">
+              <i class="fa fa-heartbeat"></i> Health Calculators
+            </h2>
+            <p class="calculator-section-desc">Track your health metrics and fitness goals with our health calculators</p>
+          </div>
+          <div class="calculator-grid">
+            ${healthCalcs.map(calc => this.renderCalculatorCard(calc)).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    this.articlesContainer.innerHTML = html;
+    this.paginationContainer.style.display = 'none'; // No pagination for calculators
+  }
+
+  /**
+   * Render a single calculator card
+   */
+  renderCalculatorCard(calculator) {
+    const icon = calculator.icon || 'fa-calculator';
+    const iconColor = calculator.iconColor || '#14bdee';
+    const excerpt = calculator.excerpt || '';
+    const isPopular = calculator.isPopular;
+    const isFeatured = calculator.isFeatured;
+
+    return `
+      <a href="/calculators/${calculator.slug}" class="calculator-card ${isFeatured ? 'featured' : ''}">
+        <div class="calculator-card-icon" style="background-color: ${iconColor}20; color: ${iconColor};">
+          <i class="fa ${icon}"></i>
+        </div>
+        <div class="calculator-card-content">
+          <h3 class="calculator-card-title">${calculator.title}</h3>
+          <p class="calculator-card-excerpt">${excerpt}</p>
+        </div>
+        ${isPopular ? '<span class="calculator-badge popular">Popular</span>' : ''}
+        ${isFeatured && !isPopular ? '<span class="calculator-badge featured">Featured</span>' : ''}
+        <div class="calculator-card-arrow">
+          <i class="fa fa-arrow-right"></i>
+        </div>
+      </a>
+    `;
   }
 
   /**

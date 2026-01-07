@@ -10,6 +10,7 @@ import { seedArticles } from '../../../seed/articles/code';
 import { seedTagGroups } from '../../../seed/tag-group/code';
 import { seedTags } from '../../../seed/tag/code';
 import { seedStaticPages } from '../../../seed/static-page/code';
+import { seedCalculators } from '../../../seed/calculator/code';
 
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
   async populateCategories(ctx) {
@@ -162,6 +163,24 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       ctx.body = {
         success: false,
         message: 'Error seeding static pages',
+        error: error?.message || error,
+      };
+    }
+  },
+
+  async populateCalculators(ctx) {
+    try {
+      const result = await seedCalculators(strapi);
+      ctx.body = {
+        success: true,
+        message: 'Calculators seeded successfully',
+        data: result,
+      };
+    } catch (error: any) {
+      ctx.status = 500;
+      ctx.body = {
+        success: false,
+        message: 'Error seeding calculators',
         error: error?.message || error,
       };
     }

@@ -1,0 +1,349 @@
+/**
+ * Calculator Page Manager
+ * Fetches calculator data and loads appropriate calculator logic
+ */
+
+class CalculatorPageManager {
+  constructor() {
+    this.mainContainer = document.getElementById('calculator-main');
+    this.sidebarContainer = document.getElementById('calculator-sidebar');
+    this.calculator = null;
+  }
+
+  async init() {
+    const slug = this.getSlugFromUrl();
+
+    if (!slug) {
+      this.showError('Calculator not found');
+      return;
+    }
+
+    try {
+      this.calculator = await this.fetchCalculator(slug);
+
+      if (!this.calculator) {
+        this.showError('Calculator not found');
+        return;
+      }
+
+      this.updatePageMeta();
+      this.renderCalculator();
+      this.renderSidebar();
+
+    } catch (error) {
+      console.error('Error loading calculator:', error);
+      this.showError('Failed to load calculator');
+    }
+  }
+
+  /**
+   * Get slug from URL path (/calculators/:slug)
+   */
+  getSlugFromUrl() {
+    const path = window.location.pathname;
+    const parts = path.split('/').filter(p => p);
+    // Expect: ['calculators', 'sip-calculator']
+    return parts.length >= 2 ? parts[1] : null;
+  }
+
+  /**
+   * Fetch calculator by slug
+   */
+  async fetchCalculator(slug) {
+    const url = getApiUrl(
+      `/calculators?filters[slug][$eq]=${slug}&populate[featuredImage]=true&populate[faqs]=true&populate[relatedCalculators]=true&populate[category]=true`
+    );
+    const response = await fetch(url);
+    const data = await response.json();
+    return data.data && data.data.length > 0 ? data.data[0] : null;
+  }
+
+  /**
+   * Update page meta tags (SEO)
+   */
+  updatePageMeta() {
+    const title = this.calculator.metaTitle || this.calculator.title;
+    const description = this.calculator.metaDescription || this.calculator.excerpt || '';
+    const url = window.location.href;
+
+    // Page Title
+    document.title = `${title} | Finance24x`;
+    const pageTitleEl = document.getElementById('page-title');
+    if (pageTitleEl) pageTitleEl.textContent = `${title} | Finance24x`;
+    
+    // Meta Description
+    const metaDesc = document.getElementById('meta-description');
+    if (metaDesc) metaDesc.setAttribute('content', description);
+
+    // Canonical URL
+    const canonicalEl = document.getElementById('canonical-url');
+    if (canonicalEl) canonicalEl.setAttribute('href', url);
+
+    // Open Graph Tags
+    this.setMetaContent('og-url', url);
+    this.setMetaContent('og-title', title);
+    this.setMetaContent('og-description', description);
+
+    // Twitter Card Tags
+    this.setMetaContent('twitter-title', title);
+    this.setMetaContent('twitter-description', description);
+
+    // JSON-LD Breadcrumb Schema
+    const breadcrumbSchema = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": window.location.origin },
+        { "@type": "ListItem", "position": 2, "name": "Calculators", "item": `${window.location.origin}/calculators` },
+        { "@type": "ListItem", "position": 3, "name": this.calculator.title, "item": url }
+      ]
+    };
+    const schemaBreadcrumbEl = document.getElementById('schema-breadcrumb');
+    if (schemaBreadcrumbEl) schemaBreadcrumbEl.textContent = JSON.stringify(breadcrumbSchema);
+
+    // Update visible breadcrumb
+    document.getElementById('breadcrumb-calculator').textContent = this.calculator.title;
+  }
+
+  /**
+   * Helper to set meta tag content by ID
+   */
+  setMetaContent(id, content) {
+    const el = document.getElementById(id);
+    if (el) el.setAttribute('content', content);
+  }
+
+  /**
+   * Render the calculator
+   */
+  renderCalculator() {
+    const icon = this.calculator.icon || 'fa-calculator';
+    const iconColor = this.calculator.iconColor || '#14bdee';
+    
+    // Format description
+    const descriptionHtml = this.formatMarkdown(this.calculator.description || '');
+    const howToUseHtml = this.formatMarkdown(this.calculator.howToUse || '');
+    const formulaHtml = this.formatMarkdown(this.calculator.formulaExplanation || '');
+    
+    // Render FAQs
+    const faqsHtml = this.renderFAQs(this.calculator.faqs || []);
+
+    this.mainContainer.innerHTML = `
+      <div class="calculator-header">
+        <div class="calculator-icon" style="background-color: ${iconColor}20; color: ${iconColor};">
+          <i class="fa ${icon}"></i>
+        </div>
+        <div class="calculator-header-content">
+          <h1 class="calculator-title">${this.calculator.title}</h1>
+          <p class="calculator-excerpt">${this.calculator.excerpt || ''}</p>
+        </div>
+      </div>
+
+      <div class="calculator-widget" id="calculator-widget">
+        <!-- Calculator widget will be loaded here -->
+        <div class="calculator-loading">
+          <div class="spinner"></div>
+          <p>Loading calculator...</p>
+        </div>
+      </div>
+
+      ${this.calculator.disclaimer ? `
+      <div class="calculator-disclaimer">
+        <i class="fa fa-info-circle"></i>
+        <p>${this.calculator.disclaimer}</p>
+      </div>
+      ` : ''}
+
+      ${descriptionHtml ? `
+      <div class="calculator-section">
+        <h2>About This Calculator</h2>
+        <div class="calculator-content">${descriptionHtml}</div>
+      </div>
+      ` : ''}
+
+      ${howToUseHtml ? `
+      <div class="calculator-section">
+        <div class="calculator-content">${howToUseHtml}</div>
+      </div>
+      ` : ''}
+
+      ${formulaHtml ? `
+      <div class="calculator-section">
+        <div class="calculator-content">${formulaHtml}</div>
+      </div>
+      ` : ''}
+
+      ${faqsHtml}
+    `;
+
+    // Load the specific calculator widget
+    this.loadCalculatorWidget();
+  }
+
+  /**
+   * Load the specific calculator widget based on calculatorType
+   */
+  loadCalculatorWidget() {
+    const widgetContainer = document.getElementById('calculator-widget');
+    const calcType = this.calculator.calculatorType;
+
+    // Check if calculator is registered
+    const CalculatorClass = getCalculator(calcType);
+    
+    if (CalculatorClass) {
+      const calculator = new CalculatorClass(widgetContainer);
+      calculator.render();
+      // Initialize slider progress bars
+      setTimeout(() => CalculatorUtils.initSliderProgress(), 50);
+    } else {
+      // Fallback - show coming soon
+      widgetContainer.innerHTML = `
+        <div class="calculator-coming-soon">
+          <i class="fa fa-wrench"></i>
+          <h3>Coming Soon</h3>
+          <p>This calculator is being developed. Check back soon!</p>
+        </div>
+      `;
+    }
+  }
+
+  /**
+   * Render FAQs accordion
+   */
+  renderFAQs(faqs) {
+    if (!faqs || faqs.length === 0) return '';
+
+    const faqItems = faqs.map((faq, index) => `
+      <div class="faq-item">
+        <button class="faq-question" data-index="${index}">
+          <span>${faq.question}</span>
+          <i class="fa fa-chevron-down"></i>
+        </button>
+        <div class="faq-answer" id="faq-answer-${index}">
+          <p>${faq.answer}</p>
+        </div>
+      </div>
+    `).join('');
+
+    // Add event listener after rendering
+    setTimeout(() => {
+      document.querySelectorAll('.faq-question').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const index = btn.dataset.index;
+          const answer = document.getElementById(`faq-answer-${index}`);
+          const isOpen = answer.classList.contains('open');
+          
+          // Close all
+          document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
+          document.querySelectorAll('.faq-question').forEach(q => q.classList.remove('active'));
+          
+          // Open clicked if was closed
+          if (!isOpen) {
+            answer.classList.add('open');
+            btn.classList.add('active');
+          }
+        });
+      });
+    }, 100);
+
+    return `
+      <div class="calculator-section calculator-faqs">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-list">${faqItems}</div>
+      </div>
+    `;
+  }
+
+  /**
+   * Render sidebar with related calculators
+   */
+  async renderSidebar() {
+    const related = this.calculator.relatedCalculators || [];
+    
+    // Fetch more calculators from same category if needed
+    let moreCalculators = [];
+    if (related.length < 5) {
+      const url = getApiUrl(
+        `/calculators?filters[calculatorCategory][$eq]=${this.calculator.calculatorCategory}&filters[slug][$ne]=${this.calculator.slug}&pagination[limit]=5`
+      );
+      const response = await fetch(url);
+      const data = await response.json();
+      moreCalculators = data.data || [];
+    }
+
+    // Combine and dedupe
+    const allRelated = [...related, ...moreCalculators].filter((calc, index, self) =>
+      index === self.findIndex(c => c.slug === calc.slug)
+    ).slice(0, 5);
+
+    const relatedHtml = allRelated.length > 0 ? allRelated.map(calc => `
+      <a href="/calculators/${calc.slug}" class="sidebar-calc-item">
+        <div class="sidebar-calc-icon" style="color: ${calc.iconColor || '#14bdee'}">
+          <i class="fa ${calc.icon || 'fa-calculator'}"></i>
+        </div>
+        <div class="sidebar-calc-info">
+          <span class="sidebar-calc-title">${calc.title}</span>
+          <span class="sidebar-calc-category">${calc.calculatorCategory === 'finance' ? 'Finance' : 'Health'}</span>
+        </div>
+        <i class="fa fa-chevron-right sidebar-calc-arrow"></i>
+      </a>
+    `).join('') : '<p class="no-related">No related calculators</p>';
+
+    this.sidebarContainer.innerHTML = `
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">Related Calculators</h3>
+        <div class="sidebar-calc-list">
+          ${relatedHtml}
+        </div>
+      </div>
+
+      <div class="sidebar-section sidebar-cta">
+        <h3 class="sidebar-title">All Calculators</h3>
+        <p>Browse our full collection of financial and health calculators.</p>
+        <a href="/calculators" class="sidebar-btn">
+          <i class="fa fa-th-large"></i> View All Calculators
+        </a>
+      </div>
+    `;
+  }
+
+  /**
+   * Format markdown to HTML
+   */
+  formatMarkdown(content) {
+    if (!content) return '';
+    
+    if (typeof marked !== 'undefined') {
+      marked.setOptions({ breaks: true, gfm: true });
+      return marked.parse(content);
+    }
+    
+    // Fallback
+    return content.replace(/\n/g, '<br>');
+  }
+
+  /**
+   * Show error state
+   */
+  showError(message) {
+    document.title = 'Calculator Not Found | Finance24x';
+    
+    this.mainContainer.innerHTML = `
+      <div class="calculator-error">
+        <i class="fa fa-exclamation-circle"></i>
+        <h2>Calculator Not Found</h2>
+        <p>${message}</p>
+        <a href="/calculators" class="btn-back">
+          <i class="fa fa-arrow-left"></i> Back to Calculators
+        </a>
+      </div>
+    `;
+  }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+  const manager = new CalculatorPageManager();
+  manager.init();
+});
+

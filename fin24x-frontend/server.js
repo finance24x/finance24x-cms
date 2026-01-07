@@ -37,6 +37,11 @@ app.get('/sitemap.xml', async (req, res) => {
     const staticPagesData = await staticPagesRes.json();
     const staticPages = staticPagesData.data || [];
 
+    // Fetch all calculators
+    const calculatorsRes = await fetch(`${STRAPI_URL}/api/calculators?pagination[limit]=100`);
+    const calculatorsData = await calculatorsRes.json();
+    const calculators = calculatorsData.data || [];
+
     // Build sitemap XML
     let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -83,6 +88,18 @@ app.get('/sitemap.xml', async (req, res) => {
 `;
     }
 
+    // Add calculators
+    for (const calc of calculators) {
+      const lastmod = calc.updatedAt ? calc.updatedAt.split('T')[0] : new Date().toISOString().split('T')[0];
+      xml += `  <url>
+    <loc>${SITE_URL}/calculators/${calc.slug}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+`;
+    }
+
     xml += `</urlset>`;
 
     res.type('application/xml');
@@ -122,6 +139,11 @@ STATIC_PAGE_SLUGS.forEach(slug => {
   app.get(`/${slug}`, (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'static-page.html'));
   });
+});
+
+// Calculator pages - /calculators/:slug
+app.get('/calculators/:slug', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'calculator.html'));
 });
 
 // Article pages - /:category/:article-slug
