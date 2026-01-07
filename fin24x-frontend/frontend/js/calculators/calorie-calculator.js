@@ -18,10 +18,20 @@ class CalorieCalculator {
         ${CalculatorUtils.createSlider('cal-age', 'Your Age', 15, 80, this.age, 1, ' years', '')}
         ${CalculatorUtils.createSlider('cal-weight', 'Your Weight', 40, 150, this.weight, 1, ' kg', '')}
         ${CalculatorUtils.createSlider('cal-height', 'Your Height', 140, 210, this.height, 1, ' cm', '')}
-        ${CalculatorUtils.createSelect('cal-gender', 'Gender', [
-          { value: 'male', label: 'Male' },
-          { value: 'female', label: 'Female' }
-        ], 'male')}
+        
+        <div class="calc-input-card">
+          <label>Gender</label>
+          <div class="gender-toggle" id="cal-gender-toggle">
+            <button type="button" class="gender-btn active" data-value="male">
+              <i class="fa fa-male"></i> Male
+            </button>
+            <button type="button" class="gender-btn" data-value="female">
+              <i class="fa fa-female"></i> Female
+            </button>
+          </div>
+          <input type="hidden" id="cal-gender" value="male">
+        </div>
+
         ${CalculatorUtils.createSelect('cal-activity', 'Activity Level', [
           { value: '1.2', label: 'Sedentary (little or no exercise)' },
           { value: '1.375', label: 'Light (exercise 1-3 days/week)' },
@@ -37,67 +47,118 @@ class CalorieCalculator {
         </div>
 
         <div class="calc-results" id="cal-results" style="display: none;">
-          <div class="cal-main">
-            <div class="cal-value" id="cal-maintain">2,200</div>
-            <div class="cal-label">Calories/day to maintain weight</div>
+          <div class="cal-bmr">
+            <span>Your BMR (Base Metabolic Rate):</span>
+            <strong id="cal-bmr">1,650 cal/day</strong>
           </div>
 
-          <div class="cal-goals">
-            <div class="cal-goal loss">
+          <div class="cal-goals-3">
+            <div class="cal-goal-card maintain">
+              <div class="goal-icon">⚖️</div>
+              <div class="goal-title">Maintain Weight</div>
+              <div class="goal-value" id="cal-maintain">2,200 cal</div>
+              <div class="goal-desc">Daily calories to stay the same</div>
+            </div>
+            <div class="cal-goal-card loss">
               <div class="goal-icon">📉</div>
               <div class="goal-title">Weight Loss</div>
               <div class="goal-value" id="cal-loss">1,700 cal</div>
               <div class="goal-desc">-500 cal/day = ~0.5 kg/week</div>
             </div>
-            <div class="cal-goal gain">
+            <div class="cal-goal-card gain">
               <div class="goal-icon">📈</div>
               <div class="goal-title">Weight Gain</div>
               <div class="goal-value" id="cal-gain">2,700 cal</div>
               <div class="goal-desc">+500 cal/day = ~0.5 kg/week</div>
             </div>
           </div>
-
-          <div class="cal-bmr">
-            <span>Your BMR (Base Metabolic Rate):</span>
-            <strong id="cal-bmr">1,650 cal/day</strong>
-          </div>
         </div>
       </div>
       <style>
-        .cal-main {
-          text-align: center;
-          padding: 35px;
-          background: linear-gradient(135deg, #e8f7fc, #d4f1f9);
-          border-radius: 12px;
-          margin-bottom: 20px;
+        /* Gender Toggle */
+        .gender-toggle {
+          display: flex;
+          gap: 10px;
+          margin-top: 8px;
         }
-        .cal-value {
-          font-size: 3.5rem;
-          font-weight: 700;
-          color: #14bdee;
-          line-height: 1;
-        }
-        .cal-label {
-          margin-top: 10px;
-          color: #0a7d9c;
-          font-size: 1rem;
-        }
-        .cal-goals {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 15px;
-          margin-bottom: 20px;
-        }
-        .cal-goal {
-          padding: 20px;
+        .gender-btn {
+          flex: 1;
+          padding: 12px 20px;
+          border: 2px solid #e0e0e0;
           border-radius: 10px;
+          background: #fff;
+          color: #666;
+          font-size: 1rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+        }
+        .gender-btn:hover {
+          border-color: #14bdee;
+          color: #14bdee;
+        }
+        .gender-btn.active {
+          background: linear-gradient(135deg, #14bdee 0%, #0a9dc4 100%);
+          border-color: #14bdee;
+          color: #fff;
+        }
+        .gender-btn i {
+          font-size: 1.1rem;
+        }
+        /* Dark mode gender toggle */
+        .dark-mode .gender-btn {
+          background: var(--bg-tertiary);
+          border-color: var(--border-color);
+          color: var(--text-secondary);
+        }
+        .dark-mode .gender-btn:hover {
+          border-color: #14bdee;
+          color: #14bdee;
+        }
+        .dark-mode .gender-btn.active {
+          background: linear-gradient(135deg, #14bdee 0%, #0a9dc4 100%);
+          border-color: #14bdee;
+          color: #fff;
+        }
+
+        .cal-bmr {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          padding: 20px 25px;
+          border-radius: 12px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 1rem;
+          color: rgba(255,255,255,0.9);
+          margin-bottom: 20px;
+        }
+        .cal-bmr strong {
+          color: #fff;
+          font-size: 1.3rem;
+        }
+        .cal-goals-3 {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 15px;
+        }
+        .cal-goal-card {
+          padding: 20px 15px;
+          border-radius: 12px;
           text-align: center;
         }
-        .cal-goal.loss {
+        .cal-goal-card.maintain {
+          background: linear-gradient(135deg, #e8f7fc, #d4f1f9);
+          border: 1px solid #b8e6f5;
+        }
+        .cal-goal-card.loss {
           background: #fef3f2;
           border: 1px solid #fee4e2;
         }
-        .cal-goal.gain {
+        .cal-goal-card.gain {
           background: #f0fdf4;
           border: 1px solid #dcfce7;
         }
@@ -108,31 +169,47 @@ class CalorieCalculator {
         .goal-title {
           font-weight: 600;
           color: #1a1a2e;
-          margin-bottom: 5px;
+          margin-bottom: 8px;
+          font-size: 0.95rem;
         }
         .goal-value {
-          font-size: 1.4rem;
+          font-size: 1.3rem;
           font-weight: 700;
+          margin-bottom: 6px;
         }
-        .cal-goal.loss .goal-value { color: #dc2626; }
-        .cal-goal.gain .goal-value { color: #16a34a; }
+        .cal-goal-card.maintain .goal-value { color: #14bdee; }
+        .cal-goal-card.loss .goal-value { color: #dc2626; }
+        .cal-goal-card.gain .goal-value { color: #16a34a; }
         .goal-desc {
-          font-size: 0.8rem;
+          font-size: 0.75rem;
           color: #888;
-          margin-top: 5px;
         }
-        .cal-bmr {
-          background: #f8f9fa;
-          padding: 15px 20px;
-          border-radius: 8px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          font-size: 0.95rem;
-          color: #555;
+        @media (max-width: 768px) {
+          .cal-goals-3 {
+            grid-template-columns: 1fr;
+          }
         }
-        .cal-bmr strong {
-          color: #1a1a2e;
+        /* Dark mode */
+        .dark-mode .cal-bmr {
+          background: linear-gradient(135deg, #4c51bf 0%, #6b46c1 100%);
+        }
+        .dark-mode .cal-goal-card.maintain {
+          background: rgba(20, 189, 238, 0.1);
+          border-color: rgba(20, 189, 238, 0.3);
+        }
+        .dark-mode .cal-goal-card.loss {
+          background: rgba(220, 38, 38, 0.1);
+          border-color: rgba(220, 38, 38, 0.3);
+        }
+        .dark-mode .cal-goal-card.gain {
+          background: rgba(22, 163, 74, 0.1);
+          border-color: rgba(22, 163, 74, 0.3);
+        }
+        .dark-mode .goal-title {
+          color: var(--text-primary);
+        }
+        .dark-mode .goal-desc {
+          color: var(--text-secondary);
         }
       </style>
     `;
@@ -147,9 +224,18 @@ class CalorieCalculator {
       });
       document.getElementById(id).addEventListener('change', () => this.calculate());
     });
-    ['cal-gender', 'cal-activity'].forEach(id => {
-      document.getElementById(id).addEventListener('change', () => this.calculate());
+    
+    // Gender toggle buttons
+    document.querySelectorAll('.gender-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('cal-gender').value = btn.dataset.value;
+        this.calculate();
+      });
     });
+    
+    document.getElementById('cal-activity').addEventListener('change', () => this.calculate());
     document.getElementById('cal-calculate').addEventListener('click', () => this.calculate());
   }
 
@@ -166,7 +252,7 @@ class CalorieCalculator {
     const gain = maintenance + 500;
 
     document.getElementById('cal-results').style.display = 'block';
-    document.getElementById('cal-maintain').textContent = CalculatorUtils.formatIndianNumber(Math.round(maintenance));
+    document.getElementById('cal-maintain').textContent = `${CalculatorUtils.formatIndianNumber(Math.round(maintenance))} cal`;
     document.getElementById('cal-loss').textContent = `${CalculatorUtils.formatIndianNumber(Math.round(loss))} cal`;
     document.getElementById('cal-gain').textContent = `${CalculatorUtils.formatIndianNumber(Math.round(gain))} cal`;
     document.getElementById('cal-bmr').textContent = `${CalculatorUtils.formatIndianNumber(Math.round(bmr))} cal/day`;

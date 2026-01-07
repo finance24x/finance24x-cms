@@ -517,6 +517,8 @@ export interface ApiCalculatorCalculator extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     description: Schema.Attribute.RichText;
     disclaimer: Schema.Attribute.Text;
+    enableCalculator: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
     excerpt: Schema.Attribute.Text &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 200;

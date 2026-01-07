@@ -454,7 +454,7 @@
   margin-bottom: 15px;
 }
 
-/* Formula Styling */
+/* Formula Styling - Enhanced Readability */
 .calculator-content p strong:first-child,
 .calculator-content p:has(code) {
   display: block;
@@ -462,42 +462,79 @@
 }
 
 .calculator-content code {
-  font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', Georgia, serif;
-  font-size: 1.3rem;
+  font-family: 'Fira Code', 'Source Code Pro', 'Consolas', monospace;
+  font-size: 1.1rem;
   font-weight: 500;
-  color: #14bdee;
-  background: rgba(20, 189, 238, 0.08);
-  padding: 15px 30px;
+  color: #0a7d9c;
+  background: linear-gradient(135deg, #e8f7fc, #d4f1f9);
+  padding: 12px 20px;
   border-radius: 8px;
   display: inline-block;
-  margin: 10px 0;
+  margin: 8px 4px;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(20, 189, 238, 0.2);
+}
+
+/* Formula Container - Pre blocks */
+.calculator-content pre {
+  background: linear-gradient(145deg, #f0faff, #e8f7fc);
+  border: 2px solid rgba(20, 189, 238, 0.15);
+  border-radius: 16px;
+  padding: 30px 35px;
+  margin: 25px 0;
+  overflow-x: auto;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(20, 189, 238, 0.08);
+}
+
+.calculator-content pre code {
+  font-family: 'Fira Code', 'Source Code Pro', 'Consolas', monospace;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #0a7d9c;
+  background: transparent;
+  padding: 0;
+  border: none;
   letter-spacing: 1px;
+  line-height: 2;
+  display: block;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Formula Legend/Variables */
+.calculator-content pre code strong {
+  color: #14bdee;
+  font-weight: 700;
 }
 
 /* Formula box for prominent formulas */
 .formula-box {
   text-align: center;
-  padding: 25px;
-  background: linear-gradient(135deg, rgba(20, 189, 238, 0.05), rgba(20, 189, 238, 0.1));
-  border: 1px solid rgba(20, 189, 238, 0.2);
-  border-radius: 12px;
-  margin: 20px 0;
+  padding: 30px 40px;
+  background: linear-gradient(145deg, #f0faff, #e8f7fc);
+  border: 2px solid rgba(20, 189, 238, 0.2);
+  border-radius: 16px;
+  margin: 25px 0;
+  box-shadow: 0 4px 20px rgba(20, 189, 238, 0.08);
 }
 
 .formula-box .formula {
-  font-family: 'Cambria Math', 'Latin Modern Math', 'STIX Two Math', Georgia, serif;
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: #14bdee;
+  font-family: 'Fira Code', 'Source Code Pro', 'Consolas', monospace;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #0a7d9c;
   letter-spacing: 2px;
   margin-bottom: 15px;
+  line-height: 1.6;
 }
 
 .formula-box .formula-label {
   font-size: 0.85rem;
-  color: #888;
+  color: #666;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
+  font-weight: 600;
 }
 
 .calculator-content ul, .calculator-content ol {
@@ -839,17 +876,35 @@
 }
 
 .dark-mode .calculator-content code {
-  background: rgba(20, 189, 238, 0.15);
+  background: rgba(20, 189, 238, 0.12);
+  border-color: rgba(20, 189, 238, 0.25);
   color: #5ecef5;
 }
 
+.dark-mode .calculator-content pre {
+  background: linear-gradient(145deg, rgba(20, 189, 238, 0.08), rgba(20, 189, 238, 0.12));
+  border-color: rgba(20, 189, 238, 0.25);
+}
+
+.dark-mode .calculator-content pre code {
+  color: #5ecef5;
+}
+
+.dark-mode .calculator-content pre code strong {
+  color: #7dd8f7;
+}
+
 .dark-mode .formula-box {
-  background: linear-gradient(135deg, rgba(20, 189, 238, 0.08), rgba(20, 189, 238, 0.15));
+  background: linear-gradient(145deg, rgba(20, 189, 238, 0.08), rgba(20, 189, 238, 0.12));
   border-color: rgba(20, 189, 238, 0.3);
 }
 
 .dark-mode .formula-box .formula {
   color: #5ecef5;
+}
+
+.dark-mode .formula-box .formula-label {
+  color: var(--text-secondary);
 }
 
 .dark-mode .calculator-content li strong {

@@ -26,6 +26,12 @@ class CalculatorPageManager {
         return;
       }
 
+      // Check if calculator is enabled
+      if (this.calculator.enableCalculator === false) {
+        this.showError('This calculator is currently unavailable');
+        return;
+      }
+
       this.updatePageMeta();
       this.renderCalculator();
       this.renderSidebar();
@@ -258,9 +264,11 @@ class CalculatorPageManager {
    * Render sidebar with related calculators
    */
   async renderSidebar() {
-    // Fetch ALL calculators from same category (excluding current)
+    // Fetch ALL enabled calculators from same category (excluding current and disabled)
+    // URL encode the category to handle special characters like & and spaces
+    const encodedCategory = encodeURIComponent(this.calculator.calculatorCategory || '');
     const url = getApiUrl(
-      `/calculators?filters[calculatorCategory][$eq]=${this.calculator.calculatorCategory}&filters[slug][$ne]=${this.calculator.slug}&pagination[limit]=100&sort=order:asc`
+      `/calculators?filters[calculatorCategory][$eq]=${encodedCategory}&filters[slug][$ne]=${this.calculator.slug}&filters[enableCalculator][$ne]=false&pagination[limit]=100&sort=order:asc`
     );
     const response = await fetch(url);
     const data = await response.json();

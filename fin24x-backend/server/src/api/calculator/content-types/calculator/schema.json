@@ -124,6 +124,10 @@
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::tag.tag"
+    },
+    "enableCalculator": {
+      "type": "boolean",
+      "default": true
     }
   }
 }
