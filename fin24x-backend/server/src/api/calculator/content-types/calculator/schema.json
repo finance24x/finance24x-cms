@@ -21,24 +21,18 @@
       "targetField": "title",
       "required": true
     },
-    "excerpt": {
-      "type": "text",
-      "maxLength": 200
-    },
-    "description": {
-      "type": "richtext"
-    },
     "calculatorCategory": {
       "type": "enumeration",
+      "required": true,
+      "default": "finance",
       "enum": [
         "finance",
-        "health"
-      ],
-      "required": true,
-      "default": "finance"
+        "fitness & health"
+      ]
     },
     "calculatorType": {
       "type": "enumeration",
+      "required": true,
       "enum": [
         "sip",
         "fd",
@@ -57,8 +51,7 @@
         "bmr",
         "diabetes-risk",
         "walk-calorie-burn"
-      ],
-      "required": true
+      ]
     },
     "icon": {
       "type": "string",
@@ -68,15 +61,24 @@
       "type": "string",
       "default": "#14bdee"
     },
+    "excerpt": {
+      "type": "text",
+      "maxLength": 200
+    },
     "featuredImage": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
-    "howToUse": {
+    "description": {
       "type": "richtext"
     },
     "formulaExplanation": {
+      "type": "richtext"
+    },
+    "howToUse": {
       "type": "richtext"
     },
     "disclaimer": {
@@ -104,8 +106,8 @@
     },
     "faqs": {
       "type": "component",
-      "repeatable": true,
-      "component": "calculator.faq"
+      "component": "calculator.faq",
+      "repeatable": true
     },
     "category": {
       "type": "relation",
@@ -125,4 +127,3 @@
     }
   }
 }
-

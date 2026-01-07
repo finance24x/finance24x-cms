@@ -1,6 +1,5 @@
 /**
  * Diabetes Risk Calculator
- * Assesses Type 2 Diabetes risk based on various factors
  */
 
 class DiabetesRiskCalculator {
@@ -17,86 +16,111 @@ class DiabetesRiskCalculator {
   render() {
     this.container.innerHTML = `
       <div class="calc-form">
-        <div class="calc-row">
-          ${CalculatorUtils.createSlider('dr-age', 'Your Age', 20, 80, this.age, 1, ' yrs', '')}
-          ${CalculatorUtils.createSlider('dr-bmi', 'Your BMI', 15, 45, this.bmi, 0.5, '', '')}
-          ${CalculatorUtils.createSlider('dr-waist', 'Waist Size', 60, 150, this.waist, 1, ' cm', '')}
-        </div>
-        <div class="calc-row">
-          ${CalculatorUtils.createSelect('dr-family', 'Family History of Diabetes', [
-            { value: 'no', label: 'No' },
-            { value: 'yes', label: 'Yes (Parents/Siblings)' }
-          ], 'no')}
-          ${CalculatorUtils.createSelect('dr-bp', 'High Blood Pressure?', [
-            { value: 'no', label: 'No' },
-            { value: 'yes', label: 'Yes' }
-          ], 'no')}
-          ${CalculatorUtils.createSelect('dr-activity', 'Regular Exercise?', [
-            { value: 'yes', label: 'Yes (30+ min/day)' },
-            { value: 'no', label: 'No' }
-          ], 'yes')}
-        </div>
-        <div style="text-align: center;">
+        ${CalculatorUtils.createSlider('dr-age', 'Your Age', 20, 80, this.age, 1, ' years', '')}
+        ${CalculatorUtils.createSlider('dr-bmi', 'Your BMI', 15, 45, this.bmi, 0.5, '', '')}
+        ${CalculatorUtils.createSlider('dr-waist', 'Waist Circumference', 60, 150, this.waist, 1, ' cm', '')}
+        ${CalculatorUtils.createSelect('dr-family', 'Family History of Diabetes', [
+          { value: 'no', label: 'No' },
+          { value: 'yes', label: 'Yes (Parents/Siblings)' }
+        ], 'no')}
+        ${CalculatorUtils.createSelect('dr-bp', 'High Blood Pressure?', [
+          { value: 'no', label: 'No' },
+          { value: 'yes', label: 'Yes' }
+        ], 'no')}
+        ${CalculatorUtils.createSelect('dr-activity', 'Regular Physical Activity?', [
+          { value: 'yes', label: 'Yes (30+ minutes/day)' },
+          { value: 'no', label: 'No' }
+        ], 'yes')}
+        
+        <div style="text-align: center; margin-top: 10px;">
           <button class="calc-btn" id="dr-calculate">
-            <i class="fa fa-heartbeat"></i> Assess Risk
+            <i class="fa fa-heartbeat"></i> Assess My Risk
           </button>
         </div>
+
         <div class="calc-results" id="dr-results" style="display: none;">
-          <h4 class="calc-results-title">Diabetes Risk Assessment</h4>
-          <div class="dr-risk-display">
-            <div class="dr-risk-score" id="dr-score">0</div>
-            <div class="dr-risk-level" id="dr-level">Low Risk</div>
-            <div class="dr-risk-bar">
-              <div class="dr-risk-fill" id="dr-fill"></div>
+          <div class="dr-display" id="dr-display">
+            <div class="dr-score" id="dr-score">5</div>
+            <div class="dr-level" id="dr-level">Moderate Risk</div>
+          </div>
+          
+          <div class="dr-gauge">
+            <div class="dr-gauge-bar">
+              <div class="dr-gauge-fill" id="dr-fill"></div>
+            </div>
+            <div class="dr-gauge-labels">
+              <span>Low</span>
+              <span>Moderate</span>
+              <span>High</span>
+              <span>Very High</span>
             </div>
           </div>
+
           <div class="dr-recommendations" id="dr-recommendations"></div>
         </div>
       </div>
       <style>
-        .dr-risk-display {
+        .dr-display {
           text-align: center;
-          padding: 25px;
-          background: #f8f9fa;
+          padding: 35px;
           border-radius: 12px;
-          margin-bottom: 15px;
+          margin-bottom: 20px;
+          transition: background 0.3s;
         }
-        .dr-risk-score {
-          font-size: 3rem;
+        .dr-score {
+          font-size: 4rem;
           font-weight: 700;
-          color: #27ae60;
+          line-height: 1;
         }
-        .dr-risk-level {
-          font-size: 1.2rem;
+        .dr-level {
+          font-size: 1.4rem;
           font-weight: 600;
-          margin-bottom: 15px;
+          margin-top: 10px;
         }
-        .dr-risk-bar {
-          height: 10px;
-          background: #e0e0e0;
-          border-radius: 5px;
+        .dr-gauge {
+          margin-bottom: 25px;
+        }
+        .dr-gauge-bar {
+          height: 16px;
+          background: linear-gradient(to right, #27ae60 0%, #f39c12 33%, #e67e22 66%, #e74c3c 100%);
+          border-radius: 8px;
+          position: relative;
           overflow: hidden;
-          max-width: 300px;
-          margin: 0 auto;
         }
-        .dr-risk-fill {
+        .dr-gauge-fill {
+          position: absolute;
+          top: 0;
+          left: 0;
           height: 100%;
-          border-radius: 5px;
-          transition: width 0.5s, background 0.5s;
+          width: 4px;
+          background: #1a1a2e;
+          border-radius: 2px;
+          transition: left 0.5s;
+        }
+        .dr-gauge-labels {
+          display: flex;
+          justify-content: space-between;
+          margin-top: 8px;
+          font-size: 0.8rem;
+          color: #666;
         }
         .dr-recommendations {
-          padding: 15px;
-          background: #e8f7fc;
-          border-radius: 8px;
-          font-size: 0.95rem;
-          color: #333;
+          background: #f8f9fa;
+          border-radius: 10px;
+          padding: 20px;
+        }
+        .dr-recommendations h5 {
+          margin: 0 0 12px;
+          font-size: 1rem;
+          color: #1a1a2e;
         }
         .dr-recommendations ul {
-          margin: 10px 0 0 20px;
-          padding: 0;
+          margin: 0;
+          padding-left: 20px;
         }
         .dr-recommendations li {
-          margin-bottom: 5px;
+          margin-bottom: 8px;
+          color: #555;
         }
       </style>
     `;
@@ -138,7 +162,7 @@ class DiabetesRiskCalculator {
     else if (this.bmi >= 30 && this.bmi < 35) score += 2;
     else if (this.bmi >= 35) score += 3;
 
-    // Waist scoring (Asian thresholds)
+    // Waist scoring
     if (this.waist >= 90 && this.waist < 100) score += 2;
     else if (this.waist >= 100) score += 3;
 
@@ -150,35 +174,68 @@ class DiabetesRiskCalculator {
     const maxScore = 17;
     const percentage = (score / maxScore) * 100;
 
-    let level, color, recommendations;
+    let level, bgColor, recommendations;
     if (score <= 4) {
       level = 'Low Risk';
-      color = '#27ae60';
-      recommendations = 'Great! Your risk is low. Continue maintaining a healthy lifestyle.';
+      bgColor = '#e8f7ec';
+      recommendations = `
+        <h5>✅ Great News!</h5>
+        <p>Your diabetes risk is currently low. Keep up the healthy lifestyle!</p>
+        <ul>
+          <li>Continue regular physical activity</li>
+          <li>Maintain a balanced diet</li>
+          <li>Annual health check-ups recommended</li>
+        </ul>
+      `;
     } else if (score <= 8) {
       level = 'Moderate Risk';
-      color = '#f39c12';
-      recommendations = '<strong>Moderate Risk.</strong> Consider:<ul><li>Regular blood sugar testing</li><li>Maintaining healthy weight</li><li>30 minutes of daily exercise</li></ul>';
+      bgColor = '#fef3e0';
+      recommendations = `
+        <h5>⚠️ Moderate Risk - Take Action</h5>
+        <ul>
+          <li>Get your blood sugar tested regularly</li>
+          <li>Aim for 30 minutes of daily exercise</li>
+          <li>Reduce sugar and refined carbs intake</li>
+          <li>Maintain a healthy weight</li>
+        </ul>
+      `;
     } else if (score <= 12) {
       level = 'High Risk';
-      color = '#e67e22';
-      recommendations = '<strong>High Risk.</strong> Please:<ul><li>Consult a doctor soon</li><li>Get HbA1c test</li><li>Lifestyle modifications</li><li>Monitor diet closely</li></ul>';
+      bgColor = '#fdeae8';
+      recommendations = `
+        <h5>🔴 High Risk - Consult a Doctor</h5>
+        <ul>
+          <li>Schedule a doctor's appointment soon</li>
+          <li>Get HbA1c test done</li>
+          <li>Start lifestyle modifications immediately</li>
+          <li>Monitor your diet closely</li>
+          <li>Consider a diabetes prevention program</li>
+        </ul>
+      `;
     } else {
       level = 'Very High Risk';
-      color = '#e74c3c';
-      recommendations = '<strong>Very High Risk.</strong> Immediate action needed:<ul><li>Consult doctor immediately</li><li>Complete diabetes screening</li><li>Dietary intervention</li><li>Regular monitoring</li></ul>';
+      bgColor = '#fce8e8';
+      recommendations = `
+        <h5>🚨 Very High Risk - Immediate Action Needed</h5>
+        <ul>
+          <li><strong>Consult a doctor immediately</strong></li>
+          <li>Get complete diabetes screening</li>
+          <li>Start a structured diet plan</li>
+          <li>Begin a supervised exercise program</li>
+          <li>Regular blood sugar monitoring required</li>
+        </ul>
+      `;
     }
+
+    const display = document.getElementById('dr-display');
+    display.style.background = bgColor;
 
     document.getElementById('dr-results').style.display = 'block';
     document.getElementById('dr-score').textContent = score;
-    document.getElementById('dr-score').style.color = color;
     document.getElementById('dr-level').textContent = level;
-    document.getElementById('dr-level').style.color = color;
-    document.getElementById('dr-fill').style.width = `${percentage}%`;
-    document.getElementById('dr-fill').style.background = color;
+    document.getElementById('dr-fill').style.left = `${percentage}%`;
     document.getElementById('dr-recommendations').innerHTML = recommendations;
   }
 }
 
 registerCalculator('diabetes-risk', DiabetesRiskCalculator);
-

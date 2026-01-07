@@ -1,29 +1,29 @@
 /**
- * RD Calculator
- * Recurring Deposit Calculator
+ * RD Calculator with Growth Chart
  */
 
 class RDCalculator {
   constructor(container) {
     this.container = container;
-    this.monthlyDeposit = 5000;
+    this.monthlyDeposit = 10000;
     this.interestRate = 7;
     this.tenure = 5;
+    this.chart = null;
   }
 
   render() {
     this.container.innerHTML = `
       <div class="calc-form">
-        <div class="calc-row">
-          ${CalculatorUtils.createSlider('rd-monthly', 'Monthly Deposit', 500, 100000, this.monthlyDeposit, 500, '', '₹')}
-          ${CalculatorUtils.createSlider('rd-rate', 'Interest Rate (%)', 4, 10, this.interestRate, 0.1, '%', '')}
-          ${CalculatorUtils.createSlider('rd-tenure', 'Tenure', 1, 10, this.tenure, 1, ' yrs', '')}
-        </div>
-        <div style="text-align: center;">
+        ${CalculatorUtils.createSlider('rd-monthly', 'Monthly Deposit', 500, 100000, this.monthlyDeposit, 500, '', '₹')}
+        ${CalculatorUtils.createSlider('rd-rate', 'Interest Rate (p.a.)', 4, 10, this.interestRate, 0.1, '%', '')}
+        ${CalculatorUtils.createSlider('rd-tenure', 'Tenure', 1, 10, this.tenure, 1, ' years', '')}
+        
+        <div style="text-align: center; margin-top: 10px;">
           <button class="calc-btn" id="rd-calculate">
-            <i class="fa fa-calculator"></i> Calculate
+            <i class="fa fa-calculator"></i> Calculate Maturity
           </button>
         </div>
+
         <div class="calc-results" id="rd-results" style="display: none;">
           <h4 class="calc-results-title">RD Maturity Details</h4>
           <div class="calc-results-grid">
@@ -38,6 +38,23 @@ class RDCalculator {
             <div class="calc-result-box" style="border-color: #9b59b6">
               <div class="calc-result-label">Maturity Amount</div>
               <div class="calc-result-value" id="rd-maturity" style="color: #9b59b6">₹0</div>
+            </div>
+          </div>
+
+          <div class="calc-chart-container">
+            <h5 class="calc-chart-title">RD Growth Over Time</h5>
+            <div class="calc-chart-wrapper">
+              <canvas id="rd-chart"></canvas>
+            </div>
+            <div class="calc-chart-legend">
+              <div class="calc-legend-item">
+                <span class="calc-legend-dot" style="background: #3498db"></span>
+                <span>Amount Deposited</span>
+              </div>
+              <div class="calc-legend-item">
+                <span class="calc-legend-dot" style="background: #27ae60"></span>
+                <span>Total Value</span>
+              </div>
             </div>
           </div>
         </div>
@@ -66,17 +83,21 @@ class RDCalculator {
     });
   }
 
+  calculateRDMaturity(P, r, months) {
+    const quarterlyRate = r / 4;
+    let maturity = 0;
+    for (let i = 1; i <= months; i++) {
+      maturity += P * Math.pow(1 + quarterlyRate, (months - i + 1) / 3);
+    }
+    return maturity;
+  }
+
   calculate() {
     const P = this.monthlyDeposit;
-    const r = this.interestRate / 100 / 4; // Quarterly compounding
+    const r = this.interestRate / 100;
     const n = this.tenure * 12;
     
-    // RD maturity formula with quarterly compounding
-    let maturity = 0;
-    for (let i = 1; i <= n; i++) {
-      maturity += P * Math.pow(1 + r, (n - i + 1) / 3);
-    }
-    
+    const maturity = this.calculateRDMaturity(P, r, n);
     const deposited = P * n;
     const interest = maturity - deposited;
 
@@ -84,8 +105,77 @@ class RDCalculator {
     document.getElementById('rd-deposited').textContent = CalculatorUtils.formatCurrency(deposited);
     document.getElementById('rd-interest').textContent = CalculatorUtils.formatCurrency(interest);
     document.getElementById('rd-maturity').textContent = CalculatorUtils.formatCurrency(maturity);
+
+    this.renderChart();
+  }
+
+  renderChart() {
+    const years = this.tenure;
+    const labels = [];
+    const depositedData = [];
+    const totalData = [];
+
+    const P = this.monthlyDeposit;
+    const r = this.interestRate / 100;
+
+    for (let year = 0; year <= years; year++) {
+      labels.push(year === 0 ? 'Start' : `Year ${year}`);
+      const months = year * 12;
+      depositedData.push(P * months);
+      totalData.push(months === 0 ? 0 : this.calculateRDMaturity(P, r, months));
+    }
+
+    const ctx = document.getElementById('rd-chart').getContext('2d');
+    if (this.chart) this.chart.destroy();
+
+    this.chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Amount Deposited',
+            data: depositedData,
+            borderColor: '#3498db',
+            backgroundColor: 'rgba(52, 152, 219, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4
+          },
+          {
+            label: 'Total Value',
+            data: totalData,
+            borderColor: '#27ae60',
+            backgroundColor: 'rgba(39, 174, 96, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (context) => `${context.dataset.label}: ${CalculatorUtils.formatCurrency(context.raw)}`
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: (value) => CalculatorUtils.formatChartAxis(value)
+            }
+          }
+        }
+      }
+    });
   }
 }
 
 registerCalculator('rd', RDCalculator);
-

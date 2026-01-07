@@ -484,7 +484,9 @@ export interface ApiCalculatorCalculator extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    calculatorCategory: Schema.Attribute.Enumeration<['finance', 'health']> &
+    calculatorCategory: Schema.Attribute.Enumeration<
+      ['finance', 'fitness & health']
+    > &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'finance'>;
     calculatorType: Schema.Attribute.Enumeration<

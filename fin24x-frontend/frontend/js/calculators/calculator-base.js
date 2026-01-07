@@ -6,9 +6,26 @@
 const CalculatorUtils = {
   /**
    * Format number as Indian currency
+   * Handles very large numbers (crores, arab, kharab)
    */
   formatCurrency(num, decimals = 0) {
-    if (isNaN(num)) return '₹0';
+    if (isNaN(num) || num === null || num === undefined) return '₹0';
+    if (!isFinite(num)) return '₹∞';
+    
+    // Handle very large numbers with abbreviations
+    if (Math.abs(num) >= 1e12) {
+      return '₹' + (num / 1e12).toFixed(2) + ' Kharab';
+    }
+    if (Math.abs(num) >= 1e9) {
+      return '₹' + (num / 1e9).toFixed(2) + ' Arab';
+    }
+    if (Math.abs(num) >= 1e7) {
+      return '₹' + (num / 1e7).toFixed(2) + ' Cr';
+    }
+    if (Math.abs(num) >= 1e5) {
+      return '₹' + (num / 1e5).toFixed(2) + ' L';
+    }
+    
     const formatted = new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
@@ -20,13 +37,54 @@ const CalculatorUtils = {
 
   /**
    * Format number with Indian number system (lakhs, crores)
+   * Handles very large numbers
    */
   formatIndianNumber(num, decimals = 0) {
-    if (isNaN(num)) return '0';
+    if (isNaN(num) || num === null || num === undefined) return '0';
+    if (!isFinite(num)) return '∞';
+    
     return new Intl.NumberFormat('en-IN', {
       minimumFractionDigits: decimals,
       maximumFractionDigits: decimals
     }).format(num);
+  },
+  
+  /**
+   * Format large number with abbreviation (L, Cr, Arab)
+   */
+  formatLargeNumber(num) {
+    if (isNaN(num) || !isFinite(num)) return '0';
+    
+    if (Math.abs(num) >= 1e12) {
+      return (num / 1e12).toFixed(2) + ' Kharab';
+    }
+    if (Math.abs(num) >= 1e9) {
+      return (num / 1e9).toFixed(2) + ' Arab';
+    }
+    if (Math.abs(num) >= 1e7) {
+      return (num / 1e7).toFixed(2) + ' Cr';
+    }
+    if (Math.abs(num) >= 1e5) {
+      return (num / 1e5).toFixed(2) + ' L';
+    }
+    if (Math.abs(num) >= 1e3) {
+      return (num / 1e3).toFixed(2) + ' K';
+    }
+    return num.toFixed(0);
+  },
+
+  /**
+   * Format number for chart axis (shorter format)
+   */
+  formatChartAxis(value) {
+    if (isNaN(value) || !isFinite(value)) return '₹0';
+    
+    if (value >= 1e12) return `₹${(value / 1e12).toFixed(1)}Kh`;
+    if (value >= 1e9) return `₹${(value / 1e9).toFixed(1)}Ar`;
+    if (value >= 1e7) return `₹${(value / 1e7).toFixed(1)}Cr`;
+    if (value >= 1e5) return `₹${(value / 1e5).toFixed(1)}L`;
+    if (value >= 1e3) return `₹${(value / 1e3).toFixed(0)}K`;
+    return `₹${value}`;
   },
 
   /**
@@ -48,17 +106,53 @@ const CalculatorUtils = {
   /**
    * Calculate compound interest
    * P = Principal, r = rate (decimal), n = compounding frequency, t = time in years
+   * Uses logarithmic calculation for very large exponents to prevent overflow
    */
   compoundInterest(P, r, n, t) {
-    return P * Math.pow(1 + r / n, n * t);
+    if (P <= 0 || t <= 0) return P;
+    if (r <= 0) return P;
+    
+    const exponent = n * t;
+    const base = 1 + r / n;
+    
+    // For very large exponents, use log-based calculation
+    if (exponent > 1000) {
+      const logResult = Math.log(P) + exponent * Math.log(base);
+      if (logResult > 700) return Infinity; // Would overflow
+      return Math.exp(logResult);
+    }
+    
+    return P * Math.pow(base, exponent);
   },
 
   /**
    * Calculate SIP future value
    * P = monthly investment, r = monthly rate, n = total months
+   * Handles large periods safely
    */
   sipFutureValue(P, r, n) {
-    if (r === 0) return P * n;
+    if (P <= 0 || n <= 0) return 0;
+    if (r === 0 || r <= 0) return P * n;
+    
+    // For very long periods, use iterative approach to avoid overflow
+    if (n > 600) {
+      // Use logarithmic approach
+      const growthFactor = Math.pow(1 + r, n);
+      if (!isFinite(growthFactor)) {
+        // Calculate in chunks for very long periods
+        let total = 0;
+        const chunkSize = 120; // 10 years
+        for (let i = 0; i < n; i += chunkSize) {
+          const months = Math.min(chunkSize, n - i);
+          const remaining = n - i - months;
+          const chunkValue = P * ((Math.pow(1 + r, months) - 1) / r) * (1 + r);
+          total += chunkValue * Math.pow(1 + r, remaining);
+        }
+        return total;
+      }
+      return P * ((growthFactor - 1) / r) * (1 + r);
+    }
+    
     return P * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
   },
 
@@ -224,7 +318,9 @@ const CalculatorUtils = {
     const max = parseFloat(slider.max);
     const val = parseFloat(slider.value);
     const percent = ((val - min) / (max - min)) * 100;
-    slider.style.background = `linear-gradient(to right, #14bdee ${percent}%, #e0e0e0 ${percent}%)`;
+    const isDark = document.body.classList.contains('dark-mode');
+    const trackColor = isDark ? '#3a3a4a' : '#e0e0e0';
+    slider.style.background = `linear-gradient(to right, #14bdee ${percent}%, ${trackColor} ${percent}%)`;
   },
 
   /**
@@ -235,6 +331,18 @@ const CalculatorUtils = {
       this.updateSliderProgress(slider);
       slider.addEventListener('input', () => this.updateSliderProgress(slider));
     });
+
+    // Listen for dark mode changes
+    const darkModeSwitch = document.getElementById('darkModeSwitch');
+    if (darkModeSwitch) {
+      darkModeSwitch.addEventListener('change', () => {
+        setTimeout(() => {
+          document.querySelectorAll('.calc-slider').forEach(slider => {
+            this.updateSliderProgress(slider);
+          });
+        }, 50);
+      });
+    }
   }
 };
 

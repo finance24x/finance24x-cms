@@ -102,48 +102,87 @@ class CategoryPageManager {
       return;
     }
 
-    // Group calculators by category
-    const financeCalcs = calculators.filter(c => c.calculatorCategory === 'finance');
-    const healthCalcs = calculators.filter(c => c.calculatorCategory === 'health');
+    // Group calculators by category dynamically
+    const categoryGroups = {};
+    calculators.forEach(calc => {
+      const cat = calc.calculatorCategory || 'other';
+      if (!categoryGroups[cat]) {
+        categoryGroups[cat] = [];
+      }
+      categoryGroups[cat].push(calc);
+    });
+
+    // Category display config (icon, description) - add new categories here as needed
+    // These are optional - any category not listed will get auto-generated title and default icon
+    const categoryConfig = {
+      'finance': {
+        icon: 'fa-line-chart',
+        title: 'Finance Calculators',
+        desc: 'Plan your investments, taxes, and retirement with our free financial calculators'
+      },
+      'health': {
+        icon: 'fa-heartbeat',
+        title: 'Health Calculators',
+        desc: 'Track your health metrics and fitness goals with our health calculators'
+      },
+      'health & fitness': {
+        icon: 'fa-heartbeat',
+        title: 'Health & Fitness Calculators',
+        desc: 'Track your health metrics and fitness goals with our health calculators'
+      },
+      'fitness & health': {
+        icon: 'fa-heartbeat',
+        title: 'Fitness & Health Calculators',
+        desc: 'Track your health metrics and fitness goals with our health calculators'
+      }
+    };
+
+    // Default config for unknown categories
+    const defaultConfig = {
+      icon: 'fa-calculator',
+      title: 'Calculators',
+      desc: 'Useful calculators for your daily needs'
+    };
 
     let html = '';
 
-    // Finance Calculators Section
-    if (financeCalcs.length > 0) {
-      html += `
-        <div class="calculator-section">
-          <div class="calculator-section-header">
-            <h2 class="calculator-section-title">
-              <i class="fa fa-line-chart"></i> Finance Calculators
-            </h2>
-            <p class="calculator-section-desc">Plan your investments, taxes, and retirement with our free financial calculators</p>
-          </div>
-          <div class="calculator-grid">
-            ${financeCalcs.map(calc => this.renderCalculatorCard(calc)).join('')}
-          </div>
-        </div>
-      `;
-    }
+    // Render each category section
+    Object.keys(categoryGroups).forEach(category => {
+      const calcs = categoryGroups[category];
+      const config = categoryConfig[category] || {
+        ...defaultConfig,
+        title: this.formatCategoryTitle(category) + ' Calculators'
+      };
 
-    // Health Calculators Section
-    if (healthCalcs.length > 0) {
       html += `
         <div class="calculator-section">
           <div class="calculator-section-header">
             <h2 class="calculator-section-title">
-              <i class="fa fa-heartbeat"></i> Health Calculators
+              <i class="fa ${config.icon}"></i> ${config.title}
             </h2>
-            <p class="calculator-section-desc">Track your health metrics and fitness goals with our health calculators</p>
+            <p class="calculator-section-desc">${config.desc}</p>
           </div>
           <div class="calculator-grid">
-            ${healthCalcs.map(calc => this.renderCalculatorCard(calc)).join('')}
+            ${calcs.map(calc => this.renderCalculatorCard(calc)).join('')}
           </div>
         </div>
       `;
-    }
+    });
 
     this.articlesContainer.innerHTML = html;
     this.paginationContainer.style.display = 'none'; // No pagination for calculators
+  }
+
+  /**
+   * Format category name to title case
+   */
+  formatCategoryTitle(category) {
+    if (!category) return 'Other';
+    return category
+      .split(/[\s&]+/)
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' & ')
+      .replace(/ & & /g, ' & ');
   }
 
   /**

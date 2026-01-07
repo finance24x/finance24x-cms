@@ -1,34 +1,34 @@
 /**
- * Compound Interest Calculator
+ * Compound Interest Calculator with Growth Chart
  */
 
 class CompoundInterestCalculator {
   constructor(container) {
     this.container = container;
-    this.principal = 100000;
+    this.principal = 500000;
     this.rate = 8;
-    this.time = 5;
-    this.compound = 12;
+    this.time = 10;
+    this.chart = null;
   }
 
   render() {
     this.container.innerHTML = `
       <div class="calc-form">
-        <div class="calc-row">
-          ${CalculatorUtils.createSlider('ci-principal', 'Principal Amount', 1000, 10000000, this.principal, 5000, '', '₹')}
-          ${CalculatorUtils.createSlider('ci-rate', 'Interest Rate (%)', 1, 20, this.rate, 0.5, '%', '')}
-          ${CalculatorUtils.createSlider('ci-time', 'Time Period', 1, 30, this.time, 1, ' yrs', '')}
-        </div>
-        <div style="text-align: center;">
+        ${CalculatorUtils.createSlider('ci-principal', 'Principal Amount', 10000, 10000000, this.principal, 10000, '', '₹')}
+        ${CalculatorUtils.createSlider('ci-rate', 'Annual Interest Rate', 1, 20, this.rate, 0.5, '%', '')}
+        ${CalculatorUtils.createSlider('ci-time', 'Time Period', 1, 30, this.time, 1, ' years', '')}
+        
+        <div style="text-align: center; margin-top: 10px;">
           <button class="calc-btn" id="ci-calculate">
-            <i class="fa fa-calculator"></i> Calculate
+            <i class="fa fa-calculator"></i> Calculate Growth
           </button>
         </div>
+
         <div class="calc-results" id="ci-results" style="display: none;">
           <h4 class="calc-results-title">Compound Interest Details</h4>
           <div class="calc-results-grid">
             <div class="calc-result-box" style="border-color: #3498db">
-              <div class="calc-result-label">Principal</div>
+              <div class="calc-result-label">Principal Amount</div>
               <div class="calc-result-value" id="ci-principal-result" style="color: #3498db">₹0</div>
             </div>
             <div class="calc-result-box" style="border-color: #27ae60">
@@ -38,6 +38,27 @@ class CompoundInterestCalculator {
             <div class="calc-result-box" style="border-color: #9b59b6">
               <div class="calc-result-label">Total Amount</div>
               <div class="calc-result-value" id="ci-total" style="color: #9b59b6">₹0</div>
+            </div>
+          </div>
+
+          <div class="calc-chart-container">
+            <h5 class="calc-chart-title">Compound vs Simple Interest Growth</h5>
+            <div class="calc-chart-wrapper">
+              <canvas id="ci-chart"></canvas>
+            </div>
+            <div class="calc-chart-legend">
+              <div class="calc-legend-item">
+                <span class="calc-legend-dot" style="background: #27ae60"></span>
+                <span>Compound Interest</span>
+              </div>
+              <div class="calc-legend-item">
+                <span class="calc-legend-dot" style="background: #e74c3c"></span>
+                <span>Simple Interest</span>
+              </div>
+              <div class="calc-legend-item">
+                <span class="calc-legend-dot" style="background: #3498db"></span>
+                <span>Principal</span>
+              </div>
             </div>
           </div>
         </div>
@@ -67,17 +88,97 @@ class CompoundInterestCalculator {
   }
 
   calculate() {
-    // A = P(1 + r/n)^(nt) - Monthly compounding
-    const n = 12;
-    const total = this.principal * Math.pow(1 + (this.rate / 100) / n, n * this.time);
-    const interest = total - this.principal;
+    const P = this.principal;
+    const r = this.rate / 100;
+    const t = this.time;
+    const n = 12; // Monthly compounding
+
+    const total = P * Math.pow(1 + r / n, n * t);
+    const interest = total - P;
 
     document.getElementById('ci-results').style.display = 'block';
-    document.getElementById('ci-principal-result').textContent = CalculatorUtils.formatCurrency(this.principal);
+    document.getElementById('ci-principal-result').textContent = CalculatorUtils.formatCurrency(P);
     document.getElementById('ci-interest').textContent = CalculatorUtils.formatCurrency(interest);
     document.getElementById('ci-total').textContent = CalculatorUtils.formatCurrency(total);
+
+    this.renderChart();
+  }
+
+  renderChart() {
+    const years = this.time;
+    const labels = [];
+    const principalData = [];
+    const compoundData = [];
+    const simpleData = [];
+
+    const P = this.principal;
+    const r = this.rate / 100;
+
+    for (let year = 0; year <= years; year++) {
+      labels.push(year === 0 ? 'Start' : `Year ${year}`);
+      principalData.push(P);
+      compoundData.push(P * Math.pow(1 + r / 12, 12 * year));
+      simpleData.push(P + (P * r * year));
+    }
+
+    const ctx = document.getElementById('ci-chart').getContext('2d');
+    if (this.chart) this.chart.destroy();
+
+    this.chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Compound Interest',
+            data: compoundData,
+            borderColor: '#27ae60',
+            backgroundColor: 'rgba(39, 174, 96, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4
+          },
+          {
+            label: 'Simple Interest',
+            data: simpleData,
+            borderColor: '#e74c3c',
+            borderWidth: 2,
+            fill: false,
+            borderDash: [5, 5]
+          },
+          {
+            label: 'Principal',
+            data: principalData,
+            borderColor: '#3498db',
+            borderWidth: 2,
+            fill: false,
+            pointRadius: 0
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (context) => `${context.dataset.label}: ${CalculatorUtils.formatCurrency(context.raw)}`
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: (value) => CalculatorUtils.formatChartAxis(value)
+            }
+          }
+        }
+      }
+    });
   }
 }
 
 registerCalculator('compound-interest', CompoundInterestCalculator);
-

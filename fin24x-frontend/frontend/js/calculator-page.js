@@ -258,41 +258,31 @@ class CalculatorPageManager {
    * Render sidebar with related calculators
    */
   async renderSidebar() {
-    const related = this.calculator.relatedCalculators || [];
-    
-    // Fetch more calculators from same category if needed
-    let moreCalculators = [];
-    if (related.length < 5) {
-      const url = getApiUrl(
-        `/calculators?filters[calculatorCategory][$eq]=${this.calculator.calculatorCategory}&filters[slug][$ne]=${this.calculator.slug}&pagination[limit]=5`
-      );
-      const response = await fetch(url);
-      const data = await response.json();
-      moreCalculators = data.data || [];
-    }
+    // Fetch ALL calculators from same category (excluding current)
+    const url = getApiUrl(
+      `/calculators?filters[calculatorCategory][$eq]=${this.calculator.calculatorCategory}&filters[slug][$ne]=${this.calculator.slug}&pagination[limit]=100&sort=order:asc`
+    );
+    const response = await fetch(url);
+    const data = await response.json();
+    const categoryCalculators = data.data || [];
 
-    // Combine and dedupe
-    const allRelated = [...related, ...moreCalculators].filter((calc, index, self) =>
-      index === self.findIndex(c => c.slug === calc.slug)
-    ).slice(0, 5);
-
-    const relatedHtml = allRelated.length > 0 ? allRelated.map(calc => `
+    const categoryName = this.formatCategoryName(this.calculator.calculatorCategory);
+    const relatedHtml = categoryCalculators.length > 0 ? categoryCalculators.map(calc => `
       <a href="/calculators/${calc.slug}" class="sidebar-calc-item">
         <div class="sidebar-calc-icon" style="color: ${calc.iconColor || '#14bdee'}">
           <i class="fa ${calc.icon || 'fa-calculator'}"></i>
         </div>
         <div class="sidebar-calc-info">
           <span class="sidebar-calc-title">${calc.title}</span>
-          <span class="sidebar-calc-category">${calc.calculatorCategory === 'finance' ? 'Finance' : 'Health'}</span>
         </div>
         <i class="fa fa-chevron-right sidebar-calc-arrow"></i>
       </a>
-    `).join('') : '<p class="no-related">No related calculators</p>';
+    `).join('') : '<p class="no-related">No other calculators in this category</p>';
 
     this.sidebarContainer.innerHTML = `
-      <div class="sidebar-section">
-        <h3 class="sidebar-title">Related Calculators</h3>
-        <div class="sidebar-calc-list">
+      <div class="sidebar-section sidebar-related">
+        <h3 class="sidebar-title">${categoryName} Calculators <span class="calc-count">(${categoryCalculators.length})</span></h3>
+        <div class="sidebar-calc-list sidebar-calc-scroll">
           ${relatedHtml}
         </div>
       </div>
@@ -320,6 +310,19 @@ class CalculatorPageManager {
     
     // Fallback
     return content.replace(/\n/g, '<br>');
+  }
+
+  /**
+   * Format category name for display
+   */
+  formatCategoryName(category) {
+    if (!category) return 'Calculator';
+    // Capitalize each word
+    return category
+      .split(/[\s&]+/)
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' & ')
+      .replace(/ & & /g, ' & ');
   }
 
   /**

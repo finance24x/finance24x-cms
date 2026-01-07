@@ -61,19 +61,23 @@ The calculator will show you:
 
 The SIP returns are calculated using the compound interest formula:
 
-**FV = P × [{(1 + r)^n – 1} / r] × (1 + r)**
+\`FV = P × [ {(1 + r)ⁿ − 1} / r ] × (1 + r)\`
 
-Where:
-- **FV** = Future Value
-- **P** = Monthly investment amount
-- **r** = Monthly rate of return (annual rate / 12 / 100)
-- **n** = Total number of months
+**Where:**
+- **FV** = Future Value (Maturity Amount)
+- **P** = Monthly Investment Amount
+- **r** = Monthly Rate of Return (Annual Rate ÷ 12 ÷ 100)
+- **n** = Total Number of Months
 
-### Example
-If you invest ₹10,000 per month for 10 years at 12% annual return:
-- Total Investment = ₹12,00,000
-- Estimated Returns = ₹11,23,391
-- Future Value = ₹23,23,391`,
+---
+
+### Example Calculation
+
+> If you invest **₹10,000 per month** for **10 years** at **12% annual return**:
+>
+> - **Total Investment** = ₹12,00,000
+> - **Estimated Returns** = ₹11,23,391  
+> - **Future Value** = ₹23,23,391`,
     disclaimer: 'This calculator provides estimates based on assumed returns. Actual returns may vary based on market conditions. Mutual fund investments are subject to market risks.',
     faqs: [
       { question: 'What is a good SIP amount to start with?', answer: 'You can start a SIP with as little as ₹500 per month. However, ₹5,000-₹10,000 monthly is recommended for meaningful wealth creation.' },
@@ -106,14 +110,23 @@ FDs are one of the safest investment options offering guaranteed returns at fixe
 5. Click **Calculate** to see your maturity amount`,
     formulaExplanation: `## FD Formula
 
-**A = P × (1 + r/n)^(n×t)**
+\`A = P × (1 + r/n)^(n×t)\`
 
-Where:
+**Where:**
 - **A** = Maturity Amount
 - **P** = Principal (Initial Deposit)
 - **r** = Annual Interest Rate (in decimal)
-- **n** = Compounding frequency per year
-- **t** = Time in years`,
+- **n** = Compounding Frequency per year
+- **t** = Time in years
+
+---
+
+### Example Calculation
+
+> For a deposit of **₹5,00,000** at **7% p.a.** for **5 years** (quarterly compounding):
+>
+> - **Maturity Amount** = ₹7,08,983
+> - **Interest Earned** = ₹2,08,983`,
     disclaimer: 'Interest rates are subject to change. Please verify current rates with your bank. TDS may be applicable on interest earned above ₹40,000 per year.',
     faqs: [
       { question: 'Is FD interest taxable?', answer: 'Yes, FD interest is fully taxable as per your income tax slab. TDS of 10% is deducted if interest exceeds ₹40,000 per year.' },
@@ -142,13 +155,26 @@ PPF has a lock-in period of 15 years and offers one of the safest investment opt
 2. **Current PPF Rate**: The current rate is 7.1% (as of 2024)
 3. **Duration**: 15 years (can be extended in blocks of 5 years)
 4. Click **Calculate** to see your maturity amount`,
-    formulaExplanation: `## PPF Calculation
+    formulaExplanation: `## PPF Formula
+
+\`Maturity = Σ [ P × (1 + r)ⁿ ]\`
 
 PPF uses compound interest calculated annually at the end of each financial year.
 
-Interest is calculated on the lowest balance between the 5th and last day of each month.
+**Where:**
+- **P** = Yearly Investment Amount
+- **r** = Interest Rate (currently 7.1%)
+- **n** = Number of years remaining until maturity
 
-**Maturity = Sum of [P × (1 + r)^n] for each year's contribution**`,
+---
+
+### Example Calculation
+
+> Investing **₹1,50,000 per year** for **15 years** at **7.1% interest**:
+>
+> - **Total Investment** = ₹22,50,000
+> - **Interest Earned** = ₹18,18,209
+> - **Maturity Amount** = ₹40,68,209`,
     disclaimer: 'PPF interest rate is revised quarterly by the government. Current calculations are based on prevailing rates and may change.',
     faqs: [
       { question: 'What is the current PPF interest rate?', answer: 'The current PPF interest rate is 7.1% per annum (as of 2024), compounded annually.' },
