@@ -3,17 +3,7 @@
  * All dark mode overrides for article page
  */
 
-/* Breadcrumb */
-.dark-mode .breadcrumb-container {
-  background: var(--bg-secondary);
-  border-bottom-color: var(--border-color);
-}
-.dark-mode .breadcrumb-item.active {
-  color: var(--text-secondary);
-}
-.dark-mode .breadcrumb-item + .breadcrumb-item::before {
-  color: var(--text-secondary);
-}
+/* Breadcrumb dark mode styles moved to main_styles.css */
 
 /* Container */
 .dark-mode .article-container {

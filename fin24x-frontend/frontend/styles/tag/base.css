@@ -3,32 +3,7 @@
  * Breadcrumb, tag header, main container, loading, pagination
  */
 
-/* Breadcrumb */
-.breadcrumb-container {
-  padding: 18px 0;
-  background: #fafbfc;
-  border-bottom: 1px solid #eef0f2;
-}
-.breadcrumb {
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  font-size: 0.9rem;
-}
-.breadcrumb-item a {
-  color: #14bdee;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-.breadcrumb-item a:hover {
-  color: #0d9bc4;
-}
-.breadcrumb-item.active {
-  color: #6c757d;
-}
-.breadcrumb-item + .breadcrumb-item::before {
-  color: #ccc;
-}
+/* Breadcrumb styles moved to main_styles.css */
 
 /* Tag Info Bar - Simple */
 .tag-info-bar {

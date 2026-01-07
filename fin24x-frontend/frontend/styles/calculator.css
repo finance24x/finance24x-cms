@@ -2,28 +2,7 @@
  * Calculator Page Styles
  */
 
-/* Breadcrumb */
-.breadcrumb-container {
-  background: #f8f9fa;
-  padding: 12px 0;
-  border-bottom: 1px solid #eee;
-}
-.breadcrumb {
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  font-size: 0.85rem;
-}
-.breadcrumb-item a {
-  color: #666;
-  text-decoration: none;
-}
-.breadcrumb-item a:hover {
-  color: #14bdee;
-}
-.breadcrumb-item.active {
-  color: #999;
-}
+/* Breadcrumb styles moved to main_styles.css */
 
 /* Page Container */
 .calculator-page-container {
@@ -890,10 +869,7 @@
 }
 
 /* Dark Mode */
-.dark-mode .breadcrumb-container {
-  background: var(--bg-secondary);
-  border-bottom-color: var(--border-color);
-}
+/* Breadcrumb dark mode styles moved to main_styles.css */
 
 .dark-mode .calculator-page-container {
   background: var(--bg-primary);

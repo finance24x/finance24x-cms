@@ -3,35 +3,7 @@
  * Breadcrumb, container, loading, error states
  */
 
-/* Breadcrumb */
-.breadcrumb-container {
-  padding: 15px 0;
-  background: #f8f9fa;
-  border-bottom: 1px solid #eee;
-}
-.breadcrumb {
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  font-size: 0.85rem;
-}
-.breadcrumb-item a {
-  color: #14bdee;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-.breadcrumb-item a:hover {
-  color: #0d9bc4;
-}
-.breadcrumb-item.active {
-  color: #6c757d;
-}
-.breadcrumb-item + .breadcrumb-item::before {
-  content: "›";
-  color: #999;
-  font-size: 1rem;
-  padding: 0 8px;
-}
+/* Breadcrumb styles moved to main_styles.css */
 
 /* Article Container */
 .article-container {

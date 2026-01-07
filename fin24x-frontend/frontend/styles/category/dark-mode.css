@@ -3,20 +3,7 @@
  * All dark mode overrides for category page components
  */
 
-/* Breadcrumb */
-.dark-mode .breadcrumb-container {
-  background: var(--bg-secondary);
-  border-bottom-color: var(--border-color);
-}
-.dark-mode .breadcrumb-item a {
-  color: #14bdee;
-}
-.dark-mode .breadcrumb-item.active {
-  color: var(--text-secondary);
-}
-.dark-mode .breadcrumb-item + .breadcrumb-item::before {
-  color: var(--text-secondary);
-}
+/* Breadcrumb dark mode styles moved to main_styles.css */
 
 /* Main Container */
 .dark-mode .articles-main-container {

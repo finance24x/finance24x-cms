@@ -15,14 +15,6 @@
   --primary-color: #14bdee;
 }
 
-/* Breadcrumb */
-.dark-mode .breadcrumb-container {
-  background: var(--bg-secondary);
-  border-bottom-color: var(--border-color);
-}
-.dark-mode .breadcrumb-item.active {
-  color: var(--text-secondary);
-}
 
 /* Tag Info Bar */
 .dark-mode .tag-info-bar {

@@ -2,10 +2,7 @@
  * Rate Page Dark Mode Styles
  */
 
-.dark-mode .breadcrumb-container {
-  background: var(--bg-secondary);
-  border-bottom-color: var(--border-color);
-}
+/* Breadcrumb dark mode styles moved to main_styles.css */
 
 .dark-mode .rate-page-container {
   background: var(--bg-primary);
