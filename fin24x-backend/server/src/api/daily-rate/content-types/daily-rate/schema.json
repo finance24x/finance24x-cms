@@ -1,0 +1,64 @@
+{
+  "kind": "collectionType",
+  "collectionName": "daily_rates",
+  "info": {
+    "singularName": "daily-rate",
+    "pluralName": "daily-rates",
+    "displayName": "Daily Rate",
+    "description": "Daily rate data for metals in specific cities"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "rate": {
+      "type": "decimal",
+      "required": true
+    },
+    "date": {
+      "type": "date",
+      "required": true
+    },
+    "unit": {
+      "type": "enumeration",
+      "enum": [
+        "one-gram",
+        "ten-gram",
+        "one-kg",
+        "one-oz",
+        "one-tola"
+      ],
+      "required": true,
+      "default": "ten-gram"
+    },
+    "purity": {
+      "type": "enumeration",
+      "enum": [
+        "twenty-four-k",
+        "twenty-two-k",
+        "eighteen-k",
+        "fourteen-k",
+        "pure"
+      ],
+      "required": true,
+      "default": "twenty-four-k"
+    },
+    "mcxReferenceRate": {
+      "type": "decimal"
+    },
+    "metal": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::metal.metal",
+      "inversedBy": "dailyRates"
+    },
+    "city": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::city.city",
+      "inversedBy": "dailyRates"
+    }
+  }
+}
+

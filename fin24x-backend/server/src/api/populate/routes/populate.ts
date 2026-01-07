@@ -95,6 +95,16 @@ export default {
         auth: false, // Allow public access for manual population
       },
     },
+    {
+      method: 'POST',
+      path: '/populate/rate-data',
+      handler: 'populate.populateRateData',
+      config: {
+        policies: [],
+        middlewares: [],
+        auth: false, // Allow public access for manual population
+      },
+    },
   ],
 };
 

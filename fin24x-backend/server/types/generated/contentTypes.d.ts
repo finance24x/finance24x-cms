@@ -625,6 +625,125 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiCityCity extends Struct.CollectionTypeSchema {
+  collectionName: 'cities';
+  info: {
+    description: 'Specific locations where rates might vary';
+    displayName: 'City';
+    pluralName: 'cities';
+    singularName: 'city';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    country: Schema.Attribute.Relation<'manyToOne', 'api::country.country'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    dailyRates: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::daily-rate.daily-rate'
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::city.city'> &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    state: Schema.Attribute.Relation<'manyToOne', 'api::state.state'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiCountryCountry extends Struct.CollectionTypeSchema {
+  collectionName: 'countries';
+  info: {
+    description: 'Geographical locations (India, USA, UAE, etc.)';
+    displayName: 'Country';
+    pluralName: 'countries';
+    singularName: 'country';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    cities: Schema.Attribute.Relation<'oneToMany', 'api::city.city'>;
+    code: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 3;
+      }>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    currency: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 3;
+      }>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::country.country'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    publishedAt: Schema.Attribute.DateTime;
+    states: Schema.Attribute.Relation<'oneToMany', 'api::state.state'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiDailyRateDailyRate extends Struct.CollectionTypeSchema {
+  collectionName: 'daily_rates';
+  info: {
+    description: 'Daily rate data for metals in specific cities';
+    displayName: 'Daily Rate';
+    pluralName: 'daily-rates';
+    singularName: 'daily-rate';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    city: Schema.Attribute.Relation<'manyToOne', 'api::city.city'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::daily-rate.daily-rate'
+    > &
+      Schema.Attribute.Private;
+    mcxReferenceRate: Schema.Attribute.Decimal;
+    metal: Schema.Attribute.Relation<'manyToOne', 'api::metal.metal'>;
+    publishedAt: Schema.Attribute.DateTime;
+    purity: Schema.Attribute.Enumeration<
+      ['twenty-four-k', 'twenty-two-k', 'eighteen-k', 'fourteen-k', 'pure']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'twenty-four-k'>;
+    rate: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    unit: Schema.Attribute.Enumeration<
+      ['one-gram', 'ten-gram', 'one-kg', 'one-oz', 'one-tola']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'ten-gram'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiFooterFooter extends Struct.SingleTypeSchema {
   collectionName: 'footers';
   info: {
@@ -793,6 +912,40 @@ export interface ApiMarketTickerMarketTicker extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiMetalMetal extends Struct.CollectionTypeSchema {
+  collectionName: 'metals';
+  info: {
+    description: 'Types of commodities (Gold, Silver, Platinum, etc.)';
+    displayName: 'Metal';
+    pluralName: 'metals';
+    singularName: 'metal';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    dailyRates: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::daily-rate.daily-rate'
+    >;
+    description: Schema.Attribute.RichText;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::metal.metal'> &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiPopularTagPopularTag extends Struct.SingleTypeSchema {
   collectionName: 'popular_tags';
   info: {
@@ -815,6 +968,38 @@ export interface ApiPopularTagPopularTag extends Struct.SingleTypeSchema {
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     tags: Schema.Attribute.Relation<'oneToMany', 'api::tag.tag'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiStateState extends Struct.CollectionTypeSchema {
+  collectionName: 'states';
+  info: {
+    description: 'States/Provinces within countries';
+    displayName: 'State';
+    pluralName: 'states';
+    singularName: 'state';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    cities: Schema.Attribute.Relation<'oneToMany', 'api::city.city'>;
+    code: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 10;
+      }>;
+    country: Schema.Attribute.Relation<'manyToOne', 'api::country.country'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::state.state'> &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1461,11 +1646,16 @@ declare module '@strapi/strapi' {
       'api::article.article': ApiArticleArticle;
       'api::calculator.calculator': ApiCalculatorCalculator;
       'api::category.category': ApiCategoryCategory;
+      'api::city.city': ApiCityCity;
+      'api::country.country': ApiCountryCountry;
+      'api::daily-rate.daily-rate': ApiDailyRateDailyRate;
       'api::footer.footer': ApiFooterFooter;
       'api::header.header': ApiHeaderHeader;
       'api::homepage-section.homepage-section': ApiHomepageSectionHomepageSection;
       'api::market-ticker.market-ticker': ApiMarketTickerMarketTicker;
+      'api::metal.metal': ApiMetalMetal;
       'api::popular-tag.popular-tag': ApiPopularTagPopularTag;
+      'api::state.state': ApiStateState;
       'api::static-page.static-page': ApiStaticPageStaticPage;
       'api::tag-group.tag-group': ApiTagGroupTagGroup;
       'api::tag.tag': ApiTagTag;

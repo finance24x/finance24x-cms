@@ -146,12 +146,30 @@ app.get('/calculators/:slug', (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'calculator.html'));
 });
 
+// Rate pages - /gold-rates/gold-rate-today, /gold-rates/gold-rate-today-in-mumbai, etc.
+app.get('/gold-rates/:page', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'rate-page.html'));
+});
+
+app.get('/silver-rates/:page', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'rate-page.html'));
+});
+
+app.get('/commodities/:page', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'rate-page.html'));
+});
+
 // Article pages - /:category/:article-slug
 app.get('/:category/:article', (req, res, next) => {
   const { category, article } = req.params;
   
   // Skip if it looks like a file request (has extension)
   if (category.includes('.') || article.includes('.')) {
+    return next();
+  }
+  
+  // Skip rate page categories (handled by rate page routes above)
+  if (category === 'gold-rates' || category === 'silver-rates' || category === 'commodities') {
     return next();
   }
   

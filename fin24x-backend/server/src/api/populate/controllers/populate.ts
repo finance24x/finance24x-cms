@@ -11,6 +11,7 @@ import { seedTagGroups } from '../../../seed/tag-group/code';
 import { seedTags } from '../../../seed/tag/code';
 import { seedStaticPages } from '../../../seed/static-page/code';
 import { seedCalculators } from '../../../seed/calculator/code';
+import { seedRateData } from '../../../seed/rate-data/code';
 
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
   async populateCategories(ctx) {
@@ -181,6 +182,23 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       ctx.body = {
         success: false,
         message: 'Error seeding calculators',
+        error: error?.message || error,
+      };
+    }
+  },
+
+  async populateRateData(ctx) {
+    try {
+      await seedRateData(strapi);
+      ctx.body = {
+        success: true,
+        message: 'Rate data (Metals, Countries, States, Cities) seeded successfully',
+      };
+    } catch (error: any) {
+      ctx.status = 500;
+      ctx.body = {
+        success: false,
+        message: 'Error seeding rate data',
         error: error?.message || error,
       };
     }
