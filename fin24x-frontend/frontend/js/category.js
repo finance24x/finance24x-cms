@@ -243,7 +243,7 @@ class CategoryPageManager {
    * Fetch category details by slug (with related categories)
    */
   async fetchCategory(slug) {
-    const url = getApiUrl(`/categories?filters[slug][$eq]=${slug}&populate[relatedcategories]=true&populate[relatedtaggroups][populate][tags]=true`);
+    const url = getApiUrl(`/categories?filters[slug][$eq]=${slug}&populate[relatedcategories]=true&populate[relatedtaggroups][populate][tags]=true&populate[categoryImage]=true`);
     const response = await fetch(url);
     const data = await response.json();
     return data.data && data.data.length > 0 ? data.data[0] : null;
@@ -277,14 +277,75 @@ class CategoryPageManager {
   }
 
   /**
-   * Update page with category information
+   * Update page with category information (SEO)
    */
   updateCategoryInfo() {
-    // Update page title
-    document.title = `${this.category.name} - Finance24x`;
+    const name = this.category.name;
+    const description = this.category.description || `Latest ${name} news, updates, and articles on Finance24x`;
+    const url = window.location.href;
+
+    // Page Title
+    document.title = `${name} | Finance24x`;
+    const pageTitleEl = document.getElementById('page-title');
+    if (pageTitleEl) pageTitleEl.textContent = `${name} | Finance24x`;
     
-    // Update breadcrumb
-    document.getElementById('breadcrumb-category').textContent = this.category.name;
+    // Meta Description
+    const metaDesc = document.getElementById('meta-description');
+    if (metaDesc) metaDesc.setAttribute('content', description);
+
+    // Canonical URL
+    const canonicalEl = document.getElementById('canonical-url');
+    if (canonicalEl) canonicalEl.setAttribute('href', url);
+
+    // Use categoryImage if available, otherwise fallback
+    const categoryImageUrl = this.category.categoryImage?.url;
+    const ogImage = categoryImageUrl 
+      ? `${API_CONFIG.BASE_URL}${categoryImageUrl}`
+      : `${window.location.origin}/images/og-category.jpg`;
+
+    // Open Graph Tags
+    this.setMetaContent('og-url', url);
+    this.setMetaContent('og-title', `${name} | Finance24x`);
+    this.setMetaContent('og-description', description);
+    this.setMetaContent('og-image', ogImage);
+
+    // Twitter Card Tags
+    this.setMetaContent('twitter-title', `${name} | Finance24x`);
+    this.setMetaContent('twitter-description', description);
+    this.setMetaContent('twitter-image', ogImage);
+
+    // JSON-LD Breadcrumb Schema
+    const breadcrumbSchema = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": window.location.origin
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": name,
+          "item": url
+        }
+      ]
+    };
+    const schemaBreadcrumbEl = document.getElementById('schema-breadcrumb');
+    if (schemaBreadcrumbEl) schemaBreadcrumbEl.textContent = JSON.stringify(breadcrumbSchema);
+    
+    // Update visible breadcrumb
+    document.getElementById('breadcrumb-category').textContent = name;
+  }
+
+  /**
+   * Helper to set meta tag content by ID
+   */
+  setMetaContent(id, content) {
+    const el = document.getElementById(id);
+    if (el) el.setAttribute('content', content);
   }
 
   /**

@@ -156,27 +156,119 @@ class ArticlePageManager {
   }
 
   /**
-   * Update page title and meta
+   * Update page title and meta (SEO)
    */
   updatePageMeta() {
-    document.title = `${this.article.title} - Finance24x`;
-    
-    // Update meta description
-    const metaDesc = document.getElementById('meta-description');
-    if (metaDesc) {
-      metaDesc.setAttribute('content', this.article.excerpt || this.truncateText(this.article.content, 160));
-    }
+    const title = this.article.title;
+    const description = this.article.excerpt || this.truncateText(this.article.content, 160);
+    const url = window.location.href;
+    const imageUrl = this.article.image?.url 
+      ? `${API_CONFIG.BASE_URL}${this.article.image.url}` 
+      : `${window.location.origin}/images/default-og.jpg`;
+    const author = this.article.author || 'Finance24x';
+    const publishDate = this.article.publishedDate;
+    const category = this.article.category;
 
-    // Update breadcrumb
+    // Page Title
+    document.title = `${title} | Finance24x`;
+    const pageTitleEl = document.getElementById('page-title');
+    if (pageTitleEl) pageTitleEl.textContent = `${title} | Finance24x`;
+    
+    // Meta Description
+    const metaDesc = document.getElementById('meta-description');
+    if (metaDesc) metaDesc.setAttribute('content', description);
+
+    // Canonical URL
+    const canonicalEl = document.getElementById('canonical-url');
+    if (canonicalEl) canonicalEl.setAttribute('href', url);
+
+    // Open Graph Tags
+    this.setMetaContent('og-url', url);
+    this.setMetaContent('og-title', title);
+    this.setMetaContent('og-description', description);
+    this.setMetaContent('og-image', imageUrl);
+
+    // Twitter Card Tags
+    this.setMetaContent('twitter-url', url);
+    this.setMetaContent('twitter-title', title);
+    this.setMetaContent('twitter-description', description);
+    this.setMetaContent('twitter-image', imageUrl);
+
+    // JSON-LD Article Schema
+    const articleSchema = {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": title,
+      "description": description,
+      "image": imageUrl,
+      "author": {
+        "@type": "Person",
+        "name": author
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Finance24x",
+        "logo": {
+          "@type": "ImageObject",
+          "url": `${window.location.origin}/images/logo.png`
+        }
+      },
+      "datePublished": publishDate,
+      "dateModified": this.article.updatedAt || publishDate,
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": url
+      }
+    };
+    const schemaArticleEl = document.getElementById('schema-article');
+    if (schemaArticleEl) schemaArticleEl.textContent = JSON.stringify(articleSchema);
+
+    // JSON-LD Breadcrumb Schema
+    const breadcrumbSchema = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": window.location.origin
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": category?.name || "Articles",
+          "item": `${window.location.origin}/${category?.slug || 'articles'}`
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": title,
+          "item": url
+        }
+      ]
+    };
+    const schemaBreadcrumbEl = document.getElementById('schema-breadcrumb');
+    if (schemaBreadcrumbEl) schemaBreadcrumbEl.textContent = JSON.stringify(breadcrumbSchema);
+
+    // Update visible breadcrumb
     const categoryLink = document.getElementById('breadcrumb-category-link');
     const articleBreadcrumb = document.getElementById('breadcrumb-article');
     
-    if (this.article.category) {
-      categoryLink.textContent = this.article.category.name;
-      categoryLink.href = `/${this.article.category.slug}`;
+    if (category) {
+      categoryLink.textContent = category.name;
+      categoryLink.href = `/${category.slug}`;
     }
     
-    articleBreadcrumb.textContent = this.truncateText(this.article.title, 40);
+    articleBreadcrumb.textContent = this.truncateText(title, 40);
+  }
+
+  /**
+   * Helper to set meta tag content by ID
+   */
+  setMetaContent(id, content) {
+    const el = document.getElementById(id);
+    if (el) el.setAttribute('content', content);
   }
 
   /**
