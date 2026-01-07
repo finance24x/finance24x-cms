@@ -223,6 +223,13 @@ class ArticlePageManager {
       </div>
       ` : ''}
 
+      <!-- First Ad: Below Excerpt -->
+      <div class="article-inline-ad">
+        <div class="inline-ad-box">
+          <span>Advertisement</span>
+        </div>
+      </div>
+
       <div class="article-body">
         ${this.formatContent(this.article.content)}
       </div>
@@ -272,6 +279,8 @@ class ArticlePageManager {
   formatContent(content) {
     if (!content) return '<p>No content available.</p>';
     
+    let html = '';
+    
     // Check if marked library is available
     if (typeof marked !== 'undefined') {
       // Configure marked options
@@ -283,16 +292,16 @@ class ArticlePageManager {
       });
       
       // Parse Markdown to HTML
-      return marked.parse(content);
+      html = marked.parse(content);
+    } else if (content.includes('<p>') || content.includes('<div>')) {
+      // Fallback: If content is already HTML, use as is
+      html = content;
+    } else {
+      // Fallback: wrap in paragraphs
+      html = content.split('\n\n').map(p => `<p>${p}</p>`).join('');
     }
     
-    // Fallback: If content is already HTML, return as is
-    if (content.includes('<p>') || content.includes('<div>')) {
-      return content;
-    }
-    
-    // Fallback: wrap in paragraphs
-    return content.split('\n\n').map(p => `<p>${p}</p>`).join('');
+    return html;
   }
 
   /**
