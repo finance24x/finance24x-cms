@@ -133,6 +133,11 @@ class CategoryPageManager {
         icon: 'fa-heartbeat',
         title: 'Fitness & Health Calculators',
         desc: 'Track your health metrics and fitness goals with our health calculators'
+      },
+      'loans': {
+        icon: 'fa-credit-card',
+        title: 'Loans & EMI Calculators',
+        desc: 'Calculate EMI, check loan eligibility, and plan your borrowing with our loan calculators'
       }
     };
 

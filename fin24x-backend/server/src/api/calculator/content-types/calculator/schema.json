@@ -27,7 +27,8 @@
       "default": "finance",
       "enum": [
         "finance",
-        "fitness & health"
+        "fitness & health",
+        "loans"
       ]
     },
     "calculatorType": {
@@ -50,7 +51,13 @@
         "bmi",
         "bmr",
         "diabetes-risk",
-        "walk-calorie-burn"
+        "walk-calorie-burn",
+        "emi",
+        "home-loan-emi",
+        "car-loan-emi",
+        "personal-loan-emi",
+        "loan-eligibility",
+        "loan-prepayment"
       ]
     },
     "icon": {

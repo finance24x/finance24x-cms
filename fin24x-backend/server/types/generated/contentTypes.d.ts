@@ -485,7 +485,7 @@ export interface ApiCalculatorCalculator extends Struct.CollectionTypeSchema {
   };
   attributes: {
     calculatorCategory: Schema.Attribute.Enumeration<
-      ['finance', 'fitness & health']
+      ['finance', 'fitness & health', 'loans']
     > &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'finance'>;
@@ -508,6 +508,12 @@ export interface ApiCalculatorCalculator extends Struct.CollectionTypeSchema {
         'bmr',
         'diabetes-risk',
         'walk-calorie-burn',
+        'emi',
+        'home-loan-emi',
+        'car-loan-emi',
+        'personal-loan-emi',
+        'loan-eligibility',
+        'loan-prepayment',
       ]
     > &
       Schema.Attribute.Required;

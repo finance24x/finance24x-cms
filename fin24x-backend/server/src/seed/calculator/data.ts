@@ -1,6 +1,6 @@
 /**
  * Calculator Seed Data
- * All 17 calculators - 10 Finance + 7 Health
+ * Finance + Health + Loans & EMI Calculators
  */
 
 export interface CalculatorFAQ {
@@ -13,7 +13,7 @@ export interface CalculatorData {
   slug: string;
   excerpt: string;
   description: string;
-  calculatorCategory: 'finance' | 'health';
+  calculatorCategory: 'finance' | 'fitness & health' | 'loans';
   calculatorType: string;
   icon: string;
   iconColor: string;
@@ -436,7 +436,7 @@ Where:
     title: 'BMI Calculator',
     slug: 'bmi-calculator',
     excerpt: 'Calculate your Body Mass Index and check if you\'re in a healthy weight range.',
-    calculatorCategory: 'health',
+    calculatorCategory: 'fitness & health',
     calculatorType: 'bmi',
     icon: 'fa-balance-scale',
     iconColor: '#4CAF50',
@@ -473,7 +473,7 @@ Or in imperial units:
     title: 'BMR Calculator',
     slug: 'bmr-calculator',
     excerpt: 'Calculate your Basal Metabolic Rate - calories your body burns at rest.',
-    calculatorCategory: 'health',
+    calculatorCategory: 'fitness & health',
     calculatorType: 'bmr',
     icon: 'fa-fire',
     iconColor: '#FF9800',
@@ -505,7 +505,7 @@ Or in imperial units:
     title: 'Calorie Calculator',
     slug: 'calorie-calculator',
     excerpt: 'Calculate your daily calorie needs based on your activity level and goals.',
-    calculatorCategory: 'health',
+    calculatorCategory: 'fitness & health',
     calculatorType: 'calorie',
     icon: 'fa-cutlery',
     iconColor: '#F44336',
@@ -541,7 +541,7 @@ Activity Multipliers:
     title: 'Ideal Weight Calculator',
     slug: 'ideal-weight-calculator',
     excerpt: 'Find your ideal body weight based on height, age, and gender.',
-    calculatorCategory: 'health',
+    calculatorCategory: 'fitness & health',
     calculatorType: 'ideal-weight',
     icon: 'fa-user',
     iconColor: '#673AB7',
@@ -575,7 +575,7 @@ Activity Multipliers:
     title: 'Child Height Predictor',
     slug: 'child-height-calculator',
     excerpt: 'Predict your child\'s adult height based on parents\' heights.',
-    calculatorCategory: 'health',
+    calculatorCategory: 'fitness & health',
     calculatorType: 'child-height',
     icon: 'fa-child',
     iconColor: '#03A9F4',
@@ -610,7 +610,7 @@ The prediction is ±5cm (2 inches) accurate in most cases.`,
     title: 'Diabetes Risk Calculator',
     slug: 'diabetes-risk-calculator',
     excerpt: 'Assess your risk of developing Type 2 diabetes based on lifestyle factors.',
-    calculatorCategory: 'health',
+    calculatorCategory: 'fitness & health',
     calculatorType: 'diabetes-risk',
     icon: 'fa-heartbeat',
     iconColor: '#E91E63',
@@ -660,7 +660,7 @@ Points are assigned based on answers:
     title: 'Walk Calorie Burn Calculator',
     slug: 'walk-calorie-burn-calculator',
     excerpt: 'Calculate how many calories you burn while walking based on distance, speed, and weight.',
-    calculatorCategory: 'health',
+    calculatorCategory: 'fitness & health',
     calculatorType: 'walk-calorie-burn',
     icon: 'fa-street-view',
     iconColor: '#8BC34A',
@@ -694,6 +694,277 @@ Uphill walking increases MET by 50-100%.`,
       { question: 'How many calories does 10,000 steps burn?', answer: 'Approximately 400-500 calories for an average person, depending on weight and walking speed.' },
       { question: 'Is walking good for weight loss?', answer: 'Yes! A daily 30-minute brisk walk can help burn 150-200 calories and improve cardiovascular health.' },
       { question: 'What is the best walking speed for calorie burn?', answer: 'Brisk walking (5-6 km/h) is optimal - fast enough to burn calories but sustainable for longer durations.' }
+    ]
+  },
+
+  // ============ LOANS & EMI CALCULATORS ============
+  {
+    title: 'EMI Calculator',
+    slug: 'emi-calculator',
+    excerpt: 'Calculate your monthly EMI for any loan amount with interest rate and tenure.',
+    calculatorCategory: 'loans',
+    calculatorType: 'emi',
+    icon: 'fa-credit-card',
+    iconColor: '#3F51B5',
+    order: 18,
+    isFeatured: true,
+    isPopular: true,
+    metaTitle: 'EMI Calculator - Calculate Loan EMI Online',
+    metaDescription: 'Free EMI calculator to calculate monthly installments for home loan, car loan, personal loan. See interest breakdown and amortization schedule.',
+    description: `An EMI (Equated Monthly Installment) calculator helps you determine the monthly payment amount for any loan. It considers the principal amount, interest rate, and loan tenure to calculate your fixed monthly payment.
+
+EMI remains constant throughout the loan tenure, making it easier to plan your monthly budget.`,
+    howToUse: `## How to Use This Calculator
+
+1. **Loan Amount**: Enter the total loan amount you need
+2. **Interest Rate**: Enter the annual interest rate offered by the lender
+3. **Loan Tenure**: Enter the loan duration in months or years
+4. Click **Calculate EMI** to see your monthly payment`,
+    formulaExplanation: `## EMI Formula
+
+\`\`\`
+EMI = P × r × (1+r)^n / [(1+r)^n - 1]
+
+Where:
+P = Principal loan amount
+r = Monthly interest rate (Annual rate / 12 / 100)
+n = Number of monthly installments
+\`\`\`
+
+> **Example**: For a ₹10,00,000 loan at 10% p.a. for 5 years:
+> EMI = ₹21,247 per month
+> Total Interest = ₹2,74,823`,
+    disclaimer: 'EMI calculations are indicative. Actual EMI may vary based on processing fees, prepayment charges, and lender terms.',
+    faqs: [
+      { question: 'What is EMI?', answer: 'EMI (Equated Monthly Installment) is a fixed payment amount made by a borrower to a lender at a specified date each month.' },
+      { question: 'Does EMI include interest?', answer: 'Yes, EMI includes both principal repayment and interest. Initially, interest component is higher, gradually reducing over time.' },
+      { question: 'Can I reduce my EMI?', answer: 'You can reduce EMI by choosing a longer tenure, making part-prepayments, or negotiating a lower interest rate.' }
+    ]
+  },
+  {
+    title: 'Home Loan EMI Calculator',
+    slug: 'home-loan-emi-calculator',
+    excerpt: 'Calculate your home loan EMI and plan your dream home purchase.',
+    calculatorCategory: 'loans',
+    calculatorType: 'home-loan-emi',
+    icon: 'fa-home',
+    iconColor: '#009688',
+    order: 19,
+    isFeatured: true,
+    isPopular: true,
+    metaTitle: 'Home Loan EMI Calculator - Housing Loan EMI Calculator',
+    metaDescription: 'Calculate home loan EMI instantly. Enter loan amount, interest rate, and tenure to see monthly EMI, total interest, and amortization schedule.',
+    description: `A Home Loan EMI calculator helps you estimate the monthly payments for your housing loan. Home loans typically have longer tenures (15-30 years) and lower interest rates compared to other loans.
+
+Planning your home loan EMI helps ensure affordability before making the biggest financial decision of your life.`,
+    howToUse: `## How to Use This Calculator
+
+1. **Property Value**: Enter the total property cost
+2. **Down Payment**: Enter your down payment amount (typically 10-20%)
+3. **Interest Rate**: Enter the home loan interest rate (typically 8-10%)
+4. **Loan Tenure**: Select tenure (usually 15-30 years)
+5. Click **Calculate** to see EMI and payment schedule`,
+    formulaExplanation: `## Home Loan EMI Formula
+
+\`\`\`
+EMI = P × r × (1+r)^n / [(1+r)^n - 1]
+
+Loan Amount = Property Value - Down Payment
+
+Where:
+P = Loan Amount
+r = Monthly interest rate
+n = Tenure in months
+\`\`\`
+
+> **Example**: Property ₹50 Lakhs, Down Payment ₹10 Lakhs, 8.5% for 20 years:
+> Loan Amount = ₹40,00,000
+> EMI = ₹34,715 per month`,
+    disclaimer: 'Home loan eligibility depends on income, credit score, existing liabilities, and property valuation. Processing fees and other charges apply.',
+    faqs: [
+      { question: 'What is the ideal home loan tenure?', answer: 'While longer tenure (20-25 years) reduces EMI, shorter tenure (10-15 years) saves significant interest. Choose based on your repayment capacity.' },
+      { question: 'How much down payment is required?', answer: 'Banks typically finance 75-90% of property value. You need 10-25% as down payment plus registration and stamp duty costs.' },
+      { question: 'Can I get tax benefits on home loan?', answer: 'Yes! Under Section 80C (principal up to ₹1.5L) and Section 24 (interest up to ₹2L) of Income Tax Act.' }
+    ]
+  },
+  {
+    title: 'Car Loan EMI Calculator',
+    slug: 'car-loan-emi-calculator',
+    excerpt: 'Calculate your car loan EMI and plan your vehicle purchase.',
+    calculatorCategory: 'loans',
+    calculatorType: 'car-loan-emi',
+    icon: 'fa-car',
+    iconColor: '#FF5722',
+    order: 20,
+    isFeatured: false,
+    isPopular: true,
+    metaTitle: 'Car Loan EMI Calculator - Auto Loan Calculator',
+    metaDescription: 'Calculate car loan EMI for new or used vehicles. Compare monthly payments across different loan amounts and tenures.',
+    description: `A Car Loan EMI calculator helps you estimate monthly payments for your vehicle purchase. Car loans typically have shorter tenures (3-7 years) compared to home loans.
+
+Use this calculator to determine how much car you can afford based on your monthly budget.`,
+    howToUse: `## How to Use This Calculator
+
+1. **Car Price**: Enter the on-road price of the vehicle
+2. **Down Payment**: Enter your down payment (typically 10-25%)
+3. **Interest Rate**: Enter the car loan interest rate (typically 7-12%)
+4. **Loan Tenure**: Select tenure (usually 3-7 years)
+5. Click **Calculate** to see your monthly EMI`,
+    formulaExplanation: `## Car Loan EMI Formula
+
+\`\`\`
+EMI = P × r × (1+r)^n / [(1+r)^n - 1]
+
+Loan Amount = Car Price - Down Payment
+
+Where:
+P = Loan Amount
+r = Monthly interest rate
+n = Tenure in months
+\`\`\`
+
+> **Example**: Car Price ₹8 Lakhs, Down Payment ₹2 Lakhs, 9% for 5 years:
+> Loan Amount = ₹6,00,000
+> EMI = ₹12,454 per month`,
+    disclaimer: 'Car loan rates vary by lender, vehicle type (new/used), and borrower profile. Insurance and registration costs are additional.',
+    faqs: [
+      { question: 'What is the maximum car loan tenure?', answer: 'Most banks offer up to 7 years tenure for new cars and 5 years for used cars.' },
+      { question: 'Is car loan interest rate fixed or floating?', answer: 'Car loans typically have fixed interest rates, meaning EMI remains constant throughout the tenure.' },
+      { question: 'Can I prepay my car loan?', answer: 'Yes, most lenders allow prepayment after 6-12 months. Some may charge prepayment penalty of 2-5%.' }
+    ]
+  },
+  {
+    title: 'Personal Loan EMI Calculator',
+    slug: 'personal-loan-emi-calculator',
+    excerpt: 'Calculate EMI for personal loans and plan your borrowing.',
+    calculatorCategory: 'loans',
+    calculatorType: 'personal-loan-emi',
+    icon: 'fa-user',
+    iconColor: '#673AB7',
+    order: 21,
+    isFeatured: false,
+    isPopular: true,
+    metaTitle: 'Personal Loan EMI Calculator - Calculate Personal Loan EMI',
+    metaDescription: 'Calculate personal loan EMI instantly. Compare EMI across different loan amounts, interest rates, and tenures.',
+    description: `A Personal Loan EMI calculator helps you estimate monthly payments for unsecured personal loans. Personal loans have higher interest rates but require no collateral.
+
+Use this to plan emergency expenses, weddings, travel, or debt consolidation.`,
+    howToUse: `## How to Use This Calculator
+
+1. **Loan Amount**: Enter the personal loan amount needed
+2. **Interest Rate**: Enter the interest rate (typically 10-24%)
+3. **Loan Tenure**: Select tenure (usually 1-5 years)
+4. Click **Calculate** to see your monthly EMI`,
+    formulaExplanation: `## Personal Loan EMI Formula
+
+\`\`\`
+EMI = P × r × (1+r)^n / [(1+r)^n - 1]
+
+Where:
+P = Principal loan amount
+r = Monthly interest rate
+n = Number of months
+\`\`\`
+
+> **Example**: Loan ₹5 Lakhs at 14% for 3 years:
+> EMI = ₹17,087 per month
+> Total Interest = ₹1,15,147`,
+    disclaimer: 'Personal loan interest rates are higher than secured loans. Approval depends on credit score, income, and existing obligations.',
+    faqs: [
+      { question: 'What is the maximum personal loan amount?', answer: 'Banks offer personal loans from ₹50,000 to ₹40 Lakhs based on income and credit profile.' },
+      { question: 'What credit score is needed for personal loan?', answer: 'A CIBIL score of 750+ is ideal for best rates. 650-750 may get approval at higher rates.' },
+      { question: 'How quickly can I get a personal loan?', answer: 'Many banks offer instant approval with disbursement within 24-48 hours for existing customers.' }
+    ]
+  },
+  {
+    title: 'Loan Eligibility Calculator',
+    slug: 'loan-eligibility-calculator',
+    excerpt: 'Check how much loan you can get based on your income and expenses.',
+    calculatorCategory: 'loans',
+    calculatorType: 'loan-eligibility',
+    icon: 'fa-check-circle',
+    iconColor: '#4CAF50',
+    order: 22,
+    isFeatured: true,
+    isPopular: true,
+    metaTitle: 'Loan Eligibility Calculator - Check Your Loan Eligibility',
+    metaDescription: 'Calculate how much loan you can get based on your salary, existing EMIs, and other factors. Check eligibility for home, car, and personal loans.',
+    description: `A Loan Eligibility calculator helps you determine the maximum loan amount you can borrow based on your income, existing liabilities, and the lender's criteria.
+
+Banks typically allow EMI up to 40-60% of your net monthly income depending on the loan type.`,
+    howToUse: `## How to Use This Calculator
+
+1. **Monthly Income**: Enter your net monthly salary
+2. **Existing EMIs**: Enter total of current EMI payments
+3. **Interest Rate**: Expected loan interest rate
+4. **Tenure**: Preferred loan tenure
+5. Click **Calculate** to see your eligibility`,
+    formulaExplanation: `## Loan Eligibility Formula
+
+\`\`\`
+Maximum EMI = (Net Income × FOIR) - Existing EMIs
+
+FOIR (Fixed Obligation to Income Ratio):
+- Home Loan: 50-60%
+- Car Loan: 40-50%
+- Personal Loan: 40-50%
+
+Eligible Loan = EMI × [(1+r)^n - 1] / [r × (1+r)^n]
+\`\`\`
+
+> **Example**: Income ₹1,00,000, No existing EMI, FOIR 50%:
+> Max EMI = ₹50,000
+> At 9% for 20 years = Eligible for ~₹55 Lakhs home loan`,
+    disclaimer: 'Actual eligibility depends on credit score, employer category, age, and specific lender policies.',
+    faqs: [
+      { question: 'What is FOIR?', answer: 'Fixed Obligation to Income Ratio is the percentage of income banks allow for EMI payments. Typically 40-60%.' },
+      { question: 'How can I increase my loan eligibility?', answer: 'Add co-applicant income, clear existing debts, choose longer tenure, or improve credit score.' },
+      { question: 'Does loan eligibility guarantee approval?', answer: 'No, eligibility is indicative. Approval depends on documentation, credit history, and property/vehicle valuation.' }
+    ]
+  },
+  {
+    title: 'Loan Prepayment Calculator',
+    slug: 'loan-prepayment-calculator',
+    excerpt: 'Calculate how prepayment can reduce your loan tenure and interest.',
+    calculatorCategory: 'loans',
+    calculatorType: 'loan-prepayment',
+    icon: 'fa-fast-forward',
+    iconColor: '#FF9800',
+    order: 23,
+    isFeatured: false,
+    isPopular: false,
+    metaTitle: 'Loan Prepayment Calculator - Save Interest on Loans',
+    metaDescription: 'Calculate how much you can save by prepaying your loan. See impact on tenure and total interest with part payment or lump sum prepayment.',
+    description: `A Loan Prepayment calculator helps you understand how making extra payments can reduce your loan burden. You can either reduce tenure or EMI with prepayments.
+
+Prepaying your loan, especially in early years, can save significant interest costs.`,
+    howToUse: `## How to Use This Calculator
+
+1. **Outstanding Loan**: Enter current loan balance
+2. **Interest Rate**: Current loan interest rate
+3. **Remaining Tenure**: Months remaining on loan
+4. **Prepayment Amount**: Lump sum you want to pay
+5. Click **Calculate** to see savings`,
+    formulaExplanation: `## Prepayment Impact
+
+\`\`\`
+New Principal = Outstanding - Prepayment Amount
+
+Option 1: Reduce Tenure (keep same EMI)
+New Tenure = Calculated based on reduced principal
+
+Option 2: Reduce EMI (keep same tenure)
+New EMI = Calculated based on reduced principal
+\`\`\`
+
+> **Example**: ₹30L outstanding, 8.5%, 15 years left, Prepay ₹5L:
+> Interest Saved: ~₹8.5 Lakhs
+> Tenure Reduced: ~4 years`,
+    disclaimer: 'Some loans have prepayment charges. Check with your lender before making prepayments.',
+    faqs: [
+      { question: 'When is the best time to prepay?', answer: 'Early in the loan tenure when interest component is highest. Prepaying in first 5-7 years gives maximum benefit.' },
+      { question: 'Should I reduce EMI or tenure?', answer: 'Reducing tenure saves more interest. Reduce EMI only if you need better monthly cash flow.' },
+      { question: 'Are there prepayment charges?', answer: 'Home loans on floating rate have no prepayment charges. Fixed rate and other loans may have 2-5% charges.' }
     ]
   }
 ];

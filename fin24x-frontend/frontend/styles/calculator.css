@@ -487,6 +487,18 @@
   box-shadow: 0 4px 20px rgba(20, 189, 238, 0.08);
 }
 
+/* "Where:" label - left aligned */
+.calculator-content p:has(strong:first-child) {
+  text-align: left !important;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.calculator-content p:has(strong:first-child) strong {
+  display: inline !important;
+  text-align: left !important;
+}
+
 .calculator-content pre code {
   font-family: 'Fira Code', 'Source Code Pro', 'Consolas', monospace;
   font-size: 1.4rem;
@@ -559,6 +571,23 @@
   padding: 20px 25px;
   margin: 20px 0;
   border-radius: 0 8px 8px 0;
+}
+
+/* Example text - keep on single line with horizontal scroll if needed */
+.calculator-content blockquote p:first-of-type {
+  white-space: nowrap;
+  overflow-x: auto;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.calculator-content blockquote p:not(:first-of-type) {
+  white-space: normal;
+  margin-bottom: 10px;
+}
+
+.calculator-content blockquote p:last-child {
+  margin-bottom: 0;
 }
 
 .calculator-content blockquote p:last-child {
