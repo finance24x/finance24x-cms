@@ -2454,12 +2454,6 @@ section
 	color: var(--text-secondary);
 }
 
-/* Dark Mode Market Ticker */
-.dark-mode .market-ticker-section
-{
-	background: var(--bg-secondary);
-	border-bottom-color: var(--border-color);
-}
 
 .dark-mode .market-name,
 .dark-mode .market-price

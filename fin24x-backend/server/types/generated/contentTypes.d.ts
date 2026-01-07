@@ -887,35 +887,6 @@ export interface ApiHomepageSectionHomepageSection
   };
 }
 
-export interface ApiMarketTickerMarketTicker extends Struct.SingleTypeSchema {
-  collectionName: 'market_tickers';
-  info: {
-    description: 'Live market data ticker for Gold, Silver, NIFTY, SENSEX, BANKNIFTY';
-    displayName: 'Market Ticker';
-    pluralName: 'market-tickers';
-    singularName: 'market-ticker';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::market-ticker.market-ticker'
-    > &
-      Schema.Attribute.Private;
-    marketItems: Schema.Attribute.Component<'market.market-item', true>;
-    publishedAt: Schema.Attribute.DateTime;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
 export interface ApiMetalMetal extends Struct.CollectionTypeSchema {
   collectionName: 'metals';
   info: {
@@ -1656,7 +1627,6 @@ declare module '@strapi/strapi' {
       'api::footer.footer': ApiFooterFooter;
       'api::header.header': ApiHeaderHeader;
       'api::homepage-section.homepage-section': ApiHomepageSectionHomepageSection;
-      'api::market-ticker.market-ticker': ApiMarketTickerMarketTicker;
       'api::metal.metal': ApiMetalMetal;
       'api::popular-tag.popular-tag': ApiPopularTagPopularTag;
       'api::state.state': ApiStateState;
