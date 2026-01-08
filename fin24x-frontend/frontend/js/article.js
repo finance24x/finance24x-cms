@@ -160,7 +160,7 @@ class ArticlePageManager {
    */
   updatePageMeta() {
     const title = this.article.title;
-    const description = this.article.excerpt || this.truncateText(this.article.content, 160);
+    const description = this.article.excerpt || Utils.truncateText(this.article.content, 160);
     const url = window.location.href;
     const imageUrl = this.article.image?.url 
       ? `${API_CONFIG.BASE_URL}${this.article.image.url}` 
@@ -260,7 +260,7 @@ class ArticlePageManager {
       categoryLink.href = `/${category.slug}`;
     }
     
-    articleBreadcrumb.textContent = this.truncateText(title, 40);
+    articleBreadcrumb.textContent = Utils.truncateText(title, 40);
   }
 
   /**
@@ -277,7 +277,7 @@ class ArticlePageManager {
   renderArticle() {
     const hasImage = this.article.image?.url;
     const imageUrl = hasImage ? `${API_CONFIG.BASE_URL}${this.article.image.url}` : '';
-    const publishDate = this.formatDateLong(this.article.publishedDate);
+    const publishDate = Utils.formatDateLong(this.article.publishedDate);
     const author = this.article.author || 'admin';
     const views = this.article.views || 0;
     const readTime = this.article.minutesToread || 3;
@@ -297,7 +297,7 @@ class ArticlePageManager {
         <span class="meta-separator">|</span>
         <span>By <a href="#">${author}</a></span>
         <span class="meta-separator">|</span>
-        <span><i class="fa fa-eye"></i> ${this.formatViews(views)} views</span>
+        <span><i class="fa fa-eye"></i> ${Utils.formatViews(views)} views</span>
         <span class="meta-separator">|</span>
         <span><i class="fa fa-clock-o"></i> ${readTime} min read</span>
       </div>
@@ -487,7 +487,7 @@ class ArticlePageManager {
       ? `<img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}">`
       : '<div class="latest-article-image-placeholder"></div>';
     const categorySlug = article.category?.slug || 'article';
-    const date = this.formatDateLong(article.publishedDate);
+    const date = Utils.formatDateLong(article.publishedDate);
     const views = article.views || 0;
     
     return `
@@ -501,7 +501,7 @@ class ArticlePageManager {
           </h4>
           <div class="latest-article-meta">
             <span class="latest-article-date">${date}</span>
-            <span class="latest-article-views"><i class="fa fa-eye"></i> ${this.formatViews(views)}</span>
+            <span class="latest-article-views"><i class="fa fa-eye"></i> ${Utils.formatViews(views)}</span>
           </div>
         </div>
       </div>
@@ -511,15 +511,6 @@ class ArticlePageManager {
   /**
    * Format views count (e.g., 1500 -> 1.5K)
    */
-  formatViews(views) {
-    if (views >= 1000000) {
-      return (views / 1000000).toFixed(1) + 'M';
-    } else if (views >= 1000) {
-      return (views / 1000).toFixed(1) + 'K';
-    }
-    return views.toString();
-  }
-
   /**
    * Show error message
    */
@@ -537,29 +528,6 @@ class ArticlePageManager {
       </div>
     `;
     this.sidebarContainer.style.display = 'none';
-  }
-
-  /**
-   * Format date - long format (May 5, 2018)
-   */
-  formatDateLong(dateStr) {
-    if (!dateStr) return '';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  }
-
-  /**
-   * Truncate text
-   */
-  truncateText(text, maxLength) {
-    if (!text) return '';
-    const stripped = text.replace(/<[^>]*>/g, '');
-    if (stripped.length <= maxLength) return stripped;
-    return stripped.substr(0, maxLength).trim() + '...';
   }
 }
 

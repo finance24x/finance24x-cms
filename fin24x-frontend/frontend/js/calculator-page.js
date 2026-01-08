@@ -180,7 +180,7 @@ class CalculatorPageManager {
           <h1 class="calculator-title">${this.calculator.title}</h1>
           <p class="calculator-excerpt">${this.calculator.excerpt || ''}</p>
           <div class="calculator-meta">
-            <span><i class="fa fa-eye"></i> ${this.formatViews(views)} views</span>
+            <span><i class="fa fa-eye"></i> ${Utils.formatViews(views)} views</span>
           </div>
         </div>
       </div>
@@ -396,14 +396,6 @@ class CalculatorPageManager {
   /**
    * Format views count (e.g., 1500 -> 1.5K)
    */
-  formatViews(views) {
-    if (views >= 1000000) {
-      return (views / 1000000).toFixed(1) + 'M';
-    } else if (views >= 1000) {
-      return (views / 1000).toFixed(1) + 'K';
-    }
-    return views.toString();
-  }
 
   /**
    * Show error state

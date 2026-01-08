@@ -390,8 +390,8 @@ class CategoryPageManager {
       ? `<img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}">`
       : '<div class="carousel-card-placeholder"></div>';
     
-    const excerpt = article.excerpt || this.truncateText(article.content, 60);
-    const readTime = this.getReadTime(article);
+    const excerpt = article.excerpt || Utils.truncateText(article.content, 60);
+    const readTime = Utils.getReadTime(article);
 
     return `
       <div class="carousel-card">
@@ -406,7 +406,7 @@ class CategoryPageManager {
           <div class="carousel-card-meta">
             <span>${readTime} min read</span>
             <span class="separator">•</span>
-            <span>${this.formatDate(article.publishedDate)}</span>
+            <span>${Utils.formatDate(article.publishedDate)}</span>
           </div>
         </div>
       </div>
@@ -648,8 +648,8 @@ class CategoryPageManager {
       ? `<div class="featured-image"><img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}"></div>`
       : '';
     
-    const excerpt = article.excerpt || this.truncateText(article.content, 250);
-    const readTime = this.getReadTime(article);
+    const excerpt = article.excerpt || Utils.truncateText(article.content, 250);
+    const readTime = Utils.getReadTime(article);
     // Tags removed to avoid crowding
     const tagsHtml = '';
 
@@ -665,7 +665,7 @@ class CategoryPageManager {
           <div class="featured-meta">
             <span class="read-time">${readTime} min read</span>
             <span class="separator">•</span>
-            <span class="date">${this.formatDate(article.publishedDate)}</span>
+            <span class="date">${Utils.formatDate(article.publishedDate)}</span>
           </div>
         </div>
         ${imageHtml}
@@ -682,8 +682,8 @@ class CategoryPageManager {
       ? `<div class="card-thumb"><img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}"></div>`
       : '<div class="card-thumb card-thumb-placeholder"></div>';
     
-    const readTime = this.getReadTime(article);
-    const excerpt = article.excerpt || this.truncateText(article.content, 80);
+    const readTime = Utils.getReadTime(article);
+    const excerpt = article.excerpt || Utils.truncateText(article.content, 80);
     // Tags removed to avoid crowding
     const tagsHtml = '';
 
@@ -700,7 +700,7 @@ class CategoryPageManager {
           <div class="card-meta">
             <span>${readTime} min read</span>
             <span class="separator">•</span>
-            <span>${this.formatDate(article.publishedDate)}</span>
+            <span>${Utils.formatDate(article.publishedDate)}</span>
           </div>
         </div>
       </div>
@@ -732,34 +732,17 @@ class CategoryPageManager {
   /**
    * Get read time from article
    */
-  getReadTime(article) {
-    // Use minutesToread from Strapi, default to 3 if not set
-    return article.minutesToread || 3;
-  }
 
   /**
    * Format date to readable string
    */
-  formatDate(dateStr) {
-    if (!dateStr) return '';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric',
-      year: 'numeric'
-    });
-  }
 
   /**
    * Render article list item (no image, for split section left)
    */
   renderArticleListItem(article) {
     const date = article.publishedDate 
-      ? new Date(article.publishedDate).toLocaleDateString('en-US', { 
-          month: 'short', 
-          day: 'numeric',
-          year: 'numeric'
-        })
+      ? Utils.formatDate(article.publishedDate)
       : '';
 
     return `
@@ -768,9 +751,9 @@ class CategoryPageManager {
           <a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a>
         </h4>
         <div class="article-list-meta">
-          <span>${this.getReadTime(article)} min read</span>
+          <span>${Utils.getReadTime(article)} min read</span>
           <span class="separator">|</span>
-          <span>${this.formatDate(article.publishedDate)}</span>
+          <span>${Utils.formatDate(article.publishedDate)}</span>
         </div>
       </div>
     `;
@@ -785,8 +768,8 @@ class CategoryPageManager {
       ? `<div class="mini-card-image"><img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}"></div>`
       : '<div class="mini-card-image mini-card-placeholder"></div>';
     
-    const excerpt = article.excerpt || this.truncateText(article.content, 60);
-    const readTime = this.getReadTime(article);
+    const excerpt = article.excerpt || Utils.truncateText(article.content, 60);
+    const readTime = Utils.getReadTime(article);
 
     return `
       <div class="mini-card">
@@ -800,7 +783,7 @@ class CategoryPageManager {
           <div class="mini-card-meta">
             <span>${readTime} min read</span>
             <span class="separator">•</span>
-            <span>${this.formatDate(article.publishedDate)}</span>
+            <span>${Utils.formatDate(article.publishedDate)}</span>
           </div>
         </div>
       </div>
@@ -886,12 +869,6 @@ class CategoryPageManager {
   /**
    * Truncate text and strip HTML
    */
-  truncateText(text, maxLength) {
-    if (!text) return '';
-    const stripped = text.replace(/<[^>]*>/g, '');
-    if (stripped.length <= maxLength) return stripped;
-    return stripped.substring(0, maxLength) + '...';
-  }
 
   /**
    * Show error message
@@ -1112,8 +1089,8 @@ class CategoryPageManager {
     const imageUrl = article.image?.url 
       ? getApiUrl('').replace('/api', '') + article.image.url 
       : '';
-    const readTime = article.minutesToread || 3;
-    const date = article.publishedDate ? this.formatDate(article.publishedDate) : '';
+    const readTime = Utils.getReadTime(article);
+    const date = article.publishedDate ? Utils.formatDate(article.publishedDate) : '';
     const excerpt = article.excerpt || '';
     
     return `
@@ -1144,8 +1121,8 @@ class CategoryPageManager {
     const imageUrl = article.image?.url 
       ? getApiUrl('').replace('/api', '') + article.image.url 
       : '';
-    const readTime = article.minutesToread || 3;
-    const date = article.publishedDate ? this.formatDate(article.publishedDate) : '';
+    const readTime = Utils.getReadTime(article);
+    const date = article.publishedDate ? Utils.formatDate(article.publishedDate) : '';
     const excerpt = article.excerpt || '';
     
     return `

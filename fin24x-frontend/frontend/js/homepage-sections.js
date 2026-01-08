@@ -262,11 +262,11 @@ class HomepageSectionsManager {
           <div class="news_post_meta">
             <ul>
               <li><a href="#">${article.author || 'Admin'}</a></li>
-              <li><a href="#">${this.formatDate(article.publishedDate)}</a></li>
+              <li><a href="#">${Utils.formatDate(article.publishedDate)}</a></li>
             </ul>
           </div>
           <div class="news_post_text">
-            <p>${article.excerpt || this.truncateText(article.content, 150)}</p>
+            <p>${article.excerpt || Utils.truncateText(article.content, 150)}</p>
           </div>
         </div>
       </div>
@@ -283,7 +283,7 @@ class HomepageSectionsManager {
         <div class="news_post_meta">
           <ul>
             <li><a href="#">${article.author || 'Admin'}</a></li>
-            <li><a href="#">${this.formatDate(article.publishedDate)}</a></li>
+            <li><a href="#">${Utils.formatDate(article.publishedDate)}</a></li>
           </ul>
         </div>
       </div>
@@ -307,11 +307,11 @@ class HomepageSectionsManager {
           ${imageHtml}
           <div class="grid-card-content">
             <h3 class="grid-card-title"><a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a></h3>
-            <p class="grid-card-excerpt">${article.excerpt || this.truncateText(article.content, 80)}</p>
+            <p class="grid-card-excerpt">${article.excerpt || Utils.truncateText(article.content, 80)}</p>
             <div class="grid-card-meta">
               <span>${article.minutesToread || 3} min read</span>
               <span class="separator">•</span>
-              <span>${this.formatDate(article.publishedDate)}</span>
+              <span>${Utils.formatDate(article.publishedDate)}</span>
             </div>
           </div>
         </div>
@@ -337,11 +337,11 @@ class HomepageSectionsManager {
           <h4 class="carousel-card-title">
             <a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a>
           </h4>
-          <p class="carousel-card-excerpt">${article.excerpt || this.truncateText(article.content, 60)}</p>
+          <p class="carousel-card-excerpt">${article.excerpt || Utils.truncateText(article.content, 60)}</p>
           <div class="carousel-card-meta">
             <span>${article.minutesToread || 3} min read</span>
             <span class="separator">•</span>
-            <span>${this.formatDate(article.publishedDate)}</span>
+            <span>${Utils.formatDate(article.publishedDate)}</span>
           </div>
         </div>
       </div>
@@ -374,11 +374,11 @@ class HomepageSectionsManager {
           <h4 class="carousel-card-title">
             <a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a>
           </h4>
-          <p class="carousel-card-excerpt">${article.excerpt || this.truncateText(article.content, 60)}</p>
+          <p class="carousel-card-excerpt">${article.excerpt || Utils.truncateText(article.content, 60)}</p>
           <div class="carousel-card-meta">
             <span>${article.minutesToread || 3} min read</span>
             <span class="separator">•</span>
-            <span>${this.formatDate(article.publishedDate)}</span>
+            <span>${Utils.formatDate(article.publishedDate)}</span>
           </div>
         </div>
       </div>
@@ -388,26 +388,6 @@ class HomepageSectionsManager {
   /**
    * Format date to readable string
    */
-  formatDate(dateStr) {
-    if (!dateStr) return 'Unknown';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
-  }
-
-  /**
-   * Truncate text and strip HTML
-   */
-  truncateText(text, maxLength) {
-    if (!text) return '';
-    // Strip HTML tags
-    const stripped = text.replace(/<[^>]*>/g, '');
-    if (stripped.length <= maxLength) return stripped;
-    return stripped.substring(0, maxLength) + '...';
-  }
 
   /**
    * Render no sections message

@@ -2715,3 +2715,43 @@ section
 		font-size: 0.9rem;
 	}
 }
+
+/* ============================================
+   Common Loading Styles
+   Used across all pages
+   ============================================ */
+
+.loading-container {
+  padding: 100px 0;
+  text-align: center;
+}
+
+.loading-container .spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid #e9ecef;
+  border-top: 3px solid #14bdee;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+
+.loading-container p {
+  color: #999;
+  font-size: 0.95rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Dark mode loading */
+.dark-mode .loading-container p {
+  color: var(--text-secondary);
+}
+
+.dark-mode .loading-container .spinner {
+  border-color: var(--border-color);
+  border-top-color: #14bdee;
+}

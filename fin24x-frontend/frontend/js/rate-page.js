@@ -208,11 +208,11 @@ class RatePageManager {
         <div class="purity-breakdown">
           <div class="purity-item">
             <span class="purity-label">22K ${this.metalType === 'gold' ? 'Gold' : 'Silver'}</span>
-            <span class="purity-value">₹${this.formatNumber(rate22k)}/${unit}</span>
+            <span class="purity-value">₹${Utils.formatNumber(rate22k)}/${unit}</span>
           </div>
           <div class="purity-item">
             <span class="purity-label">18K ${this.metalType === 'gold' ? 'Gold' : 'Silver'}</span>
-            <span class="purity-value">₹${this.formatNumber(rate18k)}/${unit}</span>
+            <span class="purity-value">₹${Utils.formatNumber(rate18k)}/${unit}</span>
           </div>
         </div>
       `;
@@ -227,13 +227,13 @@ class RatePageManager {
       <div class="rate-display-card">
         <div class="rate-main-value">
           <div class="rate-label">Current Rate (${purity})</div>
-          <div class="rate-amount">₹${this.formatNumber(rate)}</div>
+          <div class="rate-amount">₹${Utils.formatNumber(rate)}</div>
           <div class="rate-unit">per ${unit}</div>
         </div>
         ${mcxRate ? `
         <div class="rate-mcx">
           <span class="mcx-label">MCX Reference</span>
-          <span class="mcx-value">₹${this.formatNumber(mcxRate)}</span>
+          <span class="mcx-value">₹${Utils.formatNumber(mcxRate)}</span>
         </div>
         ` : ''}
       </div>
@@ -309,7 +309,7 @@ class RatePageManager {
           legend: { display: false },
           tooltip: {
             callbacks: {
-              label: (context) => `₹${this.formatNumber(context.raw)}`
+              label: (context) => `₹${Utils.formatNumber(context.raw)}`
             }
           }
         },
@@ -321,7 +321,7 @@ class RatePageManager {
           y: {
             beginAtZero: false,
             ticks: {
-              callback: (value) => `₹${this.formatNumber(value)}`
+              callback: (value) => `₹${Utils.formatNumber(value)}`
             }
           }
         }
@@ -357,7 +357,7 @@ class RatePageManager {
     const cityListHtml = cityRates.length > 0 ? cityRates.map(item => `
       <div class="city-rate-item">
         <span class="city-name">${item.city}</span>
-        <span class="city-rate">₹${this.formatNumber(item.rate)}/${this.formatUnit(item.unit)}</span>
+        <span class="city-rate">₹${Utils.formatNumber(item.rate)}/${this.formatUnit(item.unit)}</span>
       </div>
     `).join('') : '<p class="no-data">Rate data for other cities coming soon</p>';
 
@@ -412,12 +412,6 @@ class RatePageManager {
   /**
    * Format number with Indian numbering system
    */
-  formatNumber(num) {
-    return new Intl.NumberFormat('en-IN', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(num);
-  }
 
   /**
    * Show error state

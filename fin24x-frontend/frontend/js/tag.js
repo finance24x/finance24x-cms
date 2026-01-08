@@ -238,7 +238,7 @@ class TagPageManager {
     
     const categoryName = article.category?.name || 'Article';
     const readTime = article.minutesToread || 3;
-    const excerpt = article.excerpt || this.truncateText(article.content, 200);
+    const excerpt = article.excerpt || Utils.truncateText(article.content, 200);
 
     return `
       <div class="featured-article">
@@ -252,7 +252,7 @@ class TagPageManager {
           <div class="featured-meta">
             <span>${readTime} min read</span>
             <span class="separator">•</span>
-            <span>${this.formatDate(article.publishedDate)}</span>
+            <span>${Utils.formatDate(article.publishedDate)}</span>
           </div>
         </div>
       </div>
@@ -270,7 +270,7 @@ class TagPageManager {
     
     const categoryName = article.category?.name || 'Article';
     const readTime = article.minutesToread || 3;
-    const excerpt = article.excerpt || this.truncateText(article.content, 80);
+    const excerpt = article.excerpt || Utils.truncateText(article.content, 80);
 
     return `
       <div class="article-card">
@@ -284,7 +284,7 @@ class TagPageManager {
           <div class="article-card-meta">
             <span>${readTime} min read</span>
             <span class="separator">•</span>
-            <span>${this.formatDate(article.publishedDate)}</span>
+            <span>${Utils.formatDate(article.publishedDate)}</span>
           </div>
         </div>
       </div>
@@ -294,16 +294,6 @@ class TagPageManager {
   /**
    * Format date to readable string
    */
-  formatDate(dateStr) {
-    if (!dateStr) return '';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric',
-      year: 'numeric'
-    });
-  }
-
   /**
    * Render pagination
    */
@@ -383,12 +373,6 @@ class TagPageManager {
   /**
    * Truncate text and strip HTML
    */
-  truncateText(text, maxLength) {
-    if (!text) return '';
-    const stripped = text.replace(/<[^>]*>/g, '');
-    if (stripped.length <= maxLength) return stripped;
-    return stripped.substring(0, maxLength) + '...';
-  }
 
   /**
    * Show error message

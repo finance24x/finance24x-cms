@@ -34,14 +34,7 @@ function formatHeaderArticleDate(dateStr) {
 }
 
 // Calculate reading time (approximate)
-function calculateReadingTime(content) {
-  if (!content) return '1 min read';
-  // Remove HTML tags and count words
-  const text = content.replace(/<[^>]*>/g, ' ').trim();
-  const words = text.split(/\s+/).filter(word => word.length > 0);
-  const readingTime = Math.ceil(words.length / 200); // Average reading speed: 200 words per minute
-  return `${readingTime} min read`;
-}
+// calculateReadingTime moved to Utils
 
 // Render header article
 async function renderHeaderArticle() {
@@ -71,7 +64,7 @@ async function renderHeaderArticle() {
 
   // Format date and reading time
   const formattedDate = formatHeaderArticleDate(article.publishedDate || article.createdAt);
-  const readingTime = calculateReadingTime(article.content || article.excerpt);
+  const readingTime = Utils.calculateReadingTimeString(article.content || article.excerpt);
 
   // Render the header article
   container.innerHTML = `
