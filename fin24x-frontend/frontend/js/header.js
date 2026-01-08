@@ -108,16 +108,18 @@ function renderNavigationLinks(categories, currentPage = '') {
 
 // Render mobile menu navigation links (using categories)
 function renderMobileMenuLinks(categories) {
-  if (!categories || categories.length === 0) {
-    return '<li class="menu_mm"><a href="/">Home</a></li>';
+  let html = '<li class="menu_mm"><a href="/">Home</a></li>';
+  
+  if (categories && categories.length > 0) {
+    // Categories are already filtered and sorted by the API query
+    // Show all categories in mobile menu
+    html += categories.map(category => {
+      const url = `/${category.slug}`;
+      return `<li class="menu_mm"><a href="${url}">${category.name || ''}</a></li>`;
+    }).join('');
   }
-
-  // Categories are already filtered and sorted by the API query
-  // Show all categories in mobile menu
-  return categories.map(category => {
-    const url = `/${category.slug}`;
-    return `<li class="menu_mm"><a href="${url}">${category.name || ''}</a></li>`;
-  }).join('');
+  
+  return html;
 }
 
 // Render logo - shows both image and text side by side

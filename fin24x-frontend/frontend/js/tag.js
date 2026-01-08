@@ -22,7 +22,7 @@ class TagPageManager {
     const slug = this.getTagSlug();
     
     if (!slug) {
-      this.showError('Tag not found');
+      window.location.href = '/';
       return;
     }
 
@@ -37,7 +37,7 @@ class TagPageManager {
       this.tag = await this.fetchTag(slug);
       
       if (!this.tag) {
-        this.showError('Tag not found');
+        window.location.href = '/';
         return;
       }
 
@@ -53,7 +53,8 @@ class TagPageManager {
       
     } catch (error) {
       console.error('Error loading tag:', error);
-      this.showError('Failed to load tag');
+      // Redirect to home page on error
+      window.location.href = '/';
     }
   }
 
