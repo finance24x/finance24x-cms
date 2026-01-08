@@ -1,13 +1,72 @@
+require('dotenv').config({ path: `.env.${process.env.NODE_ENV || 'development'}` });
+
 const express = require('express');
 const path = require('path');
 
 const app = express();
-const PORT = 3000;
+
+// Environment Configuration
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const PORT = process.env.PORT || 3000;
 const SITE_URL = process.env.SITE_URL || 'http://localhost:3000';
 const STRAPI_URL = process.env.STRAPI_URL || 'http://localhost:1337';
+const STRAPI_API_PATH = process.env.STRAPI_API_PATH || '/api';
+const TRUST_PROXY = process.env.TRUST_PROXY === 'true';
+
+// Trust proxy for production (behind reverse proxy)
+if (TRUST_PROXY) {
+  app.set('trust proxy', 1);
+}
+
+// Security Headers (Production)
+if (NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    // Security headers
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+    
+    // HTTPS enforcement in production
+    if (req.header('x-forwarded-proto') !== 'https' && SITE_URL.startsWith('https')) {
+      return res.redirect(`https://${req.get('host')}${req.url}`);
+    }
+    
+    next();
+  });
+}
 
 // Serve static files from the frontend directory
-app.use(express.static(path.join(__dirname, 'frontend')));
+app.use(express.static(path.join(__dirname, 'frontend'), {
+  maxAge: NODE_ENV === 'production' ? '1y' : '0', // Cache static assets in production
+  etag: true,
+  lastModified: true
+}));
+
+// Middleware to inject environment variables into HTML
+app.use((req, res, next) => {
+  if (req.path.endsWith('.html') || !req.path.includes('.')) {
+    const originalSend = res.send;
+    res.send = function(data) {
+      if (typeof data === 'string' && data.includes('</head>')) {
+        // Inject environment variables before </head>
+        const envScript = `
+<script>
+  window.ENV = {
+    NODE_ENV: '${NODE_ENV}',
+    STRAPI_URL: '${STRAPI_URL}',
+    STRAPI_API_PATH: '${STRAPI_API_PATH}',
+    SITE_URL: '${SITE_URL}'
+  };
+</script>`;
+        data = data.replace('</head>', envScript + '</head>');
+      }
+      return originalSend.call(this, data);
+    };
+  }
+  next();
+});
 
 // Robots.txt
 app.get('/robots.txt', (req, res) => {
@@ -191,9 +250,25 @@ app.get('/:slug', (req, res, next) => {
   res.sendFile(path.join(__dirname, 'frontend', 'category.html'));
 });
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(err.status || 500).json({
+    error: NODE_ENV === 'production' ? 'Internal Server Error' : err.message
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(__dirname, 'frontend', 'index.html'));
+});
+
 // Start server
 app.listen(PORT, () => {
-  console.log(`\n🚀 Frontend server running at:`);
-  console.log(`   http://localhost:${PORT}\n`);
-  console.log(`📁 Serving files from: ${path.join(__dirname, 'frontend')}\n`);
+  console.log(`\n🚀 Frontend server running:`);
+  console.log(`   Environment: ${NODE_ENV}`);
+  console.log(`   URL: ${SITE_URL}`);
+  console.log(`   Port: ${PORT}`);
+  console.log(`   Strapi API: ${STRAPI_URL}${STRAPI_API_PATH}`);
+  console.log(`   Files: ${path.join(__dirname, 'frontend')}\n`);
 });
