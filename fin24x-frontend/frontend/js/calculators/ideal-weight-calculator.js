@@ -13,10 +13,19 @@ class IdealWeightCalculator {
     this.container.innerHTML = `
       <div class="calc-form">
         ${CalculatorUtils.createSlider('iw-height', 'Your Height', 140, 210, this.height, 1, ' cm', '')}
-        ${CalculatorUtils.createSelect('iw-gender', 'Gender', [
-          { value: 'male', label: 'Male' },
-          { value: 'female', label: 'Female' }
-        ], 'male')}
+        
+        <div class="calc-input-card">
+          <label>Gender</label>
+          <div class="gender-toggle" id="iw-gender-toggle">
+            <button type="button" class="gender-btn active" data-value="male">
+              <i class="fa fa-male"></i> Male
+            </button>
+            <button type="button" class="gender-btn" data-value="female">
+              <i class="fa fa-female"></i> Female
+            </button>
+          </div>
+          <input type="hidden" id="iw-gender" value="male">
+        </div>
         
         <div style="text-align: center; margin-top: 10px;">
           <button class="calc-btn" id="iw-calculate">
@@ -99,6 +108,7 @@ class IdealWeightCalculator {
           font-weight: 600;
           color: #27ae60;
         }
+        /* Toggle button styles moved to calculator.css */
       </style>
     `;
     this.bindEvents();
@@ -110,9 +120,16 @@ class IdealWeightCalculator {
       this.height = parseInt(e.target.value);
       document.getElementById('iw-height-value').textContent = this.height;
     });
-    document.getElementById('iw-gender').addEventListener('change', (e) => {
-      this.gender = e.target.value;
-      this.calculate();
+    
+    // Gender toggle buttons
+    document.querySelectorAll('#iw-gender-toggle .gender-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#iw-gender-toggle .gender-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('iw-gender').value = btn.dataset.value;
+        this.gender = btn.dataset.value;
+        this.calculate();
+      });
     });
     document.getElementById('iw-calculate').addEventListener('click', () => this.calculate());
     document.getElementById('iw-height').addEventListener('change', () => this.calculate());
@@ -120,7 +137,7 @@ class IdealWeightCalculator {
 
   calculate() {
     this.height = parseInt(document.getElementById('iw-height').value);
-    this.gender = document.getElementById('iw-gender').value;
+    this.gender = document.getElementById('iw-gender').value || 'male';
     
     const heightInches = this.height / 2.54;
     const heightOver5Ft = Math.max(0, heightInches - 60);

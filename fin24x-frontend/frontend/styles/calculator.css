@@ -81,7 +81,7 @@
 
 /* Calculator Widget */
 .calculator-widget {
-  background: #f8f9fa;
+  background: #fff;
   border-radius: 12px;
   padding: 25px;
   margin-bottom: 25px;
@@ -735,7 +735,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: #f8f9fa;
+  background: #fff;
   border-radius: 8px;
   text-decoration: none;
   transition: all 0.2s;
@@ -791,8 +791,8 @@
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background: #14bdee;
-  color: #fff;
+  background: #b7e3ef;
+  color: #514a4a;
   border-radius: 6px;
   text-decoration: none;
   font-size: 0.9rem;
@@ -804,6 +804,124 @@
   background: #0ea5d3;
   color: #fff;
   text-decoration: none;
+}
+
+/* Sidebar Ad Box */
+.sidebar-ad-box {
+  background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+  border: 1px dashed #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  padding-bottom: 30px;
+  text-align: center;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-ad-box .ad-label {
+  display: block;
+  font-size: 0.7rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 60px;
+}
+
+.sidebar-ad-box .ad-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ccc;
+  gap: 10px;
+}
+
+.sidebar-ad-box .ad-placeholder i {
+  font-size: 2rem;
+  opacity: 0.9;
+}
+
+.sidebar-ad-box .ad-placeholder span {
+  font-size: 0.85rem;
+}
+
+.sidebar-ad {
+  margin-bottom: 20px;
+  padding-bottom: 2;
+}
+
+/* ============================================
+   Toggle Buttons (Gender & Yes/No Toggles)
+   Used across all calculators
+   ============================================ */
+
+/* Toggle Button Container */
+.gender-toggle,
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+/* Toggle Button Base Styles */
+.gender-btn,
+.toggle-btn {
+  flex: 1;
+  padding: 12px 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  background: #fff;
+  color: #666;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.gender-btn:hover,
+.toggle-btn:hover {
+  
+  color: #14bdee;
+}
+
+.gender-btn.active,
+.toggle-btn.active {
+  background: linear-gradient(135deg, rgb(101, 139, 153, 0.5) 0%, rgb(161, 225, 243, 0.5) 100%);
+  border-color: #14bdee;
+  color: #fff;
+}
+
+.gender-btn i {
+  font-size: 1.2rem;
+}
+
+/* Dark Mode Toggle Buttons */
+.dark-mode .gender-btn,
+.dark-mode .toggle-btn {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+.dark-mode .gender-btn:hover,
+.dark-mode .toggle-btn:hover {
+  border-color: #14bdee;
+  color: #14bdee;
+}
+
+.dark-mode .gender-btn.active,
+.dark-mode .toggle-btn.active {
+  background: linear-gradient(135deg, rgb(101, 139, 153) 0%, rgb(161, 225, 243) 100%);
+  border-color: #14bdee;
+  color: #fff;
 }
 
 /* Error */
@@ -961,7 +1079,7 @@
 }
 
 .dark-mode .calculator-widget {
-  background: var(--bg-tertiary);
+  background: var(--bg-secondary);
 }
 
 /* Dark Mode - Input Cards */
@@ -1181,7 +1299,7 @@
 }
 
 .dark-mode .sidebar-calc-item {
-  background: var(--bg-tertiary);
+  background: var(--bg-secondary);
 }
 
 .dark-mode .sidebar-calc-item:hover {
@@ -1193,7 +1311,7 @@
 }
 
 .dark-mode .sidebar-calc-scroll::-webkit-scrollbar-track {
-  background: var(--bg-tertiary);
+  background: var(--bg-secondary);
 }
 
 .dark-mode .sidebar-calc-scroll::-webkit-scrollbar-thumb {
@@ -1205,6 +1323,20 @@
 }
 
 .dark-mode .calc-count {
+  color: var(--text-muted);
+}
+
+/* Dark Mode - Sidebar Ad Box */
+.dark-mode .sidebar-ad-box {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .sidebar-ad-box .ad-label {
+  color: var(--text-muted);
+}
+
+.dark-mode .sidebar-ad-box .ad-placeholder {
   color: var(--text-muted);
 }
 

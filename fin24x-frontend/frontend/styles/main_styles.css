@@ -2654,12 +2654,14 @@ section
 .breadcrumb-item {
 	display: inline-flex;
 	align-items: center;
+	
 }
 
 .breadcrumb-item a {
 	color: #14bdee;
 	text-decoration: none;
 	transition: color 0.2s ease;
+	font-weight: bold;
 }
 
 .breadcrumb-item a:hover {

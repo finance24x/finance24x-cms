@@ -17,10 +17,19 @@ class BMRCalculator {
         ${CalculatorUtils.createSlider('bmr-age', 'Your Age', 15, 80, this.age, 1, ' years', '')}
         ${CalculatorUtils.createSlider('bmr-weight', 'Your Weight', 40, 150, this.weight, 1, ' kg', '')}
         ${CalculatorUtils.createSlider('bmr-height', 'Your Height', 140, 210, this.height, 1, ' cm', '')}
-        ${CalculatorUtils.createSelect('bmr-gender', 'Gender', [
-          { value: 'male', label: 'Male' },
-          { value: 'female', label: 'Female' }
-        ], 'male')}
+        
+        <div class="calc-input-card">
+          <label>Gender</label>
+          <div class="gender-toggle" id="bmr-gender-toggle">
+            <button type="button" class="gender-btn active" data-value="male">
+              <i class="fa fa-male"></i> Male
+            </button>
+            <button type="button" class="gender-btn" data-value="female">
+              <i class="fa fa-female"></i> Female
+            </button>
+          </div>
+          <input type="hidden" id="bmr-gender" value="male">
+        </div>
         
         <div style="text-align: center; margin-top: 10px;">
           <button class="calc-btn" id="bmr-calculate">
@@ -113,6 +122,7 @@ class BMRCalculator {
           font-weight: 600;
           color: #27ae60;
         }
+        /* Toggle button styles moved to calculator.css */
       </style>
     `;
     this.bindEvents();
@@ -126,7 +136,16 @@ class BMRCalculator {
       });
       document.getElementById(id).addEventListener('change', () => this.calculate());
     });
-    document.getElementById('bmr-gender').addEventListener('change', () => this.calculate());
+    
+    // Gender toggle buttons
+    document.querySelectorAll('#bmr-gender-toggle .gender-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#bmr-gender-toggle .gender-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('bmr-gender').value = btn.dataset.value;
+        this.calculate();
+      });
+    });
     document.getElementById('bmr-calculate').addEventListener('click', () => this.calculate());
   }
 
@@ -134,7 +153,7 @@ class BMRCalculator {
     this.age = parseInt(document.getElementById('bmr-age').value);
     this.weight = parseFloat(document.getElementById('bmr-weight').value);
     this.height = parseInt(document.getElementById('bmr-height').value);
-    this.gender = document.getElementById('bmr-gender').value;
+    this.gender = document.getElementById('bmr-gender').value || 'male';
 
     const bmr = CalculatorUtils.calculateBMR(this.weight, this.height, this.age, this.gender);
 

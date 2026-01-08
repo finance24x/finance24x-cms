@@ -15,10 +15,19 @@ class ChildHeightCalculator {
       <div class="calc-form">
         ${CalculatorUtils.createSlider('ch-father', "Father's Height", 150, 200, this.fatherHeight, 1, ' cm', '')}
         ${CalculatorUtils.createSlider('ch-mother', "Mother's Height", 140, 190, this.motherHeight, 1, ' cm', '')}
-        ${CalculatorUtils.createSelect('ch-gender', "Child's Gender", [
-          { value: 'male', label: 'Boy' },
-          { value: 'female', label: 'Girl' }
-        ], 'male')}
+        
+        <div class="calc-input-card">
+          <label>Child's Gender</label>
+          <div class="gender-toggle" id="ch-gender-toggle">
+            <button type="button" class="gender-btn active" data-value="male">
+              <i class="fa fa-male"></i> Boy
+            </button>
+            <button type="button" class="gender-btn" data-value="female">
+              <i class="fa fa-female"></i> Girl
+            </button>
+          </div>
+          <input type="hidden" id="ch-gender" value="male">
+        </div>
         
         <div style="text-align: center; margin-top: 10px;">
           <button class="calc-btn" id="ch-calculate">
@@ -97,6 +106,7 @@ class ChildHeightCalculator {
           color: #888 !important;
           font-size: 0.85rem !important;
         }
+        /* Toggle button styles moved to calculator.css */
       </style>
     `;
     this.bindEvents();
@@ -112,9 +122,16 @@ class ChildHeightCalculator {
       this.motherHeight = parseInt(e.target.value);
       document.getElementById('ch-mother-value').textContent = this.motherHeight;
     });
-    document.getElementById('ch-gender').addEventListener('change', (e) => {
-      this.childGender = e.target.value;
-      this.calculate();
+    
+    // Gender toggle buttons
+    document.querySelectorAll('#ch-gender-toggle .gender-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#ch-gender-toggle .gender-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('ch-gender').value = btn.dataset.value;
+        this.childGender = btn.dataset.value;
+        this.calculate();
+      });
     });
     document.getElementById('ch-calculate').addEventListener('click', () => this.calculate());
     ['ch-father', 'ch-mother'].forEach(id => {
@@ -125,7 +142,7 @@ class ChildHeightCalculator {
   calculate() {
     this.fatherHeight = parseInt(document.getElementById('ch-father').value);
     this.motherHeight = parseInt(document.getElementById('ch-mother').value);
-    this.childGender = document.getElementById('ch-gender').value;
+    this.childGender = document.getElementById('ch-gender').value || 'male';
 
     let predictedHeight;
     if (this.childGender === 'male') {

@@ -19,18 +19,33 @@ class DiabetesRiskCalculator {
         ${CalculatorUtils.createSlider('dr-age', 'Your Age', 20, 80, this.age, 1, ' years', '')}
         ${CalculatorUtils.createSlider('dr-bmi', 'Your BMI', 15, 45, this.bmi, 0.5, '', '')}
         ${CalculatorUtils.createSlider('dr-waist', 'Waist Circumference', 60, 150, this.waist, 1, ' cm', '')}
-        ${CalculatorUtils.createSelect('dr-family', 'Family History of Diabetes', [
-          { value: 'no', label: 'No' },
-          { value: 'yes', label: 'Yes (Parents/Siblings)' }
-        ], 'no')}
-        ${CalculatorUtils.createSelect('dr-bp', 'High Blood Pressure?', [
-          { value: 'no', label: 'No' },
-          { value: 'yes', label: 'Yes' }
-        ], 'no')}
-        ${CalculatorUtils.createSelect('dr-activity', 'Regular Physical Activity?', [
-          { value: 'yes', label: 'Yes (30+ minutes/day)' },
-          { value: 'no', label: 'No' }
-        ], 'yes')}
+        
+        <div class="calc-input-card">
+          <label>Family History of Diabetes</label>
+          <div class="toggle-buttons" id="dr-family-toggle">
+            <button type="button" class="toggle-btn active" data-value="no">No</button>
+            <button type="button" class="toggle-btn" data-value="yes">Yes (Parents/Siblings)</button>
+          </div>
+          <input type="hidden" id="dr-family" value="no">
+        </div>
+        
+        <div class="calc-input-card">
+          <label>High Blood Pressure?</label>
+          <div class="toggle-buttons" id="dr-bp-toggle">
+            <button type="button" class="toggle-btn active" data-value="no">No</button>
+            <button type="button" class="toggle-btn" data-value="yes">Yes</button>
+          </div>
+          <input type="hidden" id="dr-bp" value="no">
+        </div>
+        
+        <div class="calc-input-card">
+          <label>Regular Physical Activity?</label>
+          <div class="toggle-buttons" id="dr-activity-toggle">
+            <button type="button" class="toggle-btn active" data-value="yes">Yes (30+ minutes/day)</button>
+            <button type="button" class="toggle-btn" data-value="no">No</button>
+          </div>
+          <input type="hidden" id="dr-activity" value="yes">
+        </div>
         
         <div style="text-align: center; margin-top: 10px;">
           <button class="calc-btn" id="dr-calculate">
@@ -122,6 +137,7 @@ class DiabetesRiskCalculator {
           margin-bottom: 8px;
           color: #555;
         }
+        /* Toggle button styles moved to calculator.css */
       </style>
     `;
     this.bindEvents();
@@ -136,9 +152,37 @@ class DiabetesRiskCalculator {
       });
       document.getElementById(id).addEventListener('change', () => this.calculate());
     });
-    ['dr-family', 'dr-bp', 'dr-activity'].forEach(id => {
-      document.getElementById(id).addEventListener('change', () => this.calculate());
+    
+    // Toggle buttons for Family History
+    document.querySelectorAll('#dr-family-toggle .toggle-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#dr-family-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('dr-family').value = btn.dataset.value;
+        this.calculate();
+      });
     });
+    
+    // Toggle buttons for High Blood Pressure
+    document.querySelectorAll('#dr-bp-toggle .toggle-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#dr-bp-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('dr-bp').value = btn.dataset.value;
+        this.calculate();
+      });
+    });
+    
+    // Toggle buttons for Physical Activity
+    document.querySelectorAll('#dr-activity-toggle .toggle-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#dr-activity-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('dr-activity').value = btn.dataset.value;
+        this.calculate();
+      });
+    });
+    
     document.getElementById('dr-calculate').addEventListener('click', () => this.calculate());
   }
 
@@ -146,9 +190,9 @@ class DiabetesRiskCalculator {
     this.age = parseInt(document.getElementById('dr-age').value);
     this.bmi = parseFloat(document.getElementById('dr-bmi').value);
     this.waist = parseInt(document.getElementById('dr-waist').value);
-    this.familyHistory = document.getElementById('dr-family').value;
-    this.highBP = document.getElementById('dr-bp').value;
-    this.physicalActivity = document.getElementById('dr-activity').value;
+    this.familyHistory = document.getElementById('dr-family').value || 'no';
+    this.highBP = document.getElementById('dr-bp').value || 'no';
+    this.physicalActivity = document.getElementById('dr-activity').value || 'yes';
 
     let score = 0;
 

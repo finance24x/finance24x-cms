@@ -75,55 +75,7 @@ class CalorieCalculator {
         </div>
       </div>
       <style>
-        /* Gender Toggle */
-        .gender-toggle {
-          display: flex;
-          gap: 10px;
-          margin-top: 8px;
-        }
-        .gender-btn {
-          flex: 1;
-          padding: 12px 20px;
-          border: 2px solid #e0e0e0;
-          border-radius: 10px;
-          background: #fff;
-          color: #666;
-          font-size: 1rem;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-        }
-        .gender-btn:hover {
-          border-color: #14bdee;
-          color: #14bdee;
-        }
-        .gender-btn.active {
-          background: linear-gradient(135deg, #14bdee 0%, #0a9dc4 100%);
-          border-color: #14bdee;
-          color: #fff;
-        }
-        .gender-btn i {
-          font-size: 1.1rem;
-        }
-        /* Dark mode gender toggle */
-        .dark-mode .gender-btn {
-          background: var(--bg-tertiary);
-          border-color: var(--border-color);
-          color: var(--text-secondary);
-        }
-        .dark-mode .gender-btn:hover {
-          border-color: #14bdee;
-          color: #14bdee;
-        }
-        .dark-mode .gender-btn.active {
-          background: linear-gradient(135deg, #14bdee 0%, #0a9dc4 100%);
-          border-color: #14bdee;
-          color: #fff;
-        }
+        /* Toggle button styles moved to calculator.css */
 
         .cal-bmr {
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

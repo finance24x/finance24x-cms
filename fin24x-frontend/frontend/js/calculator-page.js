@@ -335,12 +335,32 @@ class CalculatorPageManager {
         </div>
       </div>
 
+      <div class="sidebar-section sidebar-ad">
+        <div class="sidebar-ad-box">
+          <span class="ad-label">Advertisement</span>
+          <div class="ad-placeholder">
+            <i class="fa fa-bullhorn"></i>
+            <span>Ad Space</span>
+          </div>
+        </div>
+      </div>
+
       <div class="sidebar-section sidebar-cta">
         <h3 class="sidebar-title">All Calculators</h3>
         <p>Browse our full collection of financial and health calculators.</p>
         <a href="/calculators" class="sidebar-btn">
           <i class="fa fa-th-large"></i> View All Calculators
         </a>
+      </div>
+
+      <div class="sidebar-section sidebar-ad">
+        <div class="sidebar-ad-box">
+          <span class="ad-label">Advertisement</span>
+          <div class="ad-placeholder">
+            <i class="fa fa-bullhorn"></i>
+            <span>Ad Space</span>
+          </div>
+        </div>
       </div>
     `;
   }
