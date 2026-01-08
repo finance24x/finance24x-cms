@@ -918,11 +918,27 @@ class CategoryPageManager {
       const headerData = await headerRes.json();
       const popularTagData = await popularTagRes.json();
       
-      // Get the not found image URL
+      // Get the not found image URL - handle different Strapi v5 media structures
       const notFoundImage = headerData.data?.CategoryNotFound;
-      const imageUrl = notFoundImage?.url 
-        ? getApiUrl('').replace('/api', '') + notFoundImage.url 
-        : '/images/404-placeholder.png';
+      let imageUrl = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'800\' height=\'600\'%3E%3Crect fill=\'%23f0f0f0\' width=\'800\' height=\'600\'/%3E%3Ctext fill=\'%23999\' font-family=\'sans-serif\' font-size=\'24\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\'%3E404 Not Found%3C/text%3E%3C/svg%3E';
+      
+      if (notFoundImage) {
+        // Handle different possible structures
+        let url = null;
+        if (notFoundImage.url) {
+          url = notFoundImage.url;
+        } else if (notFoundImage.data?.attributes?.url) {
+          url = notFoundImage.data.attributes.url;
+        } else if (notFoundImage.data?.[0]?.attributes?.url) {
+          url = notFoundImage.data[0].attributes.url;
+        } else if (notFoundImage.data?.url) {
+          url = notFoundImage.data.url;
+        }
+        
+        if (url) {
+          imageUrl = getApiUrl('').replace('/api', '') + url;
+        }
+      }
       
       // Get popular tags
       const popularTags = popularTagData.data?.tags || [];

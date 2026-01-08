@@ -16,6 +16,9 @@ export default factories.createCoreController('api::header.header', ({ strapi })
         logo: {
           fields: ['url', 'alternativeText', 'width', 'height'],
         },
+        CategoryNotFound: {
+          fields: ['url', 'alternativeText', 'width', 'height'],
+        },
         navigationCategories: {
           sort: ['order:asc'], // Sort categories by order
         },
@@ -31,10 +34,33 @@ export default factories.createCoreController('api::header.header', ({ strapi })
         },
       };
       query.populate = populate;
+    } else if (typeof populate === 'string' && populate !== '*') {
+      // Handle string populate like "CategoryNotFound"
+      query.populate = {
+        [populate]: {
+          fields: ['url', 'alternativeText', 'width', 'height'],
+        },
+        CategoryNotFound: {
+          fields: ['url', 'alternativeText', 'width', 'height'],
+        },
+        header_article: {
+          populate: {
+            image: {
+              fields: ['url', 'alternativeText', 'width', 'height'],
+            },
+            category: {
+              fields: ['name', 'slug'],
+            },
+          },
+        },
+      };
     } else if (typeof populate === 'object' && populate !== null) {
       query.populate = {
         ...populate,
         logo: (populate as any).logo || {
+          fields: ['url', 'alternativeText', 'width', 'height'],
+        },
+        CategoryNotFound: (populate as any).CategoryNotFound || {
           fields: ['url', 'alternativeText', 'width', 'height'],
         },
         navigationCategories: {
@@ -59,6 +85,9 @@ export default factories.createCoreController('api::header.header', ({ strapi })
       const existingPopulate = typeof query.populate === 'object' && query.populate !== null ? query.populate : {};
       query.populate = {
         ...existingPopulate,
+        CategoryNotFound: {
+          fields: ['url', 'alternativeText', 'width', 'height'],
+        },
         header_article: {
           populate: {
             image: {
@@ -85,6 +114,9 @@ export default factories.createCoreController('api::header.header', ({ strapi })
         logo: {
           fields: ['url', 'alternativeText', 'width', 'height'],
         },
+        CategoryNotFound: {
+          fields: ['url', 'alternativeText', 'width', 'height'],
+        },
         navigationCategories: {
           sort: ['order:asc'], // Sort categories by order
         },
@@ -100,10 +132,33 @@ export default factories.createCoreController('api::header.header', ({ strapi })
         },
       };
       query.populate = populate;
+    } else if (typeof populate === 'string' && populate !== '*') {
+      // Handle string populate like "CategoryNotFound"
+      query.populate = {
+        [populate]: {
+          fields: ['url', 'alternativeText', 'width', 'height'],
+        },
+        CategoryNotFound: {
+          fields: ['url', 'alternativeText', 'width', 'height'],
+        },
+        header_article: {
+          populate: {
+            image: {
+              fields: ['url', 'alternativeText', 'width', 'height'],
+            },
+            category: {
+              fields: ['name', 'slug'],
+            },
+          },
+        },
+      };
     } else if (typeof populate === 'object' && populate !== null) {
       query.populate = {
         ...populate,
         logo: (populate as any).logo || {
+          fields: ['url', 'alternativeText', 'width', 'height'],
+        },
+        CategoryNotFound: (populate as any).CategoryNotFound || {
           fields: ['url', 'alternativeText', 'width', 'height'],
         },
         navigationCategories: {
@@ -128,6 +183,9 @@ export default factories.createCoreController('api::header.header', ({ strapi })
       const existingPopulate = typeof query.populate === 'object' && query.populate !== null ? query.populate : {};
       query.populate = {
         ...existingPopulate,
+        CategoryNotFound: {
+          fields: ['url', 'alternativeText', 'width', 'height'],
+        },
         header_article: {
           populate: {
             image: {
