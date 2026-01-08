@@ -27,11 +27,13 @@ export default ({ env }) => {
         // Use DATABASE_URL if provided (common in cloud platforms like Render)
         const databaseUrl = env('DATABASE_URL');
         if (databaseUrl) {
+          // For cloud providers like Render, default to allowing self-signed certificates
+          const sslEnabled = env.bool('DATABASE_SSL', true);
           return {
             connectionString: databaseUrl,
-            ssl: env.bool('DATABASE_SSL', true) && {
-              rejectUnauthorized: env.bool('DATABASE_SSL_REJECT_UNAUTHORIZED', true),
-            },
+            ssl: sslEnabled ? {
+              rejectUnauthorized: env.bool('DATABASE_SSL_REJECT_UNAUTHORIZED', false),
+            } : false,
             schema: env('DATABASE_SCHEMA', 'public'),
           };
         }
