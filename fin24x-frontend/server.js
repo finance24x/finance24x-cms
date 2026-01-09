@@ -2,6 +2,7 @@ require('dotenv').config({ path: `.env.${process.env.NODE_ENV || 'development'}`
 
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 
@@ -37,93 +38,15 @@ if (NODE_ENV === 'production') {
   });
 }
 
-// Middleware to inject environment variables into HTML
-// This MUST run BEFORE express.static to catch all HTML responses
-app.use((req, res, next) => {
-  // Only process HTML files and routes without extensions
-  if (req.path.endsWith('.html') || (!req.path.includes('.') && req.accepts('html'))) {
-    const originalSend = res.send;
-    const originalSendFile = res.sendFile;
-    
-    // Override res.send for HTML content
-    res.send = function(data) {
-      if (typeof data === 'string' && (data.includes('</head>') || data.includes('<!DOCTYPE html'))) {
-        // Ensure STRAPI_URL is set, throw error if missing in production
-        if (!STRAPI_URL && NODE_ENV === 'production') {
-          console.error('ERROR: STRAPI_URL environment variable is not set!');
-          console.error('Please set STRAPI_URL in your Render environment variables.');
-          return originalSend.call(this, '<html><body><h1>Configuration Error</h1><p>STRAPI_URL environment variable is missing. Please check your server configuration.</p></body></html>');
-        }
-        
-        // Inject environment variables before </head> or at the start of <head>
-        const envScript = `
-<script>
-  window.ENV = {
-    NODE_ENV: '${NODE_ENV}',
-    STRAPI_URL: '${STRAPI_URL || 'http://localhost:1337'}',
-    STRAPI_API_PATH: '${STRAPI_API_PATH || '/api'}',
-    SITE_URL: '${SITE_URL || 'http://localhost:3000'}'
-  };
-</script>`;
-        
-        // Try to inject before </head> first
-        if (data.includes('</head>')) {
-          data = data.replace('</head>', envScript + '</head>');
-        } 
-        // Otherwise inject at the start of <head>
-        else if (data.includes('<head>')) {
-          data = data.replace('<head>', '<head>' + envScript);
-        }
-        // Last resort: inject after <!DOCTYPE html>
-        else if (data.includes('<!DOCTYPE html')) {
-          data = data.replace('<!DOCTYPE html', envScript + '<!DOCTYPE html');
-        }
-      }
-      return originalSend.call(this, data);
-    };
-    
-    // Override res.sendFile to inject env vars
-    res.sendFile = function(filePath, options, callback) {
-      const originalCallback = callback;
-      const modifiedCallback = function(err) {
-        if (err && originalCallback) {
-          return originalCallback(err);
-        }
-      };
-      
-      // Read file, inject, then send
-      if (filePath.endsWith('.html')) {
-        const fs = require('fs');
-        try {
-          let html = fs.readFileSync(filePath, 'utf8');
-          if (html.includes('</head>') || html.includes('<!DOCTYPE html')) {
-            const envScript = `
-<script>
-  window.ENV = {
-    NODE_ENV: '${NODE_ENV}',
-    STRAPI_URL: '${STRAPI_URL || 'http://localhost:1337'}',
-    STRAPI_API_PATH: '${STRAPI_API_PATH || '/api'}',
-    SITE_URL: '${SITE_URL || 'http://localhost:3000'}'
-  };
-</script>`;
-            
-            if (html.includes('</head>')) {
-              html = html.replace('</head>', envScript + '</head>');
-            } else if (html.includes('<head>')) {
-              html = html.replace('<head>', '<head>' + envScript);
-            }
-            
-            return res.send(html);
-          }
-        } catch (err) {
-          console.error('Error reading HTML file:', err);
-        }
-      }
-      
-      return originalSendFile.call(this, filePath, options, modifiedCallback);
-    };
-  }
-  next();
+// Serve config.js endpoint (easier than injecting into HTML)
+app.get('/config.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript');
+  res.send(`window.ENV = {
+  NODE_ENV: '${NODE_ENV}',
+  STRAPI_URL: '${STRAPI_URL || 'http://localhost:1337'}',
+  STRAPI_API_PATH: '${STRAPI_API_PATH || '/api'}',
+  SITE_URL: '${SITE_URL || 'http://localhost:3000'}'
+};`);
 });
 
 // Serve static files from the frontend directory
