@@ -185,16 +185,23 @@ function renderFooterLogo(logoText, logoImage) {
 
 // Render footer component
 async function renderFooter() {
+  const footerContainer = document.querySelector('.footer');
+  if (!footerContainer) {
+    console.error('Footer container not found');
+    return;
+  }
+
+  // Hide footer initially to prevent "Loading..." flash
+  footerContainer.style.opacity = '0';
+  footerContainer.style.visibility = 'hidden';
+  
   const footerData = await fetchFooter();
   
   if (!footerData) {
     console.warn('Footer data not available, using fallback');
-    return;
-  }
-
-  const footerContainer = document.querySelector('.footer');
-  if (!footerContainer) {
-    console.error('Footer container not found');
+    // Show footer even if data is not available
+    footerContainer.style.opacity = '1';
+    footerContainer.style.visibility = 'visible';
     return;
   }
 
@@ -290,6 +297,11 @@ async function renderFooter() {
       crText.innerHTML = footerData.copyrightText;
     }
   }
+
+  // Show footer after content is loaded
+  footerContainer.style.opacity = '1';
+  footerContainer.style.visibility = 'visible';
+  footerContainer.style.transition = 'opacity 0.2s ease-in-out';
 }
 
 // Initialize footer when DOM is ready

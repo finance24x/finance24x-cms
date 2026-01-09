@@ -457,10 +457,10 @@ class CategoryPageManager {
   }
 
   /**
-   * Fetch category details by slug (with related categories)
+   * Fetch category details by slug (with related categories, toparticle, and populartags)
    */
   async fetchCategory(slug) {
-    const url = getApiUrl(`/categories?filters[slug][$eq]=${slug}&populate[relatedcategories]=true&populate[relatedtaggroups][populate][tags]=true&populate[categoryImage]=true`);
+    const url = getApiUrl(`/categories?filters[slug][$eq]=${slug}&populate[relatedcategories]=true&populate[relatedtaggroups][populate][tags]=true&populate[categoryImage]=true&populate[toparticle][populate][category]=true&populate[toparticle][populate][image]=true&populate[populartags]=true`);
     const response = await fetch(url);
     const data = await response.json();
     return data.data && data.data.length > 0 ? data.data[0] : null;
@@ -579,7 +579,24 @@ class CategoryPageManager {
 
     const articles = await this.fetchArticles(this.currentPage);
     
-    if (articles.length === 0) {
+    // Get toparticle from category if it exists
+    // Handle different possible structures: toparticle could be an object or have data property
+    let toparticle = this.category?.toparticle;
+    if (toparticle && toparticle.data) {
+      toparticle = toparticle.data;
+    }
+    
+    // If toparticle exists and is valid, filter it out from regular articles to avoid duplication
+    let filteredArticles = articles;
+    if (toparticle && (toparticle.documentId || toparticle.id)) {
+      const toparticleId = toparticle.documentId || toparticle.id;
+      filteredArticles = articles.filter(article => {
+        const articleId = article.documentId || article.id;
+        return articleId !== toparticleId;
+      });
+    }
+    
+    if (filteredArticles.length === 0 && !toparticle) {
       this.articlesContainer.innerHTML = `
         <div class="no-articles">
           <h3>No articles found</h3>
@@ -590,10 +607,13 @@ class CategoryPageManager {
       return;
     }
 
-    // Split articles: featured (1), cards (2-7), split section (8-15), extra (16+)
-    const featuredArticle = articles[0];
-    const cardArticles = articles.slice(1, 1 + this.cardsLimit);
-    const remainingArticles = articles.slice(1 + this.cardsLimit);
+    // Determine featured article: toparticle if exists and valid, otherwise first article
+    const featuredArticle = (toparticle && toparticle.title) ? toparticle : filteredArticles[0];
+    
+    // Adjust article slicing based on whether we have toparticle
+    const startIndex = toparticle ? 0 : 1;
+    const cardArticles = filteredArticles.slice(startIndex, startIndex + this.cardsLimit);
+    const remainingArticles = filteredArticles.slice(startIndex + this.cardsLimit);
     
     // For split section: 5 for list (left), 3 for mini cards (right)
     const listArticles = remainingArticles.slice(0, 5);
@@ -602,8 +622,18 @@ class CategoryPageManager {
 
     let html = '';
     
-    // Render featured article
+    // Render featured article (toparticle or first article)
     html += this.renderFeaturedArticle(featuredArticle);
+    
+    // Render popular tags below the first article if they exist
+    // Handle different possible structures: populartags could be an array or have data property
+    let populartags = this.category?.populartags;
+    if (populartags && populartags.data && Array.isArray(populartags.data)) {
+      populartags = populartags.data;
+    }
+    if (populartags && Array.isArray(populartags) && populartags.length > 0) {
+      html += this.renderPopularTags(populartags);
+    }
     
     // Render card articles in 2-column grid
     if (cardArticles.length > 0) {
@@ -640,32 +670,53 @@ class CategoryPageManager {
   }
 
   /**
-   * Render featured article (first article - large layout)
+   * Render featured article (first article or toparticle - large layout)
    */
   renderFeaturedArticle(article) {
-    const hasImage = article.image?.url;
+    if (!article || !article.title) {
+      return '';
+    }
+    
+    // Handle image URL - check different possible structures
+    let imageUrl = null;
+    if (article.image) {
+      if (typeof article.image === 'string') {
+        imageUrl = article.image;
+      } else if (article.image.url) {
+        imageUrl = article.image.url;
+      } else if (article.image.data?.attributes?.url) {
+        imageUrl = article.image.data.attributes.url;
+      } else if (article.image.data?.[0]?.attributes?.url) {
+        imageUrl = article.image.data[0].attributes.url;
+      }
+    }
+    
+    const hasImage = !!imageUrl;
     const imageHtml = hasImage 
-      ? `<div class="featured-image"><img src="${API_CONFIG.BASE_URL}${article.image.url}" alt="${article.title}"></div>`
+      ? `<div class="featured-image"><img src="${API_CONFIG.BASE_URL}${imageUrl}" alt="${article.title}"></div>`
       : '';
     
-    const excerpt = article.excerpt || Utils.truncateText(article.content, 250);
+    const excerpt = article.excerpt || Utils.truncateText(article.content || '', 250);
     const readTime = Utils.getReadTime(article);
     // Tags removed to avoid crowding
     const tagsHtml = '';
+    
+    // Get category slug - prefer article's category, fallback to current category
+    const categorySlug = article.category?.slug || this.category?.slug || 'article';
 
     return `
       <div class="featured-article">
         <div class="featured-content">
-          <div class="featured-category">${this.category?.name || 'Article'}</div>
+          <div class="featured-category">${article.category?.name || this.category?.name || 'Article'}</div>
           <h1 class="featured-title">
-            <a href="/${article.category?.slug || 'article'}/${article.slug}">${article.title}</a>
+            <a href="/${categorySlug}/${article.slug}">${article.title}</a>
           </h1>
           <p class="featured-excerpt">${excerpt}</p>
           ${tagsHtml}
           <div class="featured-meta">
             <span class="read-time">${readTime} min read</span>
             <span class="separator">•</span>
-            <span class="date">${Utils.formatDate(article.publishedDate)}</span>
+            <span class="date">${Utils.formatDate(article.publishedDate || article.createdAt)}</span>
           </div>
         </div>
         ${imageHtml}
@@ -727,6 +778,41 @@ class CategoryPageManager {
     
     html += '</div>';
     return html;
+  }
+
+  /**
+   * Render popular tags section (displayed below the first article)
+   */
+  renderPopularTags(tags) {
+    if (!tags || tags.length === 0) return '';
+    
+    const tagsHtml = tags.map(tag => {
+      // Handle different tag structures
+      let tagName, tagSlug;
+      if (typeof tag === 'string') {
+        tagName = tag;
+        tagSlug = tag.toLowerCase().replace(/\s+/g, '-');
+      } else {
+        tagName = tag.name || tag.title || '';
+        tagSlug = tag.slug || tag.name?.toLowerCase().replace(/\s+/g, '-') || '';
+      }
+      
+      if (!tagName || !tagSlug) return '';
+      
+      return `<a href="/tag/${encodeURIComponent(tagSlug)}" class="popular-tag-link">${tagName}</a>`;
+    }).filter(Boolean).join('');
+    
+    if (!tagsHtml) return '';
+    
+    return `
+      <div class="popular-tags-section">
+        <span class="popular-tags-header">
+          <i class="fa fa-tags"></i>
+          <span>Popular Topics</span>
+        </span>
+        ${tagsHtml}
+      </div>
+    `;
   }
 
   /**

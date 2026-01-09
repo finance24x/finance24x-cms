@@ -38,7 +38,7 @@
 
 /* Category Tags Section */
 .category-tags-section {
-  padding: 25px 0;
+  padding: 10px 0;
   background: #f5f5f5;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #eee;
@@ -76,3 +76,67 @@
   text-decoration: none;
 }
 
+/* Popular Tags Section (below first article) */
+.popular-tags-section {
+  margin: 20px 0;
+  padding: 0 0 20px 0;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: baseline;
+  gap: 15px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.popular-tags-header {
+  display: inline-flex !important;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #161616;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.popular-tags-header i {
+  color: #14bdee;
+  font-size: 1.0rem;
+}
+
+.popular-tag-link {
+  display: inline !important;
+  color: #111111;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  line-height: 1.2;
+  vertical-align: baseline;
+}
+
+.popular-tag-link:hover {
+  color: #14bdee;
+  text-decoration: underline;
+}
+
+/* Dark mode styles for popular tags */
+@media (prefers-color-scheme: dark) {
+  .popular-tags-header {
+    color: #ccc;
+  }
+  
+  .popular-tag-link {
+    color: #ccc;
+  }
+  
+  .popular-tag-link:hover {
+    color: #14bdee;
+  }
+}

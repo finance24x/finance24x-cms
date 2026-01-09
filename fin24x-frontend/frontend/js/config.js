@@ -11,13 +11,13 @@
       const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
       
       if (!isLocalhost) {
-        console.error('❌ CRITICAL ERROR: window.ENV.STRAPI_URL is not set in production!');
+        console.error('⚠️ API Configuration Error: window.ENV.STRAPI_URL is not set!');
         console.error('Current window.ENV:', window.ENV);
-        console.error('This will cause API calls to fail.');
+        console.error('This usually means environment variables are not properly configured.');
         console.error('Please check your server.js environment variable injection.');
-        throw new Error('STRAPI_URL environment variable is required in production!');
+        // Don't throw error, just use fallback to prevent page break
       } else {
-        console.warn('⚠️ Warning: window.ENV.STRAPI_URL not set, using localhost fallback');
+        console.warn('⚠️ window.ENV not set, using localhost fallback');
       }
     }
     
@@ -28,15 +28,9 @@
       SITE_URL: window.ENV?.SITE_URL || window.location.origin
     };
     
-    // Log configuration
-    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    if (isLocalhost) {
+    // Log configuration in development
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
       console.log('🔧 API Configuration:', window.API_CONFIG);
-    } else {
-      console.log('✅ API Configuration initialized:', {
-        BASE_URL: window.API_CONFIG.BASE_URL,
-        API_PATH: window.API_CONFIG.API_PATH
-      });
     }
   }
   
@@ -63,7 +57,8 @@
           initApiConfig();
         } else {
           console.error('❌ Failed to initialize API config - window.ENV not available');
-          throw new Error('Failed to initialize API configuration');
+          // Still initialize with fallback to prevent page break
+          initApiConfig();
         }
       }
     }, 100);
@@ -73,23 +68,13 @@
 // Helper function to get full API URL
 function getApiUrl(endpoint) {
   if (typeof window.API_CONFIG === 'undefined') {
-    console.error('❌ API_CONFIG not initialized!');
-    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const fallback = window.ENV?.STRAPI_URL || 'http://localhost:1337';
-    const apiPath = window.ENV?.STRAPI_API_PATH || '/api';
-    
-    if (!isLocalhost) {
-      console.error('This is a critical error in production!');
-      throw new Error('API_CONFIG not initialized - check window.ENV injection');
-    }
-    
-    console.warn('Using fallback URL:', fallback + apiPath + endpoint);
-    return `${fallback}${apiPath}${endpoint}`;
+    console.error('API_CONFIG not initialized! Using fallback.');
+    return `http://localhost:1337/api${endpoint}`;
   }
   return `${window.API_CONFIG.BASE_URL}${window.API_CONFIG.API_PATH}${endpoint}`;
 }
 
-// Export for backward compatibility (use window.API_CONFIG instead)
+// Export for backward compatibility
 const API_CONFIG = window.API_CONFIG || {
   BASE_URL: window.ENV?.STRAPI_URL || 'http://localhost:1337',
   API_PATH: window.ENV?.STRAPI_API_PATH || '/api'
