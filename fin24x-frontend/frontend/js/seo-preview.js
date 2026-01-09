@@ -351,21 +351,5 @@ window.showSEOPreview = function() {
   `;
 
   document.body.appendChild(overlay);
-
-  // Also log to console
-  console.log('%c🔍 SEO Analysis', 'font-size: 20px; font-weight: bold;');
-  console.table({
-    'Title': seoData.title,
-    'Description': seoData.description,
-    'Canonical': seoData.canonical,
-    'OG Title': seoData.ogTitle,
-    'OG Image': seoData.ogImage,
-    'Twitter Title': seoData.twitterTitle
-  });
-  console.log('Schema Markup:', seoData.schema);
 };
-
-// Auto-show hint in console
-console.log('%c💡 SEO Preview Available!', 'background: #14bdee; color: white; padding: 5px 10px; border-radius: 3px; font-weight: bold;');
-console.log('Type %cshowSEOPreview()%c in console to see how search engines & social media will display this page.', 'color: #14bdee; font-weight: bold;', '');
 

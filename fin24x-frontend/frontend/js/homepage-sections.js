@@ -13,14 +13,11 @@ class HomepageSectionsManager {
    */
   async init() {
     try {
-      console.log('🔄 Loading homepage sections...');
       const sections = await this.fetchSections();
       
       if (sections && sections.length > 0) {
         await this.renderSections(sections);
-        console.log(`✅ Loaded ${sections.length} sections`);
       } else {
-        console.log('⚠️ No sections found');
         this.renderNoSectionsMessage();
       }
     } catch (error) {
@@ -60,7 +57,6 @@ class HomepageSectionsManager {
       const category = section.category;
       
       if (!category) {
-        console.log(`⚠️ Section "${section.title}" has no category, skipping`);
         continue;
       }
 

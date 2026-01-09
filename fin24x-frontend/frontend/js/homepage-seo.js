@@ -28,7 +28,7 @@
       if (twitterImage) twitterImage.setAttribute('content', logoUrl);
     }
   } catch (error) {
-    console.log('Could not fetch header for SEO:', error);
+    console.error('Could not fetch header for SEO:', error);
   }
 })();
 

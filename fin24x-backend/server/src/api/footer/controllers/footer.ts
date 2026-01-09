@@ -36,11 +36,6 @@ export default factories.createCoreController('api::footer.footer', ({ strapi })
 
     const { data, meta } = await super.find(ctx);
     
-    // Log for debugging
-    if (data && data.appDownloads) {
-      console.log('Footer appDownloads:', JSON.stringify(data.appDownloads, null, 2));
-    }
-    
     return { data, meta };
   },
 }));

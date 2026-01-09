@@ -19,8 +19,6 @@ export interface SeedResult {
  * Create or update calculators from the data file
  */
 export async function seedCalculators(strapi: Core.Strapi): Promise<SeedResult> {
-  console.log('🔄 Starting calculator seeding...');
-  console.log(`📋 Found ${calculators.length} calculators in data file\n`);
 
   let createdCount = 0;
   let updatedCount = 0;
@@ -62,7 +60,6 @@ export async function seedCalculators(strapi: Core.Strapi): Promise<SeedResult> 
           status: 'published',
         });
         
-        console.log(`✅ Created calculator: ${calcData.title}`);
         createdCount++;
       } else {
         // Update existing calculator
@@ -72,7 +69,6 @@ export async function seedCalculators(strapi: Core.Strapi): Promise<SeedResult> 
           status: 'published',
         });
         
-        console.log(`📝 Updated calculator: ${calcData.title}`);
         updatedCount++;
       }
     } catch (error: any) {

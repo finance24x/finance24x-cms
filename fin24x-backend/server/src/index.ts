@@ -45,7 +45,6 @@ export default {
               where: { id: headerFind.id },
               data: { enabled: true },
             });
-          console.log('✅ Enabled public access for header.find');
         }
 
         if (headerFindOne && !headerFindOne.enabled) {
@@ -55,7 +54,6 @@ export default {
               where: { id: headerFindOne.id },
               data: { enabled: true },
             });
-          console.log('✅ Enabled public access for header.findOne');
         }
 
         // Enable permissions for footer
@@ -69,7 +67,6 @@ export default {
               where: { id: footerFind.id },
               data: { enabled: true },
             });
-          console.log('✅ Enabled public access for footer.find');
         }
 
         if (footerFindOne && !footerFindOne.enabled) {
@@ -79,7 +76,6 @@ export default {
               where: { id: footerFindOne.id },
               data: { enabled: true },
             });
-          console.log('✅ Enabled public access for footer.findOne');
         }
 
         // Create permissions if they don't exist
@@ -99,7 +95,6 @@ export default {
               enabled: true,
             },
           });
-          console.log('✅ Created public permission for header.find');
         }
 
         if (!permissionActions.includes('api::header.header.findOne')) {
@@ -110,7 +105,6 @@ export default {
               enabled: true,
             },
           });
-          console.log('✅ Created public permission for header.findOne');
         }
 
         if (!permissionActions.includes('api::footer.footer.find')) {
@@ -121,7 +115,6 @@ export default {
               enabled: true,
             },
           });
-          console.log('✅ Created public permission for footer.find');
         }
 
         if (!permissionActions.includes('api::footer.footer.findOne')) {
@@ -132,7 +125,6 @@ export default {
               enabled: true,
             },
           });
-          console.log('✅ Created public permission for footer.findOne');
         }
 
         // Enable permissions for market-ticker
@@ -146,7 +138,6 @@ export default {
               where: { id: marketTickerFind.id },
               data: { enabled: true },
             });
-          console.log('✅ Enabled public access for market-ticker.find');
         }
 
         if (marketTickerFindOne && !marketTickerFindOne.enabled) {
@@ -156,7 +147,6 @@ export default {
               where: { id: marketTickerFindOne.id },
               data: { enabled: true },
             });
-          console.log('✅ Enabled public access for market-ticker.findOne');
         }
 
         // Create permissions if they don't exist
@@ -168,7 +158,6 @@ export default {
               enabled: true,
             },
           });
-          console.log('✅ Created public permission for market-ticker.find');
         }
 
         if (!permissionActions.includes('api::market-ticker.market-ticker.findOne')) {
@@ -179,7 +168,6 @@ export default {
               enabled: true,
             },
           });
-          console.log('✅ Created public permission for market-ticker.findOne');
         }
 
         // Enable permissions for homepage-section
@@ -193,7 +181,6 @@ export default {
               where: { id: homepageSectionFind.id },
               data: { enabled: true },
             });
-          console.log('✅ Enabled public access for homepage-section.find');
         }
 
         if (homepageSectionFindOne && !homepageSectionFindOne.enabled) {
@@ -203,7 +190,6 @@ export default {
               where: { id: homepageSectionFindOne.id },
               data: { enabled: true },
             });
-          console.log('✅ Enabled public access for homepage-section.findOne');
         }
 
         // Create permissions if they don't exist
@@ -215,7 +201,6 @@ export default {
               enabled: true,
             },
           });
-          console.log('✅ Created public permission for homepage-section.find');
         }
 
         if (!permissionActions.includes('api::homepage-section.homepage-section.findOne')) {
@@ -226,7 +211,6 @@ export default {
               enabled: true,
             },
           });
-          console.log('✅ Created public permission for homepage-section.findOne');
         }
 
         // Enable permissions for article
@@ -240,7 +224,6 @@ export default {
               where: { id: articleFind.id },
               data: { enabled: true },
             });
-          console.log('✅ Enabled public access for article.find');
         }
 
         if (articleFindOne && !articleFindOne.enabled) {
@@ -250,7 +233,6 @@ export default {
               where: { id: articleFindOne.id },
               data: { enabled: true },
             });
-          console.log('✅ Enabled public access for article.findOne');
         }
 
         if (!permissionActions.includes('api::article.article.find')) {
@@ -261,7 +243,6 @@ export default {
               enabled: true,
             },
           });
-          console.log('✅ Created public permission for article.find');
         }
 
         if (!permissionActions.includes('api::article.article.findOne')) {
@@ -272,7 +253,6 @@ export default {
               enabled: true,
             },
           });
-          console.log('✅ Created public permission for article.findOne');
         }
 
         // Enable permissions for category
@@ -286,7 +266,6 @@ export default {
               where: { id: categoryFind.id },
               data: { enabled: true },
             });
-          console.log('✅ Enabled public access for category.find');
         }
 
         if (categoryFindOne && !categoryFindOne.enabled) {
@@ -296,7 +275,6 @@ export default {
               where: { id: categoryFindOne.id },
               data: { enabled: true },
             });
-          console.log('✅ Enabled public access for category.findOne');
         }
 
         if (!permissionActions.includes('api::category.category.find')) {
@@ -307,7 +285,6 @@ export default {
               enabled: true,
             },
           });
-          console.log('✅ Created public permission for category.find');
         }
 
         if (!permissionActions.includes('api::category.category.findOne')) {
@@ -318,7 +295,6 @@ export default {
               enabled: true,
             },
           });
-          console.log('✅ Created public permission for category.findOne');
         }
 
         // Enable permissions for tag
@@ -330,7 +306,6 @@ export default {
               enabled: true,
             },
           });
-          console.log('✅ Created public permission for tag.find');
         }
 
         if (!permissionActions.includes('api::tag.tag.findOne')) {
@@ -341,7 +316,6 @@ export default {
               enabled: true,
             },
           });
-          console.log('✅ Created public permission for tag.findOne');
         }
 
         // Enable permissions for tag-group
@@ -353,7 +327,6 @@ export default {
               enabled: true,
             },
           });
-          console.log('✅ Created public permission for tag-group.find');
         }
 
         if (!permissionActions.includes('api::tag-group.tag-group.findOne')) {
@@ -364,7 +337,6 @@ export default {
               enabled: true,
             },
           });
-          console.log('✅ Created public permission for tag-group.findOne');
         }
 
         // Enable permissions for popular-tag
@@ -377,7 +349,6 @@ export default {
               where: { id: popularTagFind.id },
               data: { enabled: true },
             });
-          console.log('✅ Enabled public access for popular-tag.find');
         }
 
         if (!permissionActions.includes('api::popular-tag.popular-tag.find')) {
@@ -388,17 +359,11 @@ export default {
               enabled: true,
             },
           });
-          console.log('✅ Created public permission for popular-tag.find');
         }
       }
     } catch (error) {
       console.error('❌ Error setting up public permissions:', error);
     }
 
-    // Note: Category and homepage section creation moved to utility functions
-    // Call them manually when needed via API endpoints:
-    // POST /api/populate/categories
-    // POST /api/populate/homepage-sections
-    // POST /api/populate/all
   },
 };

@@ -50,7 +50,7 @@ app.use((req, res, next) => {
       if (typeof data === 'string' && (data.includes('</head>') || data.includes('<!DOCTYPE html'))) {
         // Ensure STRAPI_URL is set, throw error if missing in production
         if (!STRAPI_URL && NODE_ENV === 'production') {
-          console.error('❌ ERROR: STRAPI_URL environment variable is not set!');
+          console.error('ERROR: STRAPI_URL environment variable is not set!');
           console.error('Please set STRAPI_URL in your Render environment variables.');
           return originalSend.call(this, '<html><body><h1>Configuration Error</h1><p>STRAPI_URL environment variable is missing. Please check your server configuration.</p></body></html>');
         }
@@ -458,10 +458,5 @@ app.use((req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`\n🚀 Frontend server running:`);
-  console.log(`   Environment: ${NODE_ENV}`);
-  console.log(`   URL: ${SITE_URL}`);
-  console.log(`   Port: ${PORT}`);
-  console.log(`   Strapi API: ${STRAPI_URL}${STRAPI_API_PATH}`);
-  console.log(`   Files: ${path.join(__dirname, 'frontend')}\n`);
+  // Server started successfully
 });

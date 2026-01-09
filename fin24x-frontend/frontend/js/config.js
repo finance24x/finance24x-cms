@@ -27,11 +27,6 @@
       API_PATH: window.ENV?.STRAPI_API_PATH || '/api',
       SITE_URL: window.ENV?.SITE_URL || window.location.origin
     };
-    
-    // Log configuration in development
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      console.log('🔧 API Configuration:', window.API_CONFIG);
-    }
   }
   
   // Initialize immediately if ENV is already available

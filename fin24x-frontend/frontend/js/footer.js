@@ -3,35 +3,44 @@
  * Fetches and renders footer from Strapi
  */
 
-// Fetch footer data from Strapi
+// Shared footer data cache
+let footerDataCache = null;
+let footerDataPromise = null;
+
+
+// Fetch footer data from Strapi (with caching)
 async function fetchFooter() {
-  try {
-    // Use populate=* which should populate all fields including media in components
-    // This is the simplest approach that should work with Strapi v5
-    const response = await fetch(getApiUrl('/footer?populate=*'));
-    if (!response.ok) {
-      throw new Error('Failed to fetch footer');
-    }
-    const data = await response.json();
-    console.log('Footer API Response:', data);
-    console.log('Footer Data:', data.data);
-    if (data.data && data.data.appDownloads) {
-      console.log('App Downloads in response:', data.data.appDownloads);
-      data.data.appDownloads.forEach((app, index) => {
-        console.log(`App ${index}:`, app);
-        console.log(`  - Platform: ${app.platform}`);
-        console.log(`  - BadgeImage:`, app.badgeImage);
-        // If badgeImage is not populated, the image might not be uploaded in Strapi
-        if (!app.badgeImage) {
-          console.log(`  - BadgeImage not found - make sure image is uploaded in Strapi for this app download`);
-        }
-      });
-    }
-    return data.data;
-  } catch (error) {
-    console.error('Error fetching footer:', error);
-    return null;
+  // If already fetching, return the same promise
+  if (footerDataPromise) {
+    return footerDataPromise;
   }
+  
+  // If cached, return cached data
+  if (footerDataCache) {
+    return footerDataCache;
+  }
+  
+  // Fetch footer data
+  footerDataPromise = (async () => {
+    try {
+      // Use populate=* which should populate all fields including media in components
+      // This is the simplest approach that should work with Strapi v5
+      const response = await fetch(getApiUrl('/footer?populate=*'));
+      if (!response.ok) {
+        throw new Error('Failed to fetch footer');
+      }
+      const data = await response.json();
+      footerDataCache = data.data;
+      footerDataPromise = null; // Clear promise after completion
+      return footerDataCache;
+    } catch (error) {
+      console.error('Error fetching footer:', error);
+      footerDataPromise = null; // Clear promise on error
+      return null;
+    }
+  })();
+  
+  return footerDataPromise;
 }
 
 // Render social links
@@ -76,26 +85,19 @@ function renderFooterLinks(links) {
 
 // Render app download buttons
 function renderAppDownloads(appDownloads) {
-  console.log('renderAppDownloads called with:', appDownloads);
-  
   if (!appDownloads || appDownloads.length === 0) {
     console.warn('No app downloads provided');
     return '';
   }
 
   const baseUrl = getApiUrl('').replace('/api', '');
-  console.log('Base URL:', baseUrl);
 
-  return appDownloads.map((app, index) => {
-    console.log(`Processing app ${index}:`, app);
-    
+  return appDownloads.map((app) => {
     let imageUrl = '';
     let imageAlt = app.platform || 'App Download';
     
     // Get image URL from Strapi - handle different data structures
     if (app.badgeImage) {
-      console.log('Badge image found:', app.badgeImage);
-      
       // Handle Strapi v5 structure - check various possible structures
       if (app.badgeImage.data) {
         // Array of images
@@ -125,8 +127,6 @@ function renderAppDownloads(appDownloads) {
       else if (typeof app.badgeImage === 'string') {
         imageUrl = baseUrl + app.badgeImage;
       }
-      
-      console.log('Resolved image URL:', imageUrl);
     } else {
       console.warn('No badgeImage found for app:', app.platform);
       // If no badgeImage, we can't show an image - return empty
@@ -136,9 +136,7 @@ function renderAppDownloads(appDownloads) {
     
     // Render image tag if URL exists
     if (imageUrl) {
-      const html = `<div class="footer_image"><a href="${app.url || '#'}" target="_blank" rel="noopener noreferrer"><img src="${imageUrl}" alt="${imageAlt}" style="max-width: 150px; height: auto; display: block;"></a></div>`;
-      console.log('Generated HTML:', html);
-      return html;
+      return `<div class="footer_image"><a href="${app.url || '#'}" target="_blank" rel="noopener noreferrer"><img src="${imageUrl}" alt="${imageAlt}" style="max-width: 150px; height: auto; display: block;"></a></div>`;
     } else {
       console.warn('No image URL resolved for app:', app.platform);
       return '';
@@ -205,15 +203,17 @@ async function renderFooter() {
     return;
   }
 
-  // Render logo and description
+  // Get containers
   const footerAbout = footerContainer.querySelector('.footer_about');
+  const logoContainer = footerAbout ? footerAbout.querySelector('.footer_logo_container') : null;
+  const aboutText = footerAbout ? footerAbout.querySelector('.footer_about_text') : null;
+
+  // Render logo and description
   if (footerAbout) {
-    const logoContainer = footerAbout.querySelector('.footer_logo_container');
     if (logoContainer) {
       logoContainer.innerHTML = renderFooterLogo(footerData.logoText, footerData.logo);
     }
 
-    const aboutText = footerAbout.querySelector('.footer_about_text');
     if (aboutText && footerData.description) {
       aboutText.innerHTML = `<p>${footerData.description}</p>`;
     }
@@ -255,9 +255,6 @@ async function renderFooter() {
   // Render app downloads
   const footerMobile = footerContainer.querySelector('.footer_mobile');
   if (footerMobile) {
-    console.log('Footer Mobile section found');
-    console.log('App Downloads data:', footerData.appDownloads);
-    
     const mobileTitle = footerMobile.querySelector('.footer_title');
     if (mobileTitle && footerData.mobileTitle) {
       mobileTitle.textContent = footerData.mobileTitle;
@@ -267,11 +264,9 @@ async function renderFooter() {
     if (mobileContent) {
       if (footerData.appDownloads && footerData.appDownloads.length > 0) {
         const renderedContent = renderAppDownloads(footerData.appDownloads);
-        console.log('Rendered app downloads HTML:', renderedContent);
         mobileContent.innerHTML = renderedContent;
       } else {
         console.warn('No app downloads data found in footer');
-        // Show placeholder or keep empty
         mobileContent.innerHTML = '';
       }
     } else {
@@ -305,10 +300,14 @@ async function renderFooter() {
 }
 
 // Initialize footer when DOM is ready
+function initFooter() {
+  renderFooter();
+}
+
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', renderFooter);
+  document.addEventListener('DOMContentLoaded', initFooter);
 } else {
   // DOM is already ready
-  renderFooter();
+  initFooter();
 }
 

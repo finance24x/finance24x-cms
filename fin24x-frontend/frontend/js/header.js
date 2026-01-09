@@ -7,6 +7,11 @@
 let headerDataCache = null;
 let headerDataPromise = null;
 
+// Shared categories cache
+let categoriesCache = null;
+let categoriesPromise = null;
+
+
 // Fetch header data from Strapi (with full populate for sharing)
 async function fetchHeader() {
   // If already fetching, return the same promise
@@ -45,19 +50,37 @@ window.getHeaderData = async function() {
   return await fetchHeader();
 };
 
-// Fetch categories from Strapi
+// Fetch categories from Strapi (with caching)
 async function fetchCategories() {
-  try {
-    const response = await fetch(getApiUrl('/categories?sort=order:asc&filters[enabled][$eq]=true'));
-    if (!response.ok) {
-      throw new Error('Failed to fetch categories');
-    }
-    const data = await response.json();
-    return data.data || [];
-  } catch (error) {
-    console.error('Error fetching categories:', error);
-    return [];
+  // If already fetching, return the same promise
+  if (categoriesPromise) {
+    return categoriesPromise;
   }
+  
+  // If cached, return cached data
+  if (categoriesCache) {
+    return categoriesCache;
+  }
+  
+  // Fetch categories
+  categoriesPromise = (async () => {
+    try {
+      const response = await fetch(getApiUrl('/categories?sort=order:asc&filters[enabled][$eq]=true'));
+      if (!response.ok) {
+        throw new Error('Failed to fetch categories');
+      }
+      const data = await response.json();
+      categoriesCache = data.data || [];
+      categoriesPromise = null; // Clear promise after completion
+      return categoriesCache;
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      categoriesPromise = null; // Clear promise on error
+      return [];
+    }
+  })();
+  
+  return categoriesPromise;
 }
 
 // Render header navigation links with dropdown (using categories)
@@ -66,17 +89,13 @@ function renderNavigationLinks(categories, currentPage = '') {
     return '<li><a href="/">Home</a></li>';
   }
 
-  console.log('Total navigation categories:', categories.length);
-  console.log('All categories:', categories.map(c => c.name));
 
   // Categories are already filtered and sorted by the API query
   // Show first 5 categories in main nav
   const mainCategories = categories.slice(0, 5);
   // Rest go in dropdown
   const dropdownCategories = categories.slice(5);
-  
-  console.log('Main nav will show:', mainCategories.length, 'categories');
-  console.log('Dropdown will show:', dropdownCategories.length, 'categories');
+
 
   let html = '';
   
@@ -152,9 +171,68 @@ function renderLogo(logoText, logoImage) {
   return logoHTML;
 }
 
+// Normalize URL for comparison
+function normalizeUrl(url) {
+  if (!url) return '/';
+  // Remove trailing slash except for root
+  url = url.trim();
+  if (url === '' || url === '/') return '/';
+  // Ensure it starts with /
+  if (!url.startsWith('/')) url = '/' + url;
+  // Remove trailing slash
+  if (url.length > 1 && url.endsWith('/')) {
+    url = url.slice(0, -1);
+  }
+  return url;
+}
+
+// Update active state in navigation without re-rendering
+function updateActiveNavLink(currentPage) {
+  const headerContainer = document.querySelector('.header');
+  if (!headerContainer) return;
+  
+  const normalizedCurrentPage = normalizeUrl(currentPage);
+  
+  const mainNav = headerContainer.querySelector('.main_nav');
+  if (!mainNav) return;
+  
+  // Remove active class from all links
+  const allLinks = mainNav.querySelectorAll('li');
+  allLinks.forEach(li => {
+    li.classList.remove('active');
+    const link = li.querySelector('a');
+    if (link) {
+      const href = normalizeUrl(link.getAttribute('href'));
+      // Check if current page matches this link
+      if (href === normalizedCurrentPage) {
+        li.classList.add('active');
+      }
+    }
+  });
+  
+  // Also update dropdown links
+  const dropdownLinks = mainNav.querySelectorAll('.dropdown-menu li');
+  dropdownLinks.forEach(li => {
+    li.classList.remove('active');
+    const link = li.querySelector('a');
+    if (link) {
+      const href = normalizeUrl(link.getAttribute('href'));
+      if (href === normalizedCurrentPage) {
+        li.classList.add('active');
+      }
+    }
+  });
+}
+
 // Render header component
 async function renderHeader(currentPage = '') {
-  // Fetch header data (logo only)
+  const headerContainer = document.querySelector('.header');
+  if (!headerContainer) {
+    console.error('Header container not found');
+    return;
+  }
+
+  // Fetch header data
   const headerData = await fetchHeader();
   
   // Fetch categories separately
@@ -164,26 +242,22 @@ async function renderHeader(currentPage = '') {
     console.warn('Header data not available, using fallback');
   }
 
-  const headerContainer = document.querySelector('.header');
-  if (!headerContainer) {
-    console.error('Header container not found');
-    return;
-  }
+  // Get containers
+  const logoContainer = headerContainer.querySelector('.logo_container');
+  const mainNav = headerContainer.querySelector('.main_nav');
+  const mobileMenuNav = document.querySelector('.menu_nav ul.menu_mm');
 
   // Render logo
-  const logoContainer = headerContainer.querySelector('.logo_container');
   if (logoContainer && headerData) {
     logoContainer.innerHTML = renderLogo(headerData.logoText, headerData.logo);
   }
 
-  // Render main navigation (using categories fetched directly)
-  const mainNav = headerContainer.querySelector('.main_nav');
+  // Render main navigation
   if (mainNav) {
     mainNav.innerHTML = renderNavigationLinks(categories, currentPage);
   }
 
-  // Render mobile menu navigation (using categories fetched directly)
-  const mobileMenuNav = document.querySelector('.menu_nav ul.menu_mm');
+  // Render mobile menu navigation
   if (mobileMenuNav) {
     mobileMenuNav.innerHTML = renderMobileMenuLinks(categories);
   }
@@ -200,17 +274,24 @@ async function renderHeader(currentPage = '') {
         e.preventDefault();
         e.stopPropagation();
         
+        const dropdown = dropdownToggle.closest('.dropdown');
+        const dropdownMenu = dropdown ? dropdown.querySelector('.dropdown-menu') : null;
+        
         // Toggle dropdown on click
-        const isOpen = dropdown.classList.contains('active') || dropdownMenu.classList.contains('active');
+        const isOpen = dropdown.classList.contains('active') || (dropdownMenu && dropdownMenu.classList.contains('active'));
         if (isOpen) {
           dropdown.classList.remove('active');
-          dropdownMenu.style.display = 'none';
-          dropdownMenu.classList.remove('active');
+          if (dropdownMenu) {
+            dropdownMenu.style.display = 'none';
+            dropdownMenu.classList.remove('active');
+          }
           dropdownToggle.classList.remove('active');
         } else {
           dropdown.classList.add('active');
-          dropdownMenu.style.display = 'block';
-          dropdownMenu.classList.add('active');
+          if (dropdownMenu) {
+            dropdownMenu.style.display = 'block';
+            dropdownMenu.classList.add('active');
+          }
           dropdownToggle.classList.add('active');
         }
       });
@@ -219,9 +300,15 @@ async function renderHeader(currentPage = '') {
       document.addEventListener('click', function(e) {
         if (dropdown && !dropdown.contains(e.target)) {
           dropdown.classList.remove('active');
-          dropdownMenu.style.display = 'none';
-          dropdownMenu.classList.remove('active');
-          dropdownToggle.classList.remove('active');
+          const menu = dropdown.querySelector('.dropdown-menu');
+          if (menu) {
+            menu.style.display = 'none';
+            menu.classList.remove('active');
+          }
+          const toggle = dropdown.querySelector('.dropdown-toggle');
+          if (toggle) {
+            toggle.classList.remove('active');
+          }
         }
       });
     }
@@ -229,15 +316,18 @@ async function renderHeader(currentPage = '') {
 }
 
 // Initialize header when DOM is ready
+function initHeader() {
+  // Get current page from URL path
+  const path = window.location.pathname;
+  const currentPage = normalizeUrl(path);
+  
+  renderHeader(currentPage);
+}
+
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', function() {
-    // Get current page from URL
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    renderHeader(currentPage);
-  });
+  document.addEventListener('DOMContentLoaded', initHeader);
 } else {
   // DOM is already ready
-  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-  renderHeader(currentPage);
+  initHeader();
 }
 
