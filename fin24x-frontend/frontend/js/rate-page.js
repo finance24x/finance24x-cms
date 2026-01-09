@@ -121,7 +121,7 @@ class RatePageManager {
   updatePageMeta() {
     const metalName = this.metalType === 'gold' ? 'Gold' : 'Silver';
     const location = this.city === 'India' ? 'India' : `${this.city}, India`;
-    const title = `${metalName} Rate Today in ${location} | Finance24x`;
+    const title = `${metalName} Rate Today in ${location} | FiscalColumn`;
     const description = `Check today's ${metalName.toLowerCase()} rate in ${location}. Get live ${metalName.toLowerCase()} prices, historical trends, and MCX reference rates.`;
     const url = window.location.href;
 
@@ -417,7 +417,7 @@ class RatePageManager {
    * Show error state
    */
   showError(message) {
-    document.title = 'Rate Page Error | Finance24x';
+    document.title = 'Rate Page Error | FiscalColumn';
     
     this.mainContainer.innerHTML = `
       <div class="rate-error">

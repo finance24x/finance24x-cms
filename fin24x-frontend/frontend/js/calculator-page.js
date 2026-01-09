@@ -109,9 +109,9 @@ class CalculatorPageManager {
     const url = window.location.href;
 
     // Page Title
-    document.title = `${title} | Finance24x`;
+    document.title = `${title} | FiscalColumn`;
     const pageTitleEl = document.getElementById('page-title');
-    if (pageTitleEl) pageTitleEl.textContent = `${title} | Finance24x`;
+    if (pageTitleEl) pageTitleEl.textContent = `${title} | FiscalColumn`;
     
     // Meta Description
     const metaDesc = document.getElementById('meta-description');
@@ -401,7 +401,7 @@ class CalculatorPageManager {
    * Show error state
    */
   showError(message) {
-    document.title = 'Calculator Not Found | Finance24x';
+    document.title = 'Calculator Not Found | FiscalColumn';
     
     this.mainContainer.innerHTML = `
       <div class="calculator-error">

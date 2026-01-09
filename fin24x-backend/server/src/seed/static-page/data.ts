@@ -24,9 +24,9 @@ export const staticPages: StaticPageData[] = [
   {
     title: 'Privacy Policy',
     slug: 'privacy-policy',
-    excerpt: 'Learn how Finance24x collects, uses, and protects your personal information.',
-    metaTitle: 'Privacy Policy - Finance24x',
-    metaDescription: 'Read our Privacy Policy to understand how Finance24x handles your data, cookies, and personal information.',
+    excerpt: 'Learn how FiscalColumn collects, uses, and protects your personal information.',
+    metaTitle: 'Privacy Policy - FiscalColumn',
+    metaDescription: 'Read our Privacy Policy to understand how FiscalColumn handles your data, cookies, and personal information.',
     showInFooter: true,
     footerOrder: 1,
     pageType: 'legal',
@@ -34,7 +34,7 @@ export const staticPages: StaticPageData[] = [
 
 **Last Updated: January 7, 2026**
 
-At Finance24x, we are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website.
+At FiscalColumn, we are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website.
 
 ## Information We Collect
 
@@ -117,8 +117,8 @@ We may update this Privacy Policy periodically. Changes will be posted on this p
 
 If you have questions about this Privacy Policy, please contact us at:
 
-**Email**: privacy@finance24x.com
-**Address**: Finance24x, Bangalore, Karnataka, India
+**Email**: privacy@fiscalcolumn.com
+**Address**: FiscalColumn, Bangalore, Karnataka, India
 
 ---
 
@@ -127,9 +127,9 @@ By using our website, you agree to the terms of this Privacy Policy.`
   {
     title: 'Terms of Use',
     slug: 'terms-of-use',
-    excerpt: 'Read the terms and conditions for using the Finance24x website and services.',
-    metaTitle: 'Terms of Use - Finance24x',
-    metaDescription: 'Terms and conditions for using Finance24x website. Read before using our financial news and information services.',
+    excerpt: 'Read the terms and conditions for using the FiscalColumn website and services.',
+    metaTitle: 'Terms of Use - FiscalColumn',
+    metaDescription: 'Terms and conditions for using FiscalColumn website. Read before using our financial news and information services.',
     showInFooter: true,
     footerOrder: 2,
     pageType: 'legal',
@@ -137,15 +137,15 @@ By using our website, you agree to the terms of this Privacy Policy.`
 
 **Effective Date: January 7, 2026**
 
-Welcome to Finance24x. By accessing and using this website, you agree to be bound by these Terms of Use. Please read them carefully.
+Welcome to FiscalColumn. By accessing and using this website, you agree to be bound by these Terms of Use. Please read them carefully.
 
 ## 1. Acceptance of Terms
 
-By accessing, browsing, or using Finance24x (the "Website"), you acknowledge that you have read, understood, and agree to be bound by these Terms of Use and our Privacy Policy.
+By accessing, browsing, or using FiscalColumn (the "Website"), you acknowledge that you have read, understood, and agree to be bound by these Terms of Use and our Privacy Policy.
 
 ## 2. Description of Service
 
-Finance24x provides:
+FiscalColumn provides:
 - Financial news and market updates
 - Gold and silver rate information
 - Stock market analysis and insights
@@ -154,7 +154,7 @@ Finance24x provides:
 
 ## 3. Disclaimer of Financial Advice
 
-**IMPORTANT**: The information provided on Finance24x is for general informational purposes only and should NOT be construed as:
+**IMPORTANT**: The information provided on FiscalColumn is for general informational purposes only and should NOT be construed as:
 - Professional financial advice
 - Investment recommendations
 - Legal or tax advice
@@ -178,7 +178,7 @@ All content on this website, including but not limited to:
 - Website design and layout
 - Trademarks and service marks
 
-...is the property of Finance24x or its content suppliers and is protected by copyright laws.
+...is the property of FiscalColumn or its content suppliers and is protected by copyright laws.
 
 ### Permitted Use
 You may:
@@ -215,13 +215,13 @@ Our website may contain links to third-party websites. We are not responsible fo
 ## 8. Limitation of Liability
 
 To the fullest extent permitted by law:
-- Finance24x shall not be liable for any direct, indirect, incidental, or consequential damages arising from your use of the website
+- FiscalColumn shall not be liable for any direct, indirect, incidental, or consequential damages arising from your use of the website
 - We do not guarantee uninterrupted or error-free access
 - We are not liable for any investment losses based on information from our website
 
 ## 9. Indemnification
 
-You agree to indemnify and hold harmless Finance24x, its officers, directors, employees, and agents from any claims, damages, or expenses arising from:
+You agree to indemnify and hold harmless FiscalColumn, its officers, directors, employees, and agents from any claims, damages, or expenses arising from:
 - Your use of the website
 - Your violation of these Terms
 - Your violation of any third-party rights
@@ -242,29 +242,29 @@ These Terms shall be governed by and construed in accordance with the laws of In
 
 For questions about these Terms of Use, contact us at:
 
-**Email**: legal@finance24x.com
-**Website**: www.finance24x.com
+**Email**: legal@fiscalcolumn.com
+**Website**: www.fiscalcolumn.com
 
 ---
 
-By using Finance24x, you acknowledge that you have read, understood, and agree to these Terms of Use.`
+By using FiscalColumn, you acknowledge that you have read, understood, and agree to these Terms of Use.`
   },
   {
     title: 'Copyright Notification',
     slug: 'copyright-notification',
-    excerpt: 'Copyright and intellectual property information for Finance24x content.',
-    metaTitle: 'Copyright Notice - Finance24x',
-    metaDescription: 'Copyright and intellectual property notice for Finance24x. All content is protected under applicable copyright laws.',
+    excerpt: 'Copyright and intellectual property information for FiscalColumn content.',
+    metaTitle: 'Copyright Notice - FiscalColumn',
+    metaDescription: 'Copyright and intellectual property notice for FiscalColumn. All content is protected under applicable copyright laws.',
     showInFooter: true,
     footerOrder: 3,
     pageType: 'legal',
     content: `# Copyright Notification
 
-**© 2024-2026 Finance24x. All Rights Reserved.**
+**© 2024-2026 FiscalColumn. All Rights Reserved.**
 
 ## Ownership of Content
 
-All content published on Finance24x, including but not limited to articles, news reports, analysis, commentary, graphics, photographs, logos, icons, and software, is the exclusive property of Finance24x and its content partners.
+All content published on FiscalColumn, including but not limited to articles, news reports, analysis, commentary, graphics, photographs, logos, icons, and software, is the exclusive property of FiscalColumn and its content partners.
 
 ## Protected Materials
 
@@ -295,12 +295,12 @@ You may access and read our content for personal, non-commercial purposes.
 ### Sharing
 You may share links to our articles on social media platforms, provided you:
 - Do not modify the content
-- Include proper attribution to Finance24x
+- Include proper attribution to FiscalColumn
 - Do not imply endorsement
 
 ### Fair Use
 Brief quotations for purposes of criticism, comment, news reporting, teaching, or research may be permitted under fair use provisions, provided:
-- Proper credit is given to Finance24x
+- Proper credit is given to FiscalColumn
 - The quotation is reasonable in length
 - It does not substitute for the original work
 
@@ -319,9 +319,9 @@ Without prior written permission, you may NOT:
 
 ## DMCA Notice
 
-If you believe your copyrighted work has been infringed on Finance24x, please send a DMCA notice to:
+If you believe your copyrighted work has been infringed on FiscalColumn, please send a DMCA notice to:
 
-**Email**: copyright@finance24x.com
+**Email**: copyright@fiscalcolumn.com
 
 Your notice should include:
 1. Identification of the copyrighted work
@@ -333,7 +333,7 @@ Your notice should include:
 
 ## Trademarks
 
-"Finance24x" and our logo are trademarks of Finance24x. Unauthorized use of our trademarks is strictly prohibited.
+"FiscalColumn" and our logo are trademarks of FiscalColumn. Unauthorized use of our trademarks is strictly prohibited.
 
 ## Third-Party Content
 
@@ -350,7 +350,7 @@ We actively monitor for copyright infringement and will take appropriate legal a
 
 For permission requests or copyright inquiries:
 
-**Email**: copyright@finance24x.com
+**Email**: copyright@fiscalcolumn.com
 
 ---
 
@@ -359,15 +359,15 @@ For permission requests or copyright inquiries:
   {
     title: 'Contact Us',
     slug: 'contact-us',
-    excerpt: 'Get in touch with the Finance24x team. We\'re here to help with your questions and feedback.',
-    metaTitle: 'Contact Us - Finance24x',
-    metaDescription: 'Contact Finance24x for questions, feedback, or business inquiries. Reach our team via email or through our contact form.',
+    excerpt: 'Get in touch with the FiscalColumn team. We\'re here to help with your questions and feedback.',
+    metaTitle: 'Contact Us - FiscalColumn',
+    metaDescription: 'Contact FiscalColumn for questions, feedback, or business inquiries. Reach our team via email or through our contact form.',
     showInFooter: true,
     footerOrder: 4,
     pageType: 'contact',
-    contactEmail: 'contact@finance24x.com',
+    contactEmail: 'contact@fiscalcolumn.com',
     contactPhone: '+91-80-XXXX-XXXX',
-    contactAddress: 'Finance24x\nBangalore, Karnataka\nIndia - 560001',
+    contactAddress: 'FiscalColumn\nBangalore, Karnataka\nIndia - 560001',
     showContactForm: true,
     content: `# Contact Us
 
@@ -388,7 +388,7 @@ Please don't hesitate to let us know.
 
 ## Business & Partnerships
 
-Interested in partnering with Finance24x? We welcome inquiries regarding:
+Interested in partnering with FiscalColumn? We welcome inquiries regarding:
 - **Advertising**: Display ads, sponsored content
 - **Content Partnerships**: Syndication, guest articles
 - **Data Licensing**: Market data, API access
@@ -401,7 +401,7 @@ While we're a growing team, we occasionally have openings for:
 - Web Developers
 - Digital Marketing Specialists
 
-Send your resume to **careers@finance24x.com**
+Send your resume to **careers@fiscalcolumn.com**
 
 ## Report an Issue
 
@@ -428,13 +428,13 @@ We appreciate your help in maintaining accuracy.
 ## Connect With Us
 
 Follow us on social media for the latest updates:
-- Twitter: @Finance24x
-- LinkedIn: Finance24x
-- Facebook: Finance24x
+- Twitter: @FiscalColumn
+- LinkedIn: FiscalColumn
+- Facebook: FiscalColumn
 
 ---
 
-*Thank you for choosing Finance24x as your trusted source for financial news and insights.*`
+*Thank you for choosing FiscalColumn as your trusted source for financial news and insights.*`
   }
 ];
 

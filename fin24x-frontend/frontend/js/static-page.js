@@ -68,9 +68,9 @@ class StaticPageManager {
       : `${window.location.origin}/images/og-default.jpg`;
 
     // Page Title
-    document.title = `${title} | Finance24x`;
+    document.title = `${title} | FiscalColumn`;
     const pageTitleEl = document.getElementById('page-title');
-    if (pageTitleEl) pageTitleEl.textContent = `${title} | Finance24x`;
+    if (pageTitleEl) pageTitleEl.textContent = `${title} | FiscalColumn`;
     
     // Meta Description
     const metaDesc = document.getElementById('meta-description');
@@ -245,7 +245,7 @@ class StaticPageManager {
    * Show error state
    */
   showError(message) {
-    document.title = 'Page Not Found | Finance24x';
+    document.title = 'Page Not Found | FiscalColumn';
     
     this.pageContainer.innerHTML = `
       <div class="static-page-error">

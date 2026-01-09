@@ -52,9 +52,9 @@
    - Key generation commands
    - Quick start commands
 
-3. **`PRODUCTION_CHECKLIST.md`** - Pre-deployment checklist
-
-4. **`README_PRODUCTION.md`** - Quick start guide
+3. **`DEPLOYMENT.md`** - Complete deployment guide (consolidated)
+4. **`ENV_SETUP.md`** - Environment variable setup guide
+5. **`SITEMAP_SEO_GUIDE.md`** - Sitemap and SEO guide
 
 ## 🔧 Required Actions
 

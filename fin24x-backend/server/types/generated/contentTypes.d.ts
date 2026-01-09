@@ -608,6 +608,7 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
     order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    populartags: Schema.Attribute.Relation<'oneToMany', 'api::tag.tag'>;
     publishedAt: Schema.Attribute.DateTime;
     relatedcategories: Schema.Attribute.Relation<
       'oneToMany',
@@ -619,6 +620,7 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
     >;
     SectionName: Schema.Attribute.String;
     slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
+    toparticle: Schema.Attribute.Relation<'oneToOne', 'api::article.article'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

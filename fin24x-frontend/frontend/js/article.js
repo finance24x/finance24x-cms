@@ -165,14 +165,14 @@ class ArticlePageManager {
     const imageUrl = this.article.image?.url 
       ? `${API_CONFIG.BASE_URL}${this.article.image.url}` 
       : `${window.location.origin}/images/default-og.jpg`;
-    const author = this.article.author || 'Finance24x';
+    const author = this.article.author || 'FiscalColumn';
     const publishDate = this.article.publishedDate;
     const category = this.article.category;
 
     // Page Title
-    document.title = `${title} | Finance24x`;
+    document.title = `${title} | FiscalColumn`;
     const pageTitleEl = document.getElementById('page-title');
-    if (pageTitleEl) pageTitleEl.textContent = `${title} | Finance24x`;
+    if (pageTitleEl) pageTitleEl.textContent = `${title} | FiscalColumn`;
     
     // Meta Description
     const metaDesc = document.getElementById('meta-description');
@@ -207,7 +207,7 @@ class ArticlePageManager {
       },
       "publisher": {
         "@type": "Organization",
-        "name": "Finance24x",
+        "name": "FiscalColumn",
         "logo": {
           "@type": "ImageObject",
           "url": `${window.location.origin}/images/logo.png`
@@ -515,7 +515,7 @@ class ArticlePageManager {
    * Show error message
    */
   showError(message) {
-    document.title = 'Article Not Found - Finance24x';
+    document.title = 'Article Not Found - FiscalColumn';
     this.articleContainer.innerHTML = `
       <div class="article-error">
         <i class="fa fa-exclamation-circle"></i>

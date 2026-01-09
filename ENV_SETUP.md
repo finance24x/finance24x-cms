@@ -30,8 +30,8 @@ LOG_LEVEL=info
 ```env
 NODE_ENV=production
 PORT=3000
-SITE_URL=https://yourdomain.com
-STRAPI_URL=https://api.yourdomain.com
+SITE_URL=https://fiscalcolumn.com
+STRAPI_URL=https://api.fiscalcolumn.com
 STRAPI_API_PATH=/api
 TRUST_PROXY=true
 LOG_LEVEL=warn

@@ -22,6 +22,16 @@
       "targetField": "name",
       "required": true
     },
+    "categoryImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
     "SectionName": {
       "type": "string"
     },
@@ -55,30 +65,30 @@
       "relation": "oneToMany",
       "target": "api::tag-group.tag-group"
     },
-    "categoryImage": {
-      "type": "media",
-      "multiple": false,
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ]
-    },
     "contentType": {
       "type": "enumeration",
+      "default": "articles",
       "enum": [
         "articles",
         "calculators",
         "mixed"
-      ],
-      "default": "articles"
+      ]
     },
     "calculators": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::calculator.calculator",
       "mappedBy": "category"
+    },
+    "toparticle": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::article.article"
+    },
+    "populartags": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::tag.tag"
     }
   }
 }

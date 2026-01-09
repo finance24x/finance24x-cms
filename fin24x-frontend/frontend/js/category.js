@@ -29,7 +29,7 @@ class CategoryPageManager {
 
     // Immediately set a formatted slug as title (before API loads)
     const formattedSlug = this.formatSlugAsTitle(slug);
-    document.title = `${formattedSlug} - Finance24x`;
+    document.title = `${formattedSlug} - FiscalColumn`;
     document.getElementById('breadcrumb-category').textContent = formattedSlug;
 
     try {
@@ -498,13 +498,13 @@ class CategoryPageManager {
    */
   updateCategoryInfo() {
     const name = this.category.name;
-    const description = this.category.description || `Latest ${name} news, updates, and articles on Finance24x`;
+    const description = this.category.description || `Latest ${name} news, updates, and articles on FiscalColumn`;
     const url = window.location.href;
 
     // Page Title
-    document.title = `${name} | Finance24x`;
+    document.title = `${name} | FiscalColumn`;
     const pageTitleEl = document.getElementById('page-title');
-    if (pageTitleEl) pageTitleEl.textContent = `${name} | Finance24x`;
+    if (pageTitleEl) pageTitleEl.textContent = `${name} | FiscalColumn`;
     
     // Meta Description
     const metaDesc = document.getElementById('meta-description');
@@ -522,12 +522,12 @@ class CategoryPageManager {
 
     // Open Graph Tags
     this.setMetaContent('og-url', url);
-    this.setMetaContent('og-title', `${name} | Finance24x`);
+    this.setMetaContent('og-title', `${name} | FiscalColumn`);
     this.setMetaContent('og-description', description);
     this.setMetaContent('og-image', ogImage);
 
     // Twitter Card Tags
-    this.setMetaContent('twitter-title', `${name} | Finance24x`);
+    this.setMetaContent('twitter-title', `${name} | FiscalColumn`);
     this.setMetaContent('twitter-description', description);
     this.setMetaContent('twitter-image', ogImage);
 
@@ -875,7 +875,7 @@ class CategoryPageManager {
    */
   async showError(message) {
     // Update page title
-    document.title = 'Page Not Found - Finance24x';
+    document.title = 'Page Not Found - FiscalColumn';
     
     // Show loading initially
     this.articlesContainer.innerHTML = `

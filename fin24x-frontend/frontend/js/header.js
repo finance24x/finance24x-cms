@@ -134,7 +134,7 @@ function renderLogo(logoText, logoImage) {
   
   // Add logo text if available
   if (logoText) {
-    // Split logo text if it contains numbers (e.g., "Finance24x" -> "Finance<span>24x</span>")
+    // Split logo text if it contains numbers (e.g., "FiscalColumn" -> "Finance<span>24x</span>")
     const parts = logoText.split(/(\d+)/);
     if (parts.length > 1) {
       // Combine all parts after the first (number + any text after number)

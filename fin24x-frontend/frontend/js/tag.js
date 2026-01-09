@@ -28,7 +28,7 @@ class TagPageManager {
 
     // Immediately set a formatted slug as title (before API loads)
     const formattedSlug = this.formatSlugAsTitle(slug);
-    document.title = `${formattedSlug} - Finance24x`;
+    document.title = `${formattedSlug} - FiscalColumn`;
     document.getElementById('breadcrumb-tag').textContent = formattedSlug;
     document.getElementById('tag-title').textContent = formattedSlug;
 
@@ -108,7 +108,7 @@ class TagPageManager {
    */
   updateTagInfo() {
     // Update page title and meta
-    document.title = `${this.tag.name} - Finance24x`;
+    document.title = `${this.tag.name} - FiscalColumn`;
     document.getElementById('tag-title').textContent = this.tag.name;
     document.getElementById('breadcrumb-tag').textContent = this.tag.name;
     
