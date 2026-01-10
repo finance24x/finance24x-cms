@@ -177,10 +177,11 @@ class CalculatorPageManager {
           <i class="fa ${icon}"></i>
         </div>
         <div class="calculator-header-content">
-          <h1 class="calculator-title">${this.calculator.title}</h1>
-          <p class="calculator-excerpt">${this.calculator.excerpt || ''}</p>
-          <div class="calculator-meta">
-            <span><i class="fa fa-eye"></i> ${Utils.formatViews(views)} views</span>
+          <div class="calculator-title-row">
+            <h1 class="calculator-title">${this.calculator.title}</h1>
+            <div class="calculator-meta">
+              <span><i class="fa fa-eye"></i> ${Utils.formatViews(views)} views</span>
+            </div>
           </div>
         </div>
       </div>
