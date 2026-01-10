@@ -229,12 +229,34 @@ class CalculatorPageManager {
 
   /**
    * Get script filename from calculator slug
-   * Slug format: 'loan-eligibility-calculator' → 'loan-eligibility-calculator.js'
+   * Maps URL slug to actual JavaScript filename
+   * Location: fin24x-frontend/frontend/js/calculator-page.js (line ~234)
    */
   getCalculatorScriptPath(slug) {
     if (!slug) return null;
-    // Slug already matches filename pattern, just add .js extension
+    
+    // Map slug (from URL) to actual script filename
+    // Add new calculators here if slug doesn't match filename
+    const slugToFileMap = {
+      'walk-calorie-burn-calculator': 'walk-calorie-calculator.js' // Slug mismatch example
+    };
+    
+    // Check if there's a mapping for this slug
+    if (slugToFileMap[slug]) {
+      return slugToFileMap[slug];
+    }
+    
+    // Default: slug matches filename pattern, just add .js extension
     return `${slug}.js`;
+  }
+
+  /**
+   * Get versioned script URL for cache busting
+   */
+  getVersionedScriptUrl(src) {
+    const version = window.ENV?.APP_VERSION || Date.now();
+    const separator = src.includes('?') ? '&' : '?';
+    return `${src}${separator}v=${version}`;
   }
 
   /**
@@ -242,19 +264,22 @@ class CalculatorPageManager {
    */
   loadScript(src) {
     return new Promise((resolve, reject) => {
-      // Check if script is already loaded
-      const existingScript = document.querySelector(`script[src="${src}"]`);
+      // Add version for cache busting
+      const versionedSrc = this.getVersionedScriptUrl(src);
+      
+      // Check if script is already loaded (check both versioned and unversioned)
+      const existingScript = document.querySelector(`script[src="${src}"], script[src="${versionedSrc}"], script[src^="${src}?"]`);
       if (existingScript) {
         resolve();
         return;
       }
 
       const script = document.createElement('script');
-      script.src = src;
+      script.src = versionedSrc;
       script.async = true;
       
       script.onload = () => resolve();
-      script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+      script.onerror = () => reject(new Error(`Failed to load script: ${versionedSrc}`));
       
       document.head.appendChild(script);
     });

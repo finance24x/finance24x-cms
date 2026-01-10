@@ -38,6 +38,23 @@ if (NODE_ENV === 'production') {
   });
 }
 
+// Generate app version for cache busting
+// Priority: 1) VERSION file, 2) APP_VERSION env var, 3) timestamp
+let APP_VERSION = Date.now();
+try {
+  const versionFile = path.join(__dirname, 'VERSION');
+  if (fs.existsSync(versionFile)) {
+    const versionContent = fs.readFileSync(versionFile, 'utf8').trim();
+    if (versionContent) {
+      APP_VERSION = versionContent;
+    }
+  }
+} catch (error) {
+  console.warn('Could not read VERSION file, using timestamp:', error.message);
+}
+// Allow env var to override file (useful for testing)
+APP_VERSION = process.env.APP_VERSION || APP_VERSION;
+
 // Serve config.js endpoint (easier than injecting into HTML)
 app.get('/config.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript');
@@ -45,9 +62,41 @@ app.get('/config.js', (req, res) => {
   NODE_ENV: '${NODE_ENV}',
   STRAPI_URL: '${STRAPI_URL || 'http://localhost:1337'}',
   STRAPI_API_PATH: '${STRAPI_API_PATH || '/api'}',
-  SITE_URL: '${SITE_URL || 'http://localhost:3000'}'
+  SITE_URL: '${SITE_URL || 'http://localhost:3000'}',
+  APP_VERSION: '${APP_VERSION}'
 };`);
 });
+
+// Helper function to add version query params to script tags in HTML (cache busting)
+function addVersionToScripts(htmlContent) {
+  return htmlContent.replace(
+    /<script\s+src=["']([^"']+)["']/g,
+    (match, src) => {
+      // Skip external URLs (CDN) and config.js (already has version logic)
+      if (src.startsWith('http') || src.startsWith('//') || src === '/config.js') {
+        return match;
+      }
+      // Skip if already has version parameter
+      if (src.includes('?v=') || src.includes('&v=')) {
+        return match;
+      }
+      const separator = src.includes('?') ? '&' : '?';
+      return `<script src="${src}${separator}v=${APP_VERSION}"`;
+    }
+  );
+}
+
+// Helper function to send HTML file with versioned script tags
+function sendVersionedHtml(res, filePath) {
+  fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+      return res.status(500).send('Error loading page');
+    }
+    const processedHtml = addVersionToScripts(data);
+    res.setHeader('Content-Type', 'text/html');
+    res.send(processedHtml);
+  });
+}
 
 // Serve static files from the frontend directory
 // This MUST come AFTER the env injection middleware
@@ -287,17 +336,17 @@ app.get('/sitemap.xml', async (req, res) => {
 
 // Home page
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+  sendVersionedHtml(res, path.join(__dirname, 'frontend', 'index.html'));
 });
 
 // Blog single page
 app.get('/blog_single.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'blog_single.html'));
+  sendVersionedHtml(res, path.join(__dirname, 'frontend', 'blog_single.html'));
 });
 
 // Tag pages - /tag/:slug
 app.get('/tag/:slug', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'tag.html'));
+  sendVersionedHtml(res, path.join(__dirname, 'frontend', 'tag.html'));
 });
 
 // Static Pages - explicit routes for legal/info pages
@@ -312,26 +361,26 @@ const STATIC_PAGE_SLUGS = [
 
 STATIC_PAGE_SLUGS.forEach(slug => {
   app.get(`/${slug}`, (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend', 'static-page.html'));
+    sendVersionedHtml(res, path.join(__dirname, 'frontend', 'static-page.html'));
   });
 });
 
 // Calculator pages - /calculators/:slug
 app.get('/calculators/:slug', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'calculator.html'));
+  sendVersionedHtml(res, path.join(__dirname, 'frontend', 'calculator.html'));
 });
 
 // Rate pages - /gold-rates/gold-rate-today, /gold-rates/gold-rate-today-in-mumbai, etc.
 app.get('/gold-rates/:page', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'rate-page.html'));
+  sendVersionedHtml(res, path.join(__dirname, 'frontend', 'rate-page.html'));
 });
 
 app.get('/silver-rates/:page', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'rate-page.html'));
+  sendVersionedHtml(res, path.join(__dirname, 'frontend', 'rate-page.html'));
 });
 
 app.get('/commodities/:page', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'rate-page.html'));
+  sendVersionedHtml(res, path.join(__dirname, 'frontend', 'rate-page.html'));
 });
 
 // Article pages - /:category/:article-slug
@@ -349,7 +398,7 @@ app.get('/:category/:article', (req, res, next) => {
   }
   
   // Serve article page
-  res.sendFile(path.join(__dirname, 'frontend', 'article.html'));
+  sendVersionedHtml(res, path.join(__dirname, 'frontend', 'article.html'));
 });
 
 // Category pages - serve category.html for any slug that looks like a category
@@ -363,7 +412,7 @@ app.get('/:slug', (req, res, next) => {
   }
   
   // Serve category page for category slugs
-  res.sendFile(path.join(__dirname, 'frontend', 'category.html'));
+  sendVersionedHtml(res, path.join(__dirname, 'frontend', 'category.html'));
 });
 
 // Error handling middleware
@@ -376,7 +425,7 @@ app.use((err, req, res, next) => {
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).sendFile(path.join(__dirname, 'frontend', 'index.html'));
+  sendVersionedHtml(res, path.join(__dirname, 'frontend', 'index.html'));
 });
 
 // Start server
