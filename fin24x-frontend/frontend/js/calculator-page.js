@@ -227,14 +227,93 @@ class CalculatorPageManager {
   }
 
   /**
-   * Load the specific calculator widget based on calculatorType
+   * Get script filename from calculator slug
+   * Slug format: 'loan-eligibility-calculator' → 'loan-eligibility-calculator.js'
    */
-  loadCalculatorWidget() {
+  getCalculatorScriptPath(slug) {
+    if (!slug) return null;
+    // Slug already matches filename pattern, just add .js extension
+    return `${slug}.js`;
+  }
+
+  /**
+   * Dynamically load a script and return a Promise
+   */
+  loadScript(src) {
+    return new Promise((resolve, reject) => {
+      // Check if script is already loaded
+      const existingScript = document.querySelector(`script[src="${src}"]`);
+      if (existingScript) {
+        resolve();
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = true;
+      
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+      
+      document.head.appendChild(script);
+    });
+  }
+
+  /**
+   * Load the specific calculator widget based on calculator slug
+   */
+  async loadCalculatorWidget() {
     const widgetContainer = document.getElementById('calculator-widget');
+    const slug = this.calculator.slug;
     const calcType = this.calculator.calculatorType;
 
-    // Check if calculator is registered
-    const CalculatorClass = getCalculator(calcType);
+    // First check if calculator is already registered (might be pre-loaded)
+    let CalculatorClass = getCalculator(calcType);
+    
+    if (!CalculatorClass) {
+      // Calculator not registered yet, need to load script dynamically
+      const scriptPath = this.getCalculatorScriptPath(slug);
+      
+      if (!scriptPath) {
+        widgetContainer.innerHTML = `
+          <div class="calculator-coming-soon">
+            <i class="fa fa-wrench"></i>
+            <h3>Calculator Not Found</h3>
+            <p>Calculator slug "${slug}" is not supported.</p>
+          </div>
+        `;
+        return;
+      }
+
+      try {
+        // Show loading state
+        widgetContainer.innerHTML = `
+          <div class="calculator-loading">
+            <div class="spinner"></div>
+            <p>Loading calculator...</p>
+          </div>
+        `;
+
+        // Load the calculator script
+        await this.loadScript(`/js/calculators/${scriptPath}`);
+        
+        // Wait a bit for the script to register itself
+        await new Promise(resolve => setTimeout(resolve, 50));
+        
+        // Try to get the calculator class again
+        CalculatorClass = getCalculator(calcType);
+      } catch (error) {
+        console.error('Error loading calculator script:', error);
+        widgetContainer.innerHTML = `
+          <div class="calculator-coming-soon">
+            <i class="fa fa-exclamation-triangle"></i>
+            <h3>Error Loading Calculator</h3>
+            <p>Failed to load calculator script. Please try refreshing the page.</p>
+          </div>
+        `;
+        return;
+      }
+    }
     
     if (CalculatorClass) {
       const calculator = new CalculatorClass(widgetContainer);

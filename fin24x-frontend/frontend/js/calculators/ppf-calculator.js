@@ -135,18 +135,22 @@ class PPFCalculator {
             data: investedData,
             borderColor: '#3498db',
             backgroundColor: 'rgba(52, 152, 219, 0.1)',
-            borderWidth: 3,
+            borderWidth: 1.5,
             fill: true,
-            tension: 0.4
+            tension: 0.4,
+            pointRadius: 2,
+            pointBackgroundColor: '#3498db'
           },
           {
             label: 'Total Value',
             data: totalData,
             borderColor: '#27ae60',
             backgroundColor: 'rgba(39, 174, 96, 0.1)',
-            borderWidth: 3,
+            borderWidth: 1.5,
             fill: true,
-            tension: 0.4
+            tension: 0.4,
+            pointRadius: 2,
+            pointBackgroundColor: '#27ae60'
           }
         ]
       },

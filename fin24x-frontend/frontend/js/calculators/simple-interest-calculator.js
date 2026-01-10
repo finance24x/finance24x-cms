@@ -127,15 +127,17 @@ class SimpleInterestCalculator {
             data: totalData,
             borderColor: '#27ae60',
             backgroundColor: 'rgba(39, 174, 96, 0.1)',
-            borderWidth: 3,
+            borderWidth: 1.5,
             fill: true,
-            tension: 0
+            tension: 0,
+            pointRadius: 2,
+            pointBackgroundColor: '#27ae60'
           },
           {
             label: 'Principal',
             data: principalData,
             borderColor: '#3498db',
-            borderWidth: 2,
+            borderWidth: 1,
             fill: false,
             pointRadius: 0
           }

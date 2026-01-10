@@ -151,7 +151,7 @@ class IncomeTaxCalculator {
             data: [oldTax, newTax],
             backgroundColor: ['rgba(231, 76, 60, 0.8)', 'rgba(39, 174, 96, 0.8)'],
             borderColor: ['#e74c3c', '#27ae60'],
-            borderWidth: 2,
+            borderWidth: 1,
             borderRadius: 8
           }
         ]

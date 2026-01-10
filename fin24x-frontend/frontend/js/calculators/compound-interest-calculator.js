@@ -134,23 +134,27 @@ class CompoundInterestCalculator {
             data: compoundData,
             borderColor: '#27ae60',
             backgroundColor: 'rgba(39, 174, 96, 0.1)',
-            borderWidth: 3,
+            borderWidth: 1.5,
             fill: true,
-            tension: 0.4
+            tension: 0.4,
+            pointRadius: 2,
+            pointBackgroundColor: '#27ae60'
           },
           {
             label: 'Simple Interest',
             data: simpleData,
             borderColor: '#e74c3c',
-            borderWidth: 2,
+            borderWidth: 1,
             fill: false,
-            borderDash: [5, 5]
+            borderDash: [5, 5],
+            pointRadius: 2,
+            pointBackgroundColor: '#e74c3c'
           },
           {
             label: 'Principal',
             data: principalData,
             borderColor: '#3498db',
-            borderWidth: 2,
+            borderWidth: 1,
             fill: false,
             pointRadius: 0
           }
