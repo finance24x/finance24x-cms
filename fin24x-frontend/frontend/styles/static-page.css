@@ -7,25 +7,25 @@
 
 /* Page Container */
 .static-page-container {
-  padding: 50px 0 80px;
-  min-height: 60vh;
+  padding: 0 0 10px;
+  min-height: 30vh;
   background: #fff;
 }
 
 /* Page Content */
 .static-page-content {
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
 /* Page Title */
 .static-page-title {
-  font-size: 2rem;
-  font-weight: 500;
+  font-size: 1.5rem;
+  font-weight: 600;
   color: #5a6673;
-  line-height: 1.3;
-  margin: 0 0 20px 0;
-  padding-top: 25px;
+  line-height: 1.0;
+  margin: 0 0 10px 0;
+  padding-top: 5px;
   text-align: left;
 }
 
@@ -40,34 +40,34 @@
 
 /* Featured Image */
 .static-page-image {
-  margin-bottom: 30px;
+  margin-bottom: 10px;
   border-radius: 8px;
   overflow: hidden;
 }
 .static-page-image img {
   width: 100%;
   height: auto;
-  max-height: 400px;
+  max-height: 200px;
   object-fit: cover;
 }
 
 /* Page Body */
 .static-page-body {
-  font-size: 1.05rem;
+  font-size: 1.0rem;
   color: #333;
   line-height: 1.85;
 }
 .static-page-body p {
-  margin-bottom: 1.5em;
+  margin-bottom: 1.0em;
 }
 .static-page-body h2 {
-  font-size: 1.5rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: #1a1a2e;
   margin: 2em 0 1em;
 }
 .static-page-body h3 {
-  font-size: 1.25rem;
+  font-size: 1.0rem;
   font-weight: 600;
   color: #1a1a2e;
   margin: 1.5em 0 0.8em;
@@ -113,12 +113,12 @@
 
 /* Contact Section */
 .contact-info-section {
-  margin-top: 50px;
-  padding-top: 40px;
+  margin-top: 5px;
+  padding-top: 15px;
   border-top: 1px solid #eee;
 }
 .contact-info-section h2 {
-  font-size: 1.5rem;
+  font-size: 1.0rem;
   font-weight: 600;
   color: #1a1a2e;
   margin-bottom: 25px;
@@ -126,20 +126,20 @@
 .contact-info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 25px;
+  gap: 5px;
 }
 .contact-info-item {
   display: flex;
   align-items: flex-start;
-  gap: 15px;
-  padding: 20px;
+  gap: 2px;
+  padding: 10px;
   background: #f8f9fa;
   border-radius: 8px;
 }
 .contact-info-item i {
-  font-size: 1.5rem;
+  font-size: 0.75rem;
   color: #14bdee;
-  width: 40px;
+  width: 50px;
   text-align: center;
 }
 .contact-info-item strong {
@@ -148,7 +148,7 @@
   color: #999;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 5px;
+  margin-bottom: 1px;
 }
 .contact-info-item a {
   color: #333;
