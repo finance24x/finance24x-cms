@@ -678,7 +678,7 @@
 }
 
 .faq-answer p {
-  padding: 0 20px 15px;
+  padding: 10px 40px 15px;
   margin: 0;
   font-size: 0.9rem;
   color: #666;
@@ -753,6 +753,7 @@
   border-radius: 6px;
   text-decoration: none;
   transition: all 0.2s;
+  border-bottom: 1px solid #0d0b0b22;
 }
 
 .sidebar-calc-item:hover {
@@ -1320,6 +1321,7 @@
 
 .dark-mode .sidebar-calc-item {
   background: var(--bg-secondary);
+  border-bottom: 1px solid #847a7a;
 }
 
 .dark-mode .sidebar-calc-item:hover {
