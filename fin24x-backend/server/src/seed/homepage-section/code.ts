@@ -19,20 +19,40 @@ export interface SeedResult {
 /**
  * Get the section type for a category
  */
-function getSectionType(categorySlug: string, index: number): SectionType {
+function getSectionType(categorySlug: string, index: number, customOverrides?: Record<string, SectionType>, customSectionTypes?: SectionType[]): SectionType {
+  const overrides = customOverrides || categoryTypeOverrides;
+  const types = customSectionTypes || sectionTypes;
+  
   // Check for override first
-  if (categoryTypeOverrides[categorySlug]) {
-    return categoryTypeOverrides[categorySlug];
+  if (overrides[categorySlug]) {
+    return overrides[categorySlug];
   }
   // Otherwise cycle through section types
-  return sectionTypes[index % sectionTypes.length];
+  return types[index % types.length];
 }
 
 /**
  * Create or update homepage sections for all categories
+ * 
+ * Optional input format:
+ * {
+ *   "sectionTypes": ["grid", "news", "grid-with-date"],
+ *   "categoryTypeOverrides": { "insights": "grid" },
+ *   "sectionDefaults": { "buttonText": "view all", "enabled": true, "itemsToShow": 5 }
+ * }
  */
-export async function seedHomepageSections(strapi: Core.Strapi): Promise<SeedResult> {
-  console.log('🔄 Starting homepage section seeding...\n');
+export async function seedHomepageSections(strapi: Core.Strapi, inputData?: {
+  sectionTypes?: SectionType[];
+  categoryTypeOverrides?: Record<string, SectionType>;
+  sectionDefaults?: { buttonText?: string; enabled?: boolean; itemsToShow?: number };
+}): Promise<SeedResult> {
+  const dataSource = inputData ? 'request body' : 'file';
+  const customSectionTypes = inputData?.sectionTypes;
+  const customOverrides = inputData?.categoryTypeOverrides;
+  const customDefaults = inputData?.sectionDefaults;
+  
+  console.log('🔄 Starting homepage section seeding...');
+  console.log(`📦 Using config from ${dataSource}\n`);
 
   // Fetch all enabled categories
   const categories = await strapi.query('api::category.category').findMany({
@@ -55,7 +75,7 @@ export async function seedHomepageSections(strapi: Core.Strapi): Promise<SeedRes
     const category = categories[index];
     
     try {
-      const sectionType = getSectionType(category.slug, index);
+      const sectionType = getSectionType(category.slug, index, customOverrides, customSectionTypes);
 
       // Check if section already exists for this category
       const existingSections = await strapi.query('api::homepage-section.homepage-section').findMany({
@@ -64,15 +84,16 @@ export async function seedHomepageSections(strapi: Core.Strapi): Promise<SeedRes
 
       const existingSection = existingSections.length > 0 ? existingSections[0] : null;
 
+      const defaults = customDefaults || sectionDefaults;
       const sectionData = {
         title: category.name,
         sectionType: sectionType,
         category: category.documentId,
-        buttonText: sectionDefaults.buttonText,
+        buttonText: defaults.buttonText,
         buttonUrl: `${category.slug}`,
         order: category.order || index + 1,
-        enabled: sectionDefaults.enabled,
-        itemsToShow: sectionDefaults.itemsToShow,
+        enabled: defaults.enabled,
+        itemsToShow: defaults.itemsToShow,
       };
 
       if (!existingSection) {
@@ -107,6 +128,7 @@ export async function seedHomepageSections(strapi: Core.Strapi): Promise<SeedRes
   console.log(`   📝 Updated: ${updatedCount}`);
   console.log(`   ❌ Errors: ${errorCount}`);
   console.log(`   📋 Total: ${categories.length}`);
+  console.log(`   📦 Data Source: ${dataSource}`);
   console.log('='.repeat(50));
 
   return { created: createdCount, updated: updatedCount, errors: errorCount, total: categories.length };

@@ -125,15 +125,41 @@ function getAllArticleData(): Map<string, ArticleData[]> {
 }
 
 /**
- * Seed articles from JSON files into the database
+ * Seed articles from JSON files or provided JSON into the database
+ * 
+ * Input format (optional):
+ * {
+ *   "articles": {
+ *     "category-slug-1": [
+ *       { "title": "...", "slug": "...", "content": "...", ... }
+ *     ],
+ *     "category-slug-2": [...]
+ *   }
+ * }
  */
-export async function seedArticles(strapi: Core.Strapi): Promise<SeedResult> {
+export async function seedArticles(strapi: Core.Strapi, inputData?: { articles?: Record<string, ArticleData[]> }): Promise<SeedResult> {
   console.log('🚀 Starting article seeding...\n');
 
-  const categoryArticles = getAllArticleData();
+  let categoryArticles: Map<string, ArticleData[]>;
+  const dataSource = inputData?.articles ? 'request body' : 'file';
+  
+  if (inputData?.articles) {
+    // Convert JSON object to Map
+    categoryArticles = new Map();
+    for (const [categorySlug, articles] of Object.entries(inputData.articles)) {
+      if (Array.isArray(articles)) {
+        categoryArticles.set(categorySlug, articles);
+      }
+    }
+    console.log(`📦 Using data from ${dataSource}`);
+    console.log(`📋 Found ${categoryArticles.size} categories with articles\n`);
+  } else {
+    // Use file-based data
+    categoryArticles = getAllArticleData();
+  }
   
   if (categoryArticles.size === 0) {
-    console.log('⚠️  No article data found. Create JSON files in category folders.');
+    console.log('⚠️  No article data found. Provide JSON data or create JSON files in category folders.');
     return { created: 0, skipped: 0, errors: 0, total: 0, details: [] };
   }
 
@@ -213,6 +239,7 @@ export async function seedArticles(strapi: Core.Strapi): Promise<SeedResult> {
   console.log(`   ⏭️  Skipped: ${totalSkipped}`);
   console.log(`   ❌ Errors: ${totalErrors}`);
   console.log(`   📝 Total: ${totalArticles}`);
+  console.log(`   📦 Data Source: ${dataSource}`);
   console.log('\n📂 By Category:');
   for (const detail of details) {
     console.log(`   ${detail.category}: ${detail.articles} article(s)`);

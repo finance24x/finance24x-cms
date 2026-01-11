@@ -16,11 +16,16 @@ import { seedRateData } from '../../../seed/rate-data/code';
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
   async populateCategories(ctx) {
     try {
-      const result = await seedCategories(strapi);
+      // Accept JSON array from request body, or use file data if not provided
+      const requestData = ctx.request.body;
+      const inputData = Array.isArray(requestData.categories) ? requestData.categories : undefined;
+      
+      const result = await seedCategories(strapi, inputData);
       ctx.body = {
         success: true,
         message: 'Categories seeded successfully',
         data: result,
+        dataSource: inputData ? 'request body' : 'file',
       };
     } catch (error: any) {
       ctx.status = 500;
@@ -34,11 +39,22 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async populateHomepageSections(ctx) {
     try {
-      const result = await seedHomepageSections(strapi);
+      // Accept JSON config from request body, or use file data if not provided
+      const requestData = ctx.request.body;
+      const inputData = (requestData.sectionTypes || requestData.categoryTypeOverrides || requestData.sectionDefaults)
+        ? {
+            sectionTypes: requestData.sectionTypes,
+            categoryTypeOverrides: requestData.categoryTypeOverrides,
+            sectionDefaults: requestData.sectionDefaults,
+          }
+        : undefined;
+      
+      const result = await seedHomepageSections(strapi, inputData);
       ctx.body = {
         success: true,
         message: 'Homepage sections seeded successfully',
         data: result,
+        dataSource: inputData ? 'request body' : 'file',
       };
     } catch (error: any) {
       ctx.status = 500;
@@ -52,8 +68,20 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async populateAll(ctx) {
     try {
-      const categoriesResult = await seedCategories(strapi);
-      const sectionsResult = await seedHomepageSections(strapi);
+      const requestData = ctx.request.body;
+      
+      // Extract data for each seed function
+      const categoriesData = Array.isArray(requestData.categories) ? requestData.categories : undefined;
+      const sectionsConfig = (requestData.sectionTypes || requestData.categoryTypeOverrides || requestData.sectionDefaults)
+        ? {
+            sectionTypes: requestData.sectionTypes,
+            categoryTypeOverrides: requestData.categoryTypeOverrides,
+            sectionDefaults: requestData.sectionDefaults,
+          }
+        : undefined;
+      
+      const categoriesResult = await seedCategories(strapi, categoriesData);
+      const sectionsResult = await seedHomepageSections(strapi, sectionsConfig);
       
       ctx.body = {
         success: true,
@@ -75,11 +103,16 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async populateArticles(ctx) {
     try {
-      const result = await seedArticles(strapi);
+      // Accept JSON from request body, or use file data if not provided
+      const requestData = ctx.request.body;
+      const inputData = requestData.articles ? { articles: requestData.articles } : undefined;
+      
+      const result = await seedArticles(strapi, inputData);
       ctx.body = {
         success: true,
         message: 'Articles seeded successfully',
         data: result,
+        dataSource: inputData ? 'request body' : 'file',
       };
     } catch (error: any) {
       ctx.status = 500;
@@ -93,11 +126,16 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async populateTags(ctx) {
     try {
-      const result = await seedTags(strapi);
+      // Accept JSON array from request body, or use file data if not provided
+      const requestData = ctx.request.body;
+      const inputData = Array.isArray(requestData.tags) ? requestData.tags : undefined;
+      
+      const result = await seedTags(strapi, inputData);
       ctx.body = {
         success: true,
         message: 'Tags seeded successfully',
         data: result,
+        dataSource: inputData ? 'request body' : 'file',
       };
     } catch (error: any) {
       ctx.status = 500;
@@ -111,11 +149,16 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async populateTagGroups(ctx) {
     try {
-      const result = await seedTagGroups(strapi);
+      // Accept JSON array from request body, or use file data if not provided
+      const requestData = ctx.request.body;
+      const inputData = Array.isArray(requestData.tagGroups) ? requestData.tagGroups : undefined;
+      
+      const result = await seedTagGroups(strapi, inputData);
       ctx.body = {
         success: true,
         message: 'Tag groups seeded successfully',
         data: result,
+        dataSource: inputData ? 'request body' : 'file',
       };
     } catch (error: any) {
       ctx.status = 500;
@@ -129,9 +172,15 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async populateTagsWithGroups(ctx) {
     try {
+      const requestData = ctx.request.body;
+      
+      // Extract data for each seed function
+      const tagGroupsData = Array.isArray(requestData.tagGroups) ? requestData.tagGroups : undefined;
+      const tagsData = Array.isArray(requestData.tags) ? requestData.tags : undefined;
+      
       // First seed tag groups, then tags
-      const tagGroupsResult = await seedTagGroups(strapi);
-      const tagsResult = await seedTags(strapi);
+      const tagGroupsResult = await seedTagGroups(strapi, tagGroupsData);
+      const tagsResult = await seedTags(strapi, tagsData);
       
       ctx.body = {
         success: true,
@@ -153,11 +202,16 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async populateStaticPages(ctx) {
     try {
-      const result = await seedStaticPages(strapi);
+      // Accept JSON array from request body, or use file data if not provided
+      const requestData = ctx.request.body;
+      const inputData = Array.isArray(requestData.staticPages) ? requestData.staticPages : undefined;
+      
+      const result = await seedStaticPages(strapi, inputData);
       ctx.body = {
         success: true,
         message: 'Static pages seeded successfully',
         data: result,
+        dataSource: inputData ? 'request body' : 'file',
       };
     } catch (error: any) {
       ctx.status = 500;
@@ -171,11 +225,16 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async populateCalculators(ctx) {
     try {
-      const result = await seedCalculators(strapi);
+      // Accept JSON array from request body, or use file data if not provided
+      const requestData = ctx.request.body;
+      const inputData = Array.isArray(requestData.calculators) ? requestData.calculators : undefined;
+      
+      const result = await seedCalculators(strapi, inputData);
       ctx.body = {
         success: true,
         message: 'Calculators seeded successfully',
         data: result,
+        dataSource: inputData ? 'request body' : 'file',
       };
     } catch (error: any) {
       ctx.status = 500;

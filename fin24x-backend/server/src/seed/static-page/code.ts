@@ -6,7 +6,7 @@
  */
 
 import type { Core } from '@strapi/strapi';
-import { staticPages } from './data';
+import { staticPages, StaticPageData } from './data';
 
 export interface SeedResult {
   created: number;
@@ -16,17 +16,21 @@ export interface SeedResult {
 }
 
 /**
- * Create or update static pages from the data file
+ * Create or update static pages from the data file or provided JSON
  */
-export async function seedStaticPages(strapi: Core.Strapi): Promise<SeedResult> {
+export async function seedStaticPages(strapi: Core.Strapi, inputData?: StaticPageData[]): Promise<SeedResult> {
+  // Use provided data or fallback to file data
+  const staticPagesData = inputData || staticPages;
+  const dataSource = inputData ? 'request body' : 'file';
+  
   console.log('🔄 Starting static page seeding...');
-  console.log(`📋 Found ${staticPages.length} static pages in data file\n`);
+  console.log(`📋 Found ${staticPagesData.length} static pages in ${dataSource}\n`);
 
   let createdCount = 0;
   let updatedCount = 0;
   let errorCount = 0;
 
-  for (const pageData of staticPages) {
+  for (const pageData of staticPagesData) {
     try {
       // Check if static page already exists
       const existingPage = await strapi.query('api::static-page.static-page').findOne({
@@ -64,9 +68,10 @@ export async function seedStaticPages(strapi: Core.Strapi): Promise<SeedResult> 
   console.log(`   ✅ Created: ${createdCount}`);
   console.log(`   📝 Updated: ${updatedCount}`);
   console.log(`   ❌ Errors: ${errorCount}`);
-  console.log(`   📋 Total: ${staticPages.length}`);
+  console.log(`   📋 Total: ${staticPagesData.length}`);
+  console.log(`   📦 Data Source: ${dataSource}`);
   console.log('='.repeat(50));
 
-  return { created: createdCount, updated: updatedCount, errors: errorCount, total: staticPages.length };
+  return { created: createdCount, updated: updatedCount, errors: errorCount, total: staticPagesData.length };
 }
 

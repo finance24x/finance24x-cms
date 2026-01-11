@@ -8,17 +8,21 @@
 
 import type { Core } from '@strapi/strapi';
 import { tagsData } from './data';
-import { TagSeedingResult } from './types';
+import { TagSeedingResult, TagData } from './types';
 
 /**
- * Create or update tags from the data file
+ * Create or update tags from the data file or provided JSON
  * Uses two-pass approach:
  * 1. First pass: Create/update all tags with basic data and tagGroup
  * 2. Second pass: Link similar and related tags
  */
-export async function seedTags(strapi: Core.Strapi): Promise<TagSeedingResult> {
+export async function seedTags(strapi: Core.Strapi, inputData?: TagData[]): Promise<TagSeedingResult> {
+  // Use provided data or fallback to file data
+  const tagsDataToUse = inputData || tagsData;
+  const dataSource = inputData ? 'request body' : 'file';
+  
   console.log('🔄 Starting tag seeding...');
-  console.log(`📋 Found ${tagsData.length} tags in data file\n`);
+  console.log(`📋 Found ${tagsDataToUse.length} tags in ${dataSource}\n`);
 
   let createdCount = 0;
   let updatedCount = 0;
@@ -40,7 +44,7 @@ export async function seedTags(strapi: Core.Strapi): Promise<TagSeedingResult> {
   // ========== PASS 1: Create/update tags with basic data ==========
   console.log('🔄 Pass 1: Creating/updating tags with basic data...\n');
 
-  for (const tagData of tagsData) {
+  for (const tagData of tagsDataToUse) {
     try {
       // Get tag group documentId
       const tagGroupDocId = tagGroupDocumentIds.get(tagData.tagGroupSlug);
@@ -96,7 +100,7 @@ export async function seedTags(strapi: Core.Strapi): Promise<TagSeedingResult> {
   // ========== PASS 2: Link similar and related tags ==========
   console.log('\n🔄 Pass 2: Linking similar and related tags...\n');
 
-  for (const tagData of tagsData) {
+  for (const tagData of tagsDataToUse) {
     try {
       const tagDocId = tagDocumentIds.get(tagData.slug);
       if (!tagDocId) continue;
@@ -156,7 +160,8 @@ export async function seedTags(strapi: Core.Strapi): Promise<TagSeedingResult> {
   console.log(`   📝 Updated: ${updatedCount}`);
   console.log(`   ⏭️  Skipped: ${skippedCount}`);
   console.log(`   ❌ Errors: ${errors.length}`);
-  console.log(`   📋 Total tags: ${tagsData.length}`);
+  console.log(`   📋 Total tags: ${tagsDataToUse.length}`);
+  console.log(`   📦 Data Source: ${dataSource}`);
   console.log('='.repeat(50));
 
   return { created: createdCount, updated: updatedCount, skipped: skippedCount, errors };

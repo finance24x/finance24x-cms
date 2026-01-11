@@ -35,6 +35,11 @@ STRAPI_URL=https://api.fiscalcolumn.com
 STRAPI_API_PATH=/api
 TRUST_PROXY=true
 LOG_LEVEL=warn
+
+# Cache Busting Version (Optional - VERSION file takes priority)
+# Only needed if you want to override the VERSION file
+# See VERSION file in fin24x-frontend/ directory
+# APP_VERSION=1.0.0
 ```
 
 ## Backend Environment Files

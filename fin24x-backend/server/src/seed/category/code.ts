@@ -6,7 +6,7 @@
  */
 
 import type { Core } from '@strapi/strapi';
-import { categories } from './data';
+import { categories, CategoryData } from './data';
 
 export interface SeedResult {
   created: number;
@@ -16,17 +16,21 @@ export interface SeedResult {
 }
 
 /**
- * Create or update categories from the data file
+ * Create or update categories from the data file or provided JSON
  */
-export async function seedCategories(strapi: Core.Strapi): Promise<SeedResult> {
+export async function seedCategories(strapi: Core.Strapi, inputData?: CategoryData[]): Promise<SeedResult> {
+  // Use provided data or fallback to file data
+  const categoriesData = inputData || categories;
+  const dataSource = inputData ? 'request body' : 'file';
+  
   console.log('🔄 Starting category seeding...');
-  console.log(`📋 Found ${categories.length} categories in data file\n`);
+  console.log(`📋 Found ${categoriesData.length} categories in ${dataSource}\n`);
 
   let createdCount = 0;
   let updatedCount = 0;
   let errorCount = 0;
 
-  for (const categoryData of categories) {
+  for (const categoryData of categoriesData) {
     try {
       // Check if category already exists
       const existingCategory = await strapi.query('api::category.category').findOne({
@@ -64,9 +68,10 @@ export async function seedCategories(strapi: Core.Strapi): Promise<SeedResult> {
   console.log(`   ✅ Created: ${createdCount}`);
   console.log(`   📝 Updated: ${updatedCount}`);
   console.log(`   ❌ Errors: ${errorCount}`);
-  console.log(`   📋 Total: ${categories.length}`);
+  console.log(`   📋 Total: ${categoriesData.length}`);
+  console.log(`   📦 Data Source: ${dataSource}`);
   console.log('='.repeat(50));
 
-  return { created: createdCount, updated: updatedCount, errors: errorCount, total: categories.length };
+  return { created: createdCount, updated: updatedCount, errors: errorCount, total: categoriesData.length };
 }
 

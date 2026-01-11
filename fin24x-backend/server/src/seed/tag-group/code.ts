@@ -7,21 +7,25 @@
 
 import type { Core } from '@strapi/strapi';
 import { tagGroupsData } from './data';
-import { TagGroupSeedingResult } from './types';
+import { TagGroupSeedingResult, TagGroupData } from './types';
 
 /**
- * Create or update tag groups from the data file
+ * Create or update tag groups from the data file or provided JSON
  */
-export async function seedTagGroups(strapi: Core.Strapi): Promise<TagGroupSeedingResult> {
+export async function seedTagGroups(strapi: Core.Strapi, inputData?: TagGroupData[]): Promise<TagGroupSeedingResult> {
+  // Use provided data or fallback to file data
+  const tagGroupsDataToUse = inputData || tagGroupsData;
+  const dataSource = inputData ? 'request body' : 'file';
+  
   console.log('🔄 Starting tag group seeding...');
-  console.log(`📋 Found ${tagGroupsData.length} tag groups in data file\n`);
+  console.log(`📋 Found ${tagGroupsDataToUse.length} tag groups in ${dataSource}\n`);
 
   let createdCount = 0;
   let updatedCount = 0;
   let skippedCount = 0;
   const errors: string[] = [];
 
-  for (const groupData of tagGroupsData) {
+  for (const groupData of tagGroupsDataToUse) {
     try {
       // Check if tag group already exists
       const existingGroup = await strapi.query('api::tag-group.tag-group').findOne({
@@ -61,7 +65,8 @@ export async function seedTagGroups(strapi: Core.Strapi): Promise<TagGroupSeedin
   console.log(`   📝 Updated: ${updatedCount}`);
   console.log(`   ⏭️  Skipped: ${skippedCount}`);
   console.log(`   ❌ Errors: ${errors.length}`);
-  console.log(`   📋 Total: ${tagGroupsData.length}`);
+  console.log(`   📋 Total: ${tagGroupsDataToUse.length}`);
+  console.log(`   📦 Data Source: ${dataSource}`);
   console.log('='.repeat(50));
 
   return { created: createdCount, updated: updatedCount, skipped: skippedCount, errors };

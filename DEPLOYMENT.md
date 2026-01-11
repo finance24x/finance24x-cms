@@ -125,6 +125,12 @@ openssl rand -base64 32  # For TRANSFER_TOKEN_SALT
    LOG_LEVEL = warn
    ```
 
+   **📝 About Version/Cache Busting:**
+   - **Version is managed via `VERSION` file** in `fin24x-frontend/` directory
+   - **To update version:** Edit `fin24x-frontend/VERSION` file (e.g., change `1.0.0` → `1.0.1`)
+   - **Commit and push** to git - Render will auto-deploy with new version
+   - **No environment variable needed** - version is read from the file automatically
+
 5. Click "Create Web Service"
 6. **Wait 3-5 minutes**
 7. Copy URL: `https://fin24x-frontend.onrender.com`
