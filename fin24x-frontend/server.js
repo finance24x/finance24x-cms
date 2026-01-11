@@ -139,7 +139,8 @@ async function fetchAllItems(endpoint, limit = 100) {
       
       const response = await fetch(url);
       if (!response.ok) {
-        console.error(`HTTP error fetching ${endpoint}: ${response.status}`);
+        console.error(`HTTP error fetching ${endpoint}: ${response.status} ${response.statusText}`);
+        console.error(`URL: ${url}`);
         hasMore = false;
         break;
       }
@@ -157,10 +158,12 @@ async function fetchAllItems(endpoint, limit = 100) {
           hasMore = false;
         }
       } else {
+        console.warn(`Unexpected response format for ${endpoint}:`, data);
         hasMore = false;
       }
     } catch (error) {
-      console.error(`Error fetching ${endpoint}:`, error);
+      console.error(`Error fetching ${endpoint}:`, error.message);
+      console.error(`URL: ${STRAPI_URL}${STRAPI_API_PATH}${endpoint}`);
       hasMore = false;
     }
   }
@@ -178,11 +181,14 @@ async function generateSitemap() {
       fetchAllItems('/categories', 100),
       fetchAllItems('/articles?populate[category]=true&sort=publishedDate:desc', 100),
       fetchAllItems('/static-pages', 100),
-      fetchAllItems('/calculators?filters[EnableCalculator][$ne]=false', 100),
+      fetchAllItems('/calculators?filters[enableCalculator][$ne]=false', 100),
       fetchAllItems('/tags', 100),
       fetchAllItems('/metals', 50),
       fetchAllItems('/cities', 500)
     ]);
+
+    // Log counts for debugging
+    console.log(`Sitemap generation: ${categories.length} categories, ${articles.length} articles, ${staticPages.length} static pages, ${calculators.length} calculators, ${tags.length} tags, ${metals.length} metals, ${cities.length} cities`);
 
     // Build sitemap XML
     let xml = `<?xml version="1.0" encoding="UTF-8"?>
