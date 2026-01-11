@@ -235,7 +235,7 @@ class CategoryPageManager {
           <h3 class="calculator-card-title">${calculator.title}</h3>
           <p class="calculator-card-excerpt">${excerpt}</p>
         </div>
-        ${isPopular ? '<span class="calculator-badge popular">Popular</span>' : ''}
+       
         ${isFeatured && !isPopular ? '<span class="calculator-badge featured">Featured</span>' : ''}
       </a>
     `;

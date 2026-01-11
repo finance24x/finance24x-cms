@@ -23,7 +23,7 @@ export const metals = [
 export const countries = [
   {
     name: 'India',
-    code: 'IND',
+    code: 'IN',
     currency: 'INR'
   },
   {

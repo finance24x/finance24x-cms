@@ -189,10 +189,22 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async populateRateData(ctx) {
     try {
-      await seedRateData(strapi);
+      // Accept JSON data from request body, or use file data if not provided
+      const requestData = ctx.request.body;
+      const inputData = (requestData.metals || requestData.countries || requestData.states || requestData.cities) 
+        ? {
+            metals: requestData.metals,
+            countries: requestData.countries,
+            states: requestData.states,
+            cities: requestData.cities,
+          }
+        : undefined;
+
+      await seedRateData(strapi, inputData);
       ctx.body = {
         success: true,
         message: 'Rate data (Metals, Countries, States, Cities) seeded successfully',
+        dataSource: inputData ? 'request body' : 'file',
       };
     } catch (error: any) {
       ctx.status = 500;

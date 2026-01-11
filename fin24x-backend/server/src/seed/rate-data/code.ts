@@ -4,13 +4,26 @@
 
 import { metals, countries, states, cities } from './data';
 
-export async function seedRateData(strapi: any) {
+interface RateDataInput {
+  metals?: Array<{ name: string; slug: string; description?: string }>;
+  countries?: Array<{ name: string; code: string; currency: string }>;
+  states?: Array<{ name: string; code?: string; country: string }>;
+  cities?: Array<{ name: string; state: string; country: string }>;
+}
+
+export async function seedRateData(strapi: any, inputData?: RateDataInput) {
+  // Use provided data or fallback to file data
+  const metalsData = inputData?.metals || metals;
+  const countriesData = inputData?.countries || countries;
+  const statesData = inputData?.states || states;
+  const citiesData = inputData?.cities || cities;
   console.log('🌱 Seeding Rate Data (Metals, Countries, States, Cities)...');
+  console.log(`  📊 Using ${inputData ? 'provided' : 'file'} data: ${metalsData.length} metals, ${countriesData.length} countries, ${statesData.length} states, ${citiesData.length} cities`);
 
   try {
     // Seed Metals
     const metalMap = new Map();
-    for (const metalData of metals) {
+    for (const metalData of metalsData) {
       try {
         const existing = await strapi.documents('api::metal.metal').findOne({
           filters: { slug: { $eq: metalData.slug } },
@@ -39,7 +52,7 @@ export async function seedRateData(strapi: any) {
 
     // Seed Countries
     const countryMap = new Map();
-    for (const countryData of countries) {
+    for (const countryData of countriesData) {
       try {
         const existing = await strapi.documents('api::country.country').findOne({
           filters: { code: { $eq: countryData.code } },
@@ -68,7 +81,7 @@ export async function seedRateData(strapi: any) {
 
     // Seed States
     const stateMap = new Map();
-    for (const stateData of states) {
+    for (const stateData of statesData) {
       try {
         const countryId = countryMap.get(stateData.country);
         if (!countryId) {
@@ -115,7 +128,7 @@ export async function seedRateData(strapi: any) {
     }
 
     // Seed Cities
-    for (const cityData of cities) {
+    for (const cityData of citiesData) {
       try {
         const countryId = countryMap.get(cityData.country);
         const stateId = stateMap.get(`${cityData.state}-${cityData.country}`);
