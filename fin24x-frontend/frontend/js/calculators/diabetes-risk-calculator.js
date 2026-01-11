@@ -97,7 +97,7 @@ class DiabetesRiskCalculator {
         }
         .dr-gauge-bar {
           height: 16px;
-          background: linear-gradient(to right, #27ae60 0%, #f39c12 33%, #e67e22 66%, #e74c3c 100%);
+          background: linear-gradient(to right, #27ae60 0%, #f39c12 40%, #e67e22 66%, #e74c3c 100%);
           border-radius: 8px;
           position: relative;
           overflow: hidden;
@@ -196,30 +196,31 @@ class DiabetesRiskCalculator {
 
     let score = 0;
 
-    // Age scoring
-    if (this.age >= 45 && this.age < 55) score += 2;
-    else if (this.age >= 55 && this.age < 65) score += 3;
-    else if (this.age >= 65) score += 4;
+    // Age scoring (max 7 points)
+    if (this.age >= 45 && this.age < 55) score += 3;
+    else if (this.age >= 55 && this.age < 65) score += 5;
+    else if (this.age >= 65) score += 7;
 
-    // BMI scoring
-    if (this.bmi >= 25 && this.bmi < 30) score += 1;
-    else if (this.bmi >= 30 && this.bmi < 35) score += 2;
-    else if (this.bmi >= 35) score += 3;
+    // BMI scoring (max 7 points)
+    if (this.bmi >= 25 && this.bmi < 30) score += 2;
+    else if (this.bmi >= 30 && this.bmi < 35) score += 4;
+    else if (this.bmi >= 35) score += 7;
 
-    // Waist scoring
-    if (this.waist >= 90 && this.waist < 100) score += 2;
-    else if (this.waist >= 100) score += 3;
+    // Waist scoring (max 5 points)
+    if (this.waist >= 90 && this.waist < 100) score += 3;
+    else if (this.waist >= 100) score += 5;
 
     // Other factors
-    if (this.familyHistory === 'yes') score += 3;
-    if (this.highBP === 'yes') score += 2;
-    if (this.physicalActivity === 'no') score += 2;
+    if (this.familyHistory === 'yes') score += 5; // Family history (max 5)
+    if (this.highBP === 'yes') score += 3; // High BP (max 3)
+    if (this.physicalActivity === 'no') score += 3; // No activity (max 3)
 
-    const maxScore = 17;
+    const maxScore = 30; // Total: 7 + 7 + 5 + 5 + 3 + 3 = 30
     const percentage = (score / maxScore) * 100;
 
     let level, bgColor, recommendations;
-    if (score <= 4) {
+    // Risk thresholds adjusted for maxScore of 30
+    if (score <= 10) {
       level = 'Low Risk';
       bgColor = '#e8f7ec';
       recommendations = `
@@ -231,11 +232,11 @@ class DiabetesRiskCalculator {
           <li>Annual health check-ups recommended</li>
         </ul>
       `;
-    } else if (score <= 8) {
-      level = 'Moderate Risk';
+    } else if (score <= 16) {
+      level = 'Slightly Elevated';
       bgColor = '#fef3e0';
       recommendations = `
-        <h5>⚠️ Moderate Risk - Take Action</h5>
+        <h5>⚠️ Slightly Elevated - Take Action</h5>
         <ul>
           <li>Get your blood sugar tested regularly</li>
           <li>Aim for 30 minutes of daily exercise</li>
@@ -243,7 +244,20 @@ class DiabetesRiskCalculator {
           <li>Maintain a healthy weight</li>
         </ul>
       `;
-    } else if (score <= 12) {
+    } else if (score <= 22) {
+      level = 'Moderate Risk';
+      bgColor = '#ede4e4';
+      recommendations = `
+        <h5>🔴 Moderate Risk - Consult a Doctor</h5>
+        <ul>
+          <li>Schedule a doctor's appointment soon</li>
+          <li>Get HbA1c test done</li>
+          <li>Start lifestyle modifications immediately</li>
+          <li>Monitor your diet closely</li>
+          <li>Consider a diabetes prevention program</li>
+        </ul>
+      `;
+    } else if (score <= 27) {
       level = 'High Risk';
       bgColor = '#fdeae8';
       recommendations = `
@@ -256,7 +270,8 @@ class DiabetesRiskCalculator {
           <li>Consider a diabetes prevention program</li>
         </ul>
       `;
-    } else {
+    }  
+    else {
       level = 'Very High Risk';
       bgColor = '#fce8e8';
       recommendations = `

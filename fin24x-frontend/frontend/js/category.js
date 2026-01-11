@@ -173,21 +173,11 @@ class CategoryPageManager {
           <!-- Main Layout: Scrollable Grid + Ad Sidebar -->
           <div class="calculator-main-layout">
             <div class="calculator-grid-area">
-              ${hasMoreThan6 ? `
-              <button class="calc-grid-nav calc-grid-prev" data-grid="${gridId}" aria-label="Previous">
-                <i class="fa fa-chevron-left"></i>
-              </button>
-              ` : ''}
               <div class="calculator-grid-scroll" id="${gridId}">
                 <div class="calculator-grid-track">
                   ${calcs.map(calc => this.renderCalculatorCard(calc)).join('')}
                 </div>
               </div>
-              ${hasMoreThan6 ? `
-              <button class="calc-grid-nav calc-grid-next" data-grid="${gridId}" aria-label="Next">
-                <i class="fa fa-chevron-right"></i>
-              </button>
-              ` : ''}
             </div>
             <div class="calculator-ad-sidebar">
               <div class="calc-ad-box">
@@ -206,35 +196,13 @@ class CategoryPageManager {
     this.articlesContainer.innerHTML = html;
     this.paginationContainer.style.display = 'none';
     
-    // Initialize grid scrolling
-    this.initCalculatorGridScroll();
+    // Grid scrolling is now handled by native browser scroll (no navigation buttons)
   }
 
   /**
-   * Initialize calculator grid scrolling (scrolls by 2 columns = 6 cards)
+   * Calculator grid scrolling is now handled by native browser scroll
+   * Navigation buttons have been removed for cleaner UI
    */
-  initCalculatorGridScroll() {
-    document.querySelectorAll('.calc-grid-nav').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const gridId = btn.dataset.grid;
-        const grid = document.getElementById(gridId);
-        if (!grid) return;
-
-        const card = grid.querySelector('.calculator-card');
-        if (!card) return;
-
-        // Scroll by 2 cards width (one column pair)
-        const cardWidth = card.offsetWidth + 20; // card + gap
-        const scrollAmount = cardWidth * 2; // Scroll 2 cards at a time
-        const direction = btn.classList.contains('calc-grid-next') ? 1 : -1;
-
-        grid.scrollBy({
-          left: direction * scrollAmount,
-          behavior: 'smooth'
-        });
-      });
-    });
-  }
 
   /**
    * Format category name to title case
