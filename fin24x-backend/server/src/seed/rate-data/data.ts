@@ -23,7 +23,7 @@ export const metals = [
 export const countries = [
   {
     name: 'India',
-    code: 'IN',
+    code: 'IND',
     currency: 'INR'
   },
   {
@@ -39,27 +39,46 @@ export const countries = [
 ];
 
 export const states = [
-  // India States
-  { name: 'Uttar Pradesh', code: 'UP', country: 'India' },
-  { name: 'Bihar', code: 'BR', country: 'India' },
-  { name: 'Maharashtra', code: 'MH', country: 'India' },
-  { name: 'Delhi', code: 'DL', country: 'India' },
-  { name: 'Karnataka', code: 'KA', country: 'India' },
-  { name: 'Tamil Nadu', code: 'TN', country: 'India' },
-  { name: 'West Bengal', code: 'WB', country: 'India' },
-  { name: 'Gujarat', code: 'GJ', country: 'India' },
-  { name: 'Rajasthan', code: 'RJ', country: 'India' },
-  { name: 'Punjab', code: 'PB', country: 'India' },
-  { name: 'Haryana', code: 'HR', country: 'India' },
-  { name: 'Madhya Pradesh', code: 'MP', country: 'India' },
+  // India States (28 States)
   { name: 'Andhra Pradesh', code: 'AP', country: 'India' },
-  { name: 'Telangana', code: 'TG', country: 'India' },
-  { name: 'Kerala', code: 'KL', country: 'India' },
-  { name: 'Odisha', code: 'OD', country: 'India' },
+  { name: 'Arunachal Pradesh', code: 'AR', country: 'India' },
   { name: 'Assam', code: 'AS', country: 'India' },
-  { name: 'Jharkhand', code: 'JH', country: 'India' },
+  { name: 'Bihar', code: 'BR', country: 'India' },
   { name: 'Chhattisgarh', code: 'CG', country: 'India' },
+  { name: 'Goa', code: 'GA', country: 'India' },
+  { name: 'Gujarat', code: 'GJ', country: 'India' },
+  { name: 'Haryana', code: 'HR', country: 'India' },
+  { name: 'Himachal Pradesh', code: 'HP', country: 'India' },
+  { name: 'Jharkhand', code: 'JH', country: 'India' },
+  { name: 'Karnataka', code: 'KA', country: 'India' },
+  { name: 'Kerala', code: 'KL', country: 'India' },
+  { name: 'Madhya Pradesh', code: 'MP', country: 'India' },
+  { name: 'Maharashtra', code: 'MH', country: 'India' },
+  { name: 'Manipur', code: 'MN', country: 'India' },
+  { name: 'Meghalaya', code: 'ML', country: 'India' },
+  { name: 'Mizoram', code: 'MZ', country: 'India' },
+  { name: 'Nagaland', code: 'NL', country: 'India' },
+  { name: 'Odisha', code: 'OD', country: 'India' },
+  { name: 'Punjab', code: 'PB', country: 'India' },
+  { name: 'Rajasthan', code: 'RJ', country: 'India' },
+  { name: 'Sikkim', code: 'SK', country: 'India' },
+  { name: 'Tamil Nadu', code: 'TN', country: 'India' },
+  { name: 'Telangana', code: 'TG', country: 'India' },
+  { name: 'Tripura', code: 'TR', country: 'India' },
+  { name: 'Uttar Pradesh', code: 'UP', country: 'India' },
   { name: 'Uttarakhand', code: 'UK', country: 'India' },
+  { name: 'West Bengal', code: 'WB', country: 'India' },
+  
+  // India Union Territories (8 Union Territories)
+  { name: 'Andaman and Nicobar Islands', code: 'AN', country: 'India' },
+  { name: 'Chandigarh', code: 'CH', country: 'India' },
+  { name: 'Dadra and Nagar Haveli and Daman and Diu', code: 'DH', country: 'India' },
+  { name: 'Delhi', code: 'DL', country: 'India' },
+  { name: 'Jammu and Kashmir', code: 'JK', country: 'India' },
+  { name: 'Ladakh', code: 'LA', country: 'India' },
+  { name: 'Lakshadweep', code: 'LD', country: 'India' },
+  { name: 'Puducherry', code: 'PY', country: 'India' },
+  
   // US States (sample)
   { name: 'California', code: 'CA', country: 'United States' },
   { name: 'New York', code: 'NY', country: 'United States' },
@@ -162,7 +181,7 @@ export const cities = [
   { name: 'Dehradun', state: 'Uttarakhand', country: 'India' },
   
   // United States
-  { name: 'New York', state: 'New York', country: 'United States' },
+  { name: 'New York City', state: 'New York', country: 'United States' },
   { name: 'Los Angeles', state: 'California', country: 'United States' },
   { name: 'Chicago', state: 'Illinois', country: 'United States' },
   { name: 'Houston', state: 'Texas', country: 'United States' },
