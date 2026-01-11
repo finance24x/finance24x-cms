@@ -59,25 +59,46 @@ export async function seedRateData(strapi: any, inputData?: RateDataInput) {
         });
 
         if (existing) {
-          await strapi.documents('api::country.country').update({
-            documentId: existing.documentId,
-            data: countryData,
-            status: 'published',
-          });
-          countryMap.set(countryData.name, existing.documentId);
-          console.log(`  ✓ Updated Country: ${countryData.name}`);
+          try {
+            await strapi.documents('api::country.country').update({
+              documentId: existing.documentId,
+              data: countryData,
+              status: 'published',
+            });
+            countryMap.set(countryData.name, existing.documentId);
+            console.log(`  ✓ Updated Country: ${countryData.name} (ID: ${existing.documentId})`);
+          } catch (updateError: any) {
+            // Even if update fails, use existing country for state/city linking
+            countryMap.set(countryData.name, existing.documentId);
+            console.log(`  ⚠ Update failed but using existing Country: ${countryData.name} (ID: ${existing.documentId})`);
+            console.error(`    Update error: ${updateError?.message || updateError}`);
+          }
         } else {
           const created = await strapi.documents('api::country.country').create({
             data: countryData,
             status: 'published',
           });
           countryMap.set(countryData.name, created.documentId);
-          console.log(`  ✓ Created Country: ${countryData.name}`);
+          console.log(`  ✓ Created Country: ${countryData.name} (ID: ${created.documentId})`);
         }
       } catch (error: any) {
         console.error(`  ❌ Error processing Country ${countryData.name}:`, error?.message || error);
+        // Try to find by name as fallback
+        try {
+          const byName = await strapi.documents('api::country.country').findOne({
+            filters: { name: { $eq: countryData.name } },
+          });
+          if (byName) {
+            countryMap.set(countryData.name, byName.documentId);
+            console.log(`  ✓ Found Country by name: ${countryData.name} (ID: ${byName.documentId})`);
+          }
+        } catch (fallbackError: any) {
+          console.error(`  ❌ Fallback lookup also failed for ${countryData.name}`);
+        }
       }
     }
+    
+    console.log(`  📍 Country map contains: ${Array.from(countryMap.keys()).join(', ')}`);
 
     // Seed States
     const stateMap = new Map();
