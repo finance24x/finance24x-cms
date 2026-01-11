@@ -1,26 +1,107 @@
 /**
  * Header Component
  * Fetches and renders header from Strapi
+ * Uses localStorage caching with 1-hour TTL to reduce API calls
  */
 
-// Shared header data cache
+// Cache configuration
+const HEADER_CACHE_TTL = 60 * 60 * 1000; // 1 hour in milliseconds
+const HEADER_CACHE_KEYS = {
+  HEADER: 'fc_header_data',
+  FOOTER: 'fc_footer_data',
+  CATEGORIES: 'fc_categories_data'
+};
+
+// Shared header data cache (in-memory)
 let headerDataCache = null;
 let headerDataPromise = null;
 
-// Shared categories cache
+// Shared categories cache (in-memory)
 let categoriesCache = null;
 let categoriesPromise = null;
 
+/**
+ * Get cached data from localStorage with TTL check
+ * @param {string} key - Cache key
+ * @returns {object|null} - Cached data or null if expired/missing
+ */
+function getCachedData(key) {
+  try {
+    const cached = localStorage.getItem(key);
+    if (!cached) return null;
+    
+    const { data, timestamp } = JSON.parse(cached);
+    
+    // Don't return null or invalid cached data
+    if (!data || data === null) {
+      localStorage.removeItem(key);
+      return null;
+    }
+    
+    const now = Date.now();
+    
+    // Check if cache is still valid (within TTL)
+    if (now - timestamp < HEADER_CACHE_TTL) {
+      return data;
+    }
+    
+    // Cache expired, remove it
+    localStorage.removeItem(key);
+    return null;
+  } catch (error) {
+    console.error('Error reading cache:', error);
+    // Remove corrupted cache
+    try {
+      localStorage.removeItem(key);
+    } catch (e) {
+      // Ignore removal errors
+    }
+    return null;
+  }
+}
 
-// Fetch header data from Strapi (with full populate for sharing)
+/**
+ * Store data in localStorage with timestamp
+ * @param {string} key - Cache key
+ * @param {object} data - Data to cache
+ */
+function setCachedData(key, data) {
+  try {
+    const cacheObject = {
+      data: data,
+      timestamp: Date.now()
+    };
+    localStorage.setItem(key, JSON.stringify(cacheObject));
+  } catch (error) {
+    console.error('Error writing cache:', error);
+    // If storage is full, try to clear old cache
+    try {
+      Object.values(HEADER_CACHE_KEYS).forEach(k => {
+        if (k !== key) localStorage.removeItem(k);
+      });
+      localStorage.setItem(key, JSON.stringify({ data: data, timestamp: Date.now() }));
+    } catch (e) {
+      console.error('Failed to clear cache:', e);
+    }
+  }
+}
+
+// Fetch header data from Strapi (with localStorage + in-memory caching)
 async function fetchHeader() {
   // If already fetching, return the same promise
   if (headerDataPromise) {
     return headerDataPromise;
   }
   
-  // If cached, return cached data
+  // Check in-memory cache first
   if (headerDataCache) {
+    return headerDataCache;
+  }
+  
+  // Check localStorage cache
+  const cachedHeader = getCachedData(HEADER_CACHE_KEYS.HEADER);
+  if (cachedHeader) {
+    headerDataCache = cachedHeader;
     return headerDataCache;
   }
   
@@ -29,10 +110,24 @@ async function fetchHeader() {
     try {
       const response = await fetch(getApiUrl('/header?populate=*'));
       if (!response.ok) {
-        throw new Error('Failed to fetch header');
+        throw new Error(`Failed to fetch header: ${response.status} ${response.statusText}`);
       }
       const data = await response.json();
+      
+      // Check if data exists (Strapi single types return {"data": null} if no content)
+      if (!data || !data.data) {
+        console.warn('Header data is null or empty from API');
+        headerDataPromise = null;
+        return null;
+      }
+      
       headerDataCache = data.data;
+      
+      // Only store in localStorage if data is valid (not null)
+      if (headerDataCache) {
+        setCachedData(HEADER_CACHE_KEYS.HEADER, headerDataCache);
+      }
+      
       headerDataPromise = null; // Clear promise after completion
       return headerDataCache;
     } catch (error) {
@@ -50,15 +145,22 @@ window.getHeaderData = async function() {
   return await fetchHeader();
 };
 
-// Fetch categories from Strapi (with caching)
+// Fetch categories from Strapi (with localStorage + in-memory caching)
 async function fetchCategories() {
   // If already fetching, return the same promise
   if (categoriesPromise) {
     return categoriesPromise;
   }
   
-  // If cached, return cached data
+  // Check in-memory cache first
   if (categoriesCache) {
+    return categoriesCache;
+  }
+  
+  // Check localStorage cache
+  const cachedCategories = getCachedData(HEADER_CACHE_KEYS.CATEGORIES);
+  if (cachedCategories) {
+    categoriesCache = cachedCategories;
     return categoriesCache;
   }
   
@@ -67,10 +169,16 @@ async function fetchCategories() {
     try {
       const response = await fetch(getApiUrl('/categories?sort=order:asc&filters[enabled][$eq]=true'));
       if (!response.ok) {
-        throw new Error('Failed to fetch categories');
+        throw new Error(`Failed to fetch categories: ${response.status} ${response.statusText}`);
       }
       const data = await response.json();
       categoriesCache = data.data || [];
+      
+      // Only store in localStorage if data is valid (not empty array)
+      if (categoriesCache && categoriesCache.length > 0) {
+        setCachedData(HEADER_CACHE_KEYS.CATEGORIES, categoriesCache);
+      }
+      
       categoriesPromise = null; // Clear promise after completion
       return categoriesCache;
     } catch (error) {

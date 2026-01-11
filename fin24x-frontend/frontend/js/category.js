@@ -237,9 +237,6 @@ class CategoryPageManager {
         </div>
         ${isPopular ? '<span class="calculator-badge popular">Popular</span>' : ''}
         ${isFeatured && !isPopular ? '<span class="calculator-badge featured">Featured</span>' : ''}
-        <div class="calculator-card-arrow">
-          <i class="fa fa-arrow-right"></i>
-        </div>
       </a>
     `;
   }

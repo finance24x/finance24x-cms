@@ -1,36 +1,156 @@
 /**
  * Footer Component
  * Fetches and renders footer from Strapi
+ * Uses localStorage caching with 1-hour TTL to reduce API calls
  */
 
-// Shared footer data cache
+// Cache configuration
+const FOOTER_CACHE_TTL = 60 * 60 * 1000; // 1 hour in milliseconds
+const FOOTER_CACHE_KEYS = {
+  HEADER: 'fc_header_data',
+  FOOTER: 'fc_footer_data',
+  CATEGORIES: 'fc_categories_data'
+};
+
+// Shared footer data cache (in-memory)
 let footerDataCache = null;
 let footerDataPromise = null;
 
+/**
+ * Get cached data from localStorage with TTL check
+ * @param {string} key - Cache key
+ * @returns {object|null} - Cached data or null if expired/missing
+ */
+function getCachedData(key) {
+  try {
+    const cached = localStorage.getItem(key);
+    if (!cached) {
+      console.log(`📭 No cache found for key: ${key}`);
+      return null;
+    }
+    
+    const { data, timestamp } = JSON.parse(cached);
+    const age = Date.now() - timestamp;
+    console.log(`🔍 Cache found for ${key}:`, { hasData: !!data, isNull: data === null, age: Math.round(age / 1000) + 's' });
+    
+    // Don't return null or invalid cached data
+    if (!data || data === null) {
+      console.warn(`⚠️ Cache for ${key} contains null data, removing...`);
+      localStorage.removeItem(key);
+      return null;
+    }
+    
+    const now = Date.now();
+    
+    // Check if cache is still valid (within TTL)
+    if (now - timestamp < FOOTER_CACHE_TTL) {
+      console.log(`✅ Cache for ${key} is valid`);
+      return data;
+    }
+    
+    // Cache expired, remove it
+    console.log(`⏰ Cache for ${key} expired, removing...`);
+    localStorage.removeItem(key);
+    return null;
+  } catch (error) {
+    console.error(`❌ Error reading cache for ${key}:`, error);
+    // Remove corrupted cache
+    try {
+      localStorage.removeItem(key);
+    } catch (e) {
+      // Ignore removal errors
+    }
+    return null;
+  }
+}
 
-// Fetch footer data from Strapi (with caching)
+/**
+ * Store data in localStorage with timestamp
+ * @param {string} key - Cache key
+ * @param {object} data - Data to cache
+ */
+function setCachedData(key, data) {
+  try {
+    const cacheObject = {
+      data: data,
+      timestamp: Date.now()
+    };
+    localStorage.setItem(key, JSON.stringify(cacheObject));
+  } catch (error) {
+    console.error('Error writing cache:', error);
+    // If storage is full, try to clear old cache
+    try {
+      Object.values(FOOTER_CACHE_KEYS).forEach(k => {
+        if (k !== key) localStorage.removeItem(k);
+      });
+      localStorage.setItem(key, JSON.stringify({ data: data, timestamp: Date.now() }));
+    } catch (e) {
+      console.error('Failed to clear cache:', e);
+    }
+  }
+}
+
+// Fetch footer data from Strapi (with localStorage + in-memory caching)
 async function fetchFooter() {
+  console.log('🔍 fetchFooter() called');
+  console.log('📊 Cache state:', {
+    hasPromise: !!footerDataPromise,
+    hasMemoryCache: !!footerDataCache,
+    memoryCacheIsNull: footerDataCache === null
+  });
+  
   // If already fetching, return the same promise
   if (footerDataPromise) {
+    console.log('⏳ Already fetching footer, returning existing promise');
     return footerDataPromise;
   }
   
-  // If cached, return cached data
-  if (footerDataCache) {
+  // Check in-memory cache first (but only if it's not null)
+  if (footerDataCache && footerDataCache !== null) {
+    console.log('✅ Footer data loaded from in-memory cache');
     return footerDataCache;
   }
   
-  // Fetch footer data
+  // Check localStorage cache
+  console.log('🔍 Checking localStorage cache...');
+  const cachedFooter = getCachedData(FOOTER_CACHE_KEYS.FOOTER);
+  if (cachedFooter) {
+    console.log('✅ Footer data loaded from localStorage cache');
+    footerDataCache = cachedFooter;
+    return footerDataCache;
+  }
+  
+  // Fetch footer data (cache miss - need to fetch from API)
+  console.log('🌐 Cache miss - fetching footer from API...');
   footerDataPromise = (async () => {
     try {
       // Use populate=* which should populate all fields including media in components
       // This is the simplest approach that should work with Strapi v5
       const response = await fetch(getApiUrl('/footer?populate=*'));
       if (!response.ok) {
-        throw new Error('Failed to fetch footer');
+        throw new Error(`Failed to fetch footer: ${response.status} ${response.statusText}`);
       }
       const data = await response.json();
+      console.log('🌐 Footer API response:', data);
+      
+      // Check if data exists (Strapi single types return {"data": null} if no content)
+      if (!data || !data.data) {
+        console.warn('⚠️ Footer data is null or empty from API. Response:', data);
+        footerDataPromise = null;
+        return null;
+      }
+      
       footerDataCache = data.data;
+      console.log('✅ Footer data cached in memory:', footerDataCache ? 'Success' : 'Failed');
+      
+      // Only store in localStorage if data is valid (not null)
+      if (footerDataCache) {
+        setCachedData(FOOTER_CACHE_KEYS.FOOTER, footerDataCache);
+        console.log('💾 Footer data stored in localStorage');
+      } else {
+        console.warn('⚠️ Footer data is null, not storing in cache');
+      }
+      
       footerDataPromise = null; // Clear promise after completion
       return footerDataCache;
     } catch (error) {
@@ -183,20 +303,24 @@ function renderFooterLogo(logoText, logoImage) {
 
 // Render footer component
 async function renderFooter() {
+  console.log('🚀 renderFooter() called');
   const footerContainer = document.querySelector('.footer');
   if (!footerContainer) {
-    console.error('Footer container not found');
+    console.error('❌ Footer container (.footer) not found in DOM');
     return;
   }
+  console.log('✅ Footer container found');
 
   // Hide footer initially to prevent "Loading..." flash
   footerContainer.style.opacity = '0';
   footerContainer.style.visibility = 'hidden';
   
+  console.log('🔍 Calling fetchFooter()...');
   const footerData = await fetchFooter();
+  console.log('📦 Footer data received:', footerData ? 'Data exists ✅' : 'NULL/UNDEFINED ❌', footerData);
   
   if (!footerData) {
-    console.warn('Footer data not available, using fallback');
+    console.warn('⚠️ Footer data not available, using fallback');
     // Show footer even if data is not available
     footerContainer.style.opacity = '1';
     footerContainer.style.visibility = 'visible';
