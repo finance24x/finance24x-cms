@@ -295,7 +295,7 @@ section
 .question
 {
 	font-family: 'Roboto Slab', serif;
-	font-size: 14px;
+	font-size: 10px;
 	color: #FFFFFF;
 	margin-left: 0px;
 }
@@ -303,7 +303,7 @@ section
 .top_bar_contact_list li > div
 {
 	display: inline-block;
-	font-size: 14px;
+	font-size: 10px;
 	color: #FFFFFF;
 }
 .top_bar_contact_list li > div
@@ -382,7 +382,7 @@ section
 .logo_text
 {
 	font-family: 'Roboto Slab', serif;
-	font-size: 36px;
+	font-size: 24px;
 	font-weight: 700;
 	line-height: 0.75;
 	color: #384158;
